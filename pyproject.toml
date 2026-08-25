@@ -142,6 +142,8 @@ filterwarnings = [
     # pytest-asyncio emits a deprecation warning about fixture loop scope in some versions
     "ignore::DeprecationWarning:pytest_asyncio",
     "ignore::PendingDeprecationWarning",
+    "ignore::starlette.exceptions.StarletteDeprecationWarning",
+    "ignore:The Starlette TestClient is deprecated:DeprecationWarning",
 ]
 
 # ──────────────────────────────────────────────────────────────────────────────

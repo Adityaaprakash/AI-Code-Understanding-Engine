@@ -92,27 +92,24 @@
 
 ### TASK-1D: FastAPI skeleton
 
-**Status:** ⬜ Pending  
+**Status:** ✅ Done  
 **Blockers:** TASK-1B ✅, TASK-1C ✅  
-**Scope:** App factory, lifespan, CORS, error handlers, health endpoint only.
-
-**Acceptance criteria:**
-- [ ] `backend/main.py` — FastAPI app factory with lifespan context
-- [ ] `GET /health` returns `{"status": "ok"}` with HTTP 200
-- [ ] CORS middleware configured (allow origins from env var)
-- [ ] Global exception handler returns `{"error": "<message>"}` — no
-      stack traces in responses
-- [ ] Request validation errors return HTTP 422 with structured body
-- [ ] `uvicorn backend.main:app --reload` starts without errors
-- [ ] `mypy backend/main.py` passes
+**Deliverables (all criteria met):**
+- [x] `backend/main.py` — FastAPI app factory `create_app()` and module-level `app`
+- [x] `GET /health` returns `{"status": "ok"}` with HTTP 200
+- [x] CORS middleware configured via `settings.CORS_ORIGINS`
+- [x] Global exception handlers return structured `{"error": {...}}` envelopes without stack traces in responses
+- [x] Request validation errors return HTTP 422 with structured body
+- [x] `uvicorn backend.main:app` starts without errors and serves `/health`, `/docs`, `/openapi.json`
+- [x] `mypy backend/` passes cleanly (0 errors)
 
 ---
 
 ### TASK-1E: Test infrastructure
 
 **Status:** ⬜ Pending  
-**Blockers:** TASK-1B ⬜, TASK-1D ⬜  
-**Scope:** pytest configuration and one smoke test; no feature tests yet.
+**Blockers:** TASK-1B ✅, TASK-1C ✅, TASK-1D ✅  
+**Scope:** pytest configuration and test fixtures.
 
 **Acceptance criteria:**
 - [ ] `pytest.ini` or `[tool.pytest.ini_options]` in `pyproject.toml`

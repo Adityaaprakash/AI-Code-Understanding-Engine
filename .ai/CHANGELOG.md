@@ -116,3 +116,36 @@ ADR-014: SQLAlchemy 2.0 async engine and Alembic migration system.
 
 ### Next Task
 TASK-1D: FastAPI Foundation
+
+---
+
+## 2026-08-25 — Phase 1D — FastAPI Foundation
+
+**Completed by:** TASK-1D
+
+### Created
+
+- `backend/main.py`: Application factory `create_app()` and module-level `app`
+- `backend/core/config.py`: Environment-driven configuration Settings class with CORS origin parser
+- `backend/core/errors.py`: Global exception handlers (`AppException`, validation 422, unhandled 500) and error envelope builder
+- `backend/schemas/health.py`: `HealthResponse` schema
+- `backend/schemas/errors.py`: `ErrorDetail` and `ErrorResponse` schemas
+- `backend/api/v1/router.py`: `api_v1_router` foundation registered at `/api/v1`
+- `backend/services/__init__.py`: Services layer boundary package marker
+- `tests/test_fastapi_app.py`: FastAPI test suite (health, router, OpenAPI, CORS, exception handling, DB dependency boundary)
+
+### Tooling & Verification
+
+| Check | Result |
+|---|---|
+| `uv run ruff check .` | All checks passed (0 errors) ✅ |
+| `uv run ruff format --check .` | 46 files already formatted ✅ |
+| `uv run mypy backend/` | Success: no issues found in 17 source files ✅ |
+| `uv run pytest tests/ -v` | 19 passed, 1 skipped (migration test skipped offline) ✅ |
+| `uvicorn backend.main:app` | Started successfully, served `/health`, `/openapi.json`, `/docs`, `/api/v1` ✅ |
+
+### Architectural Decisions Locked
+ADR-015: FastAPI application factory, Pydantic Settings, and standardized error response envelope.
+
+### Next Task
+TASK-1E: Test Infrastructure

@@ -8,7 +8,7 @@
 
 ## Current Task
 
-TASK-1C (Database Foundation) complete. Next: TASK-1D — FastAPI Foundation.
+TASK-1D (FastAPI Foundation) complete. Next: TASK-1E — Test Infrastructure.
 
 ---
 
@@ -36,12 +36,21 @@ TASK-1C (Database Foundation) complete. Next: TASK-1D — FastAPI Foundation.
   - Initial migration `0001_initial_schema` with pgvector, pg_trgm extensions, constraints, and indexes
   - PostgreSQL dev container configured in `docker/docker-compose.dev.yml`
   - All checks pass: ruff check ✅ ruff format ✅ mypy ✅ pytest (11/11 against PostgreSQL) ✅
+- [x] TASK-1D: FastAPI foundation complete
+  - Application factory `create_app()` in `backend/main.py`
+  - `/health` endpoint returning `{"status": "ok"}`
+  - Pydantic Settings layer in `backend/core/config.py` with environment variable driven configuration & CORS origin parsing
+  - Standardized error response envelope & handlers (`AppException`, validation HTTP 422, unhandled 500)
+  - `api_v1_router` foundation registered under `/api/v1`
+  - Database session dependency boundary `get_db_session` wired for FastAPI `Depends()`
+  - OpenAPI `/docs`, `/redoc`, `/openapi.json` exposed
+  - All checks pass: ruff check ✅ ruff format ✅ mypy ✅ pytest (19 passed, 1 skipped) ✅
 
 ---
 
 ## In Progress
 
-- [ ] TASK-1D: FastAPI Foundation (App factory, health endpoint, DB dependency)
+- [ ] TASK-1E: Test Infrastructure (pytest fixtures, test database setup, CI script)
 
 ---
 
@@ -50,7 +59,7 @@ TASK-1C (Database Foundation) complete. Next: TASK-1D — FastAPI Foundation.
 ### Phase 1 Remaining
 - [x] 1B: Python runtime setup — ✅ Done
 - [x] 1C: Database foundation — ✅ Done
-- [ ] 1D: FastAPI skeleton (app factory, health endpoint, CORS, error handlers)
+- [x] 1D: FastAPI skeleton — ✅ Done
 - [ ] 1E: Test infrastructure (pytest config, test database fixture, CI script)
 - [ ] 1F: Docker Compose foundation (postgres, backend, frontend, worker services)
 - [ ] 1G: Frontend scaffold (Vite + React + TypeScript, ESLint, Prettier)
@@ -76,4 +85,4 @@ See `DECISIONS.md` for full ADR list.
 
 ## Last Updated
 
-2026-08-25 — Phase 1C complete (Database foundation, SQLAlchemy ORM models, Alembic migrations, PostgreSQL test lifecycle).
+2026-08-25 — Phase 1D complete (FastAPI application factory, CORS, error handling, health endpoint, settings, tests).
