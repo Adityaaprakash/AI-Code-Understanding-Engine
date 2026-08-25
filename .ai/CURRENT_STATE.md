@@ -8,7 +8,7 @@
 
 ## Current Task
 
-Python runtime setup complete. Next: TASK-1C — Database Foundation.
+TASK-1C (Database Foundation) complete. Next: TASK-1D — FastAPI Foundation.
 
 ---
 
@@ -29,12 +29,19 @@ Python runtime setup complete. Next: TASK-1C — Database Foundation.
   - Ruff (lint + format), mypy, pytest configured
   - `backend/__init__.py` and `backend/py.typed` created
   - All checks pass: ruff check ✅ ruff format ✅ mypy ✅ pytest (8/8) ✅
+- [x] TASK-1C: Database foundation complete
+  - Async-first SQLAlchemy 2.0 ORM models for all 7 entities
+  - Declarative Base, async engine, and session factory in `backend/db/`
+  - Alembic migrations environment initialized with async driver support
+  - Initial migration `0001_initial_schema` with pgvector, pg_trgm extensions, constraints, and indexes
+  - PostgreSQL dev container configured in `docker/docker-compose.dev.yml`
+  - All checks pass: ruff check ✅ ruff format ✅ mypy ✅ pytest (11/11 against PostgreSQL) ✅
 
 ---
 
 ## In Progress
 
-- [ ] TASK-1C: Database foundation (Alembic migrations scaffold, initial schema DDL)
+- [ ] TASK-1D: FastAPI Foundation (App factory, health endpoint, DB dependency)
 
 ---
 
@@ -42,7 +49,7 @@ Python runtime setup complete. Next: TASK-1C — Database Foundation.
 
 ### Phase 1 Remaining
 - [x] 1B: Python runtime setup — ✅ Done
-- [ ] 1C: Database foundation (Alembic migrations scaffold, initial schema DDL)
+- [x] 1C: Database foundation — ✅ Done
 - [ ] 1D: FastAPI skeleton (app factory, health endpoint, CORS, error handlers)
 - [ ] 1E: Test infrastructure (pytest config, test database fixture, CI script)
 - [ ] 1F: Docker Compose foundation (postgres, backend, frontend, worker services)
@@ -69,4 +76,4 @@ See `DECISIONS.md` for full ADR list.
 
 ## Last Updated
 
-2026-08-25 — Phase 1B complete (Python 3.12 runtime, uv, ruff, mypy, pytest).
+2026-08-25 — Phase 1C complete (Database foundation, SQLAlchemy ORM models, Alembic migrations, PostgreSQL test lifecycle).

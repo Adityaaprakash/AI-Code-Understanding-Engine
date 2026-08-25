@@ -77,26 +77,23 @@
 
 ### TASK-1C: Database foundation
 
-**Status:** ⬜ Pending  
-**Blockers:** TASK-1B ⬜  
-**Scope:** Alembic scaffold and initial migration; no ORM models yet.
-
-**Acceptance criteria:**
-- [ ] `backend/db/` package with Alembic configuration
-- [ ] `alembic.ini` configured with async SQLAlchemy URL
-- [ ] First Alembic migration: create all tables in `DATABASE_SCHEMA.md`
-      (`repositories`, `commits`, `files`, `symbols`, `chunks`, `jobs`,
-       `index_versions`)
-- [ ] `CREATE EXTENSION IF NOT EXISTS vector` included in migration
-- [ ] Migration applies cleanly against a fresh PostgreSQL 16 database
-- [ ] Migration rolls back cleanly
+**Status:** ✅ Done  
+**Blockers:** TASK-1B ✅  
+**Deliverables (all criteria met):**
+- [x] `backend/db/` package with SQLAlchemy Base, async engine, and session factory
+- [x] Alembic configured with async engine and `db_settings`
+- [x] All 7 ORM models matching `DATABASE_SCHEMA.md` exactly
+- [x] `0001_initial_schema` migration with `pgvector` and `pg_trgm` extensions, constraints, and indexes
+- [x] Docker Compose minimal PostgreSQL 16 service in `docker/docker-compose.dev.yml`
+- [x] Real PostgreSQL migration lifecycle test (`upgrade head` -> `downgrade base` -> `upgrade head`) passes
+- [x] All quality checks pass: ruff check ✅ ruff format ✅ mypy ✅ pytest (11/11) ✅
 
 ---
 
 ### TASK-1D: FastAPI skeleton
 
 **Status:** ⬜ Pending  
-**Blockers:** TASK-1B ⬜  
+**Blockers:** TASK-1B ✅, TASK-1C ✅  
 **Scope:** App factory, lifespan, CORS, error handlers, health endpoint only.
 
 **Acceptance criteria:**

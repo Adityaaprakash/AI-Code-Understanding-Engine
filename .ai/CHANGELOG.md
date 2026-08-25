@@ -85,3 +85,34 @@ ADR-013: Python 3.12 and uv as package manager (see `DECISIONS.md`).
 
 ### Next Task
 TASK-1C: Database foundation
+
+---
+
+## 2026-08-25 — Phase 1C — Database Foundation
+
+**Completed by:** TASK-1C
+
+### Created
+
+- `backend/db/` package: `base.py`, `config.py`, `session.py`, `models/`
+- SQLAlchemy 2.0 ORM models for all 7 entities (`Repository`, `Commit`, `File`, `Symbol`, `Chunk`, `Job`, `IndexVersion`)
+- `alembic/` migration environment with async PostgreSQL driver support (`alembic/env.py`, `alembic.ini`)
+- `alembic/versions/0001_initial_schema.py` initial migration DDL with pgvector, pg_trgm extensions, constraints, and indexes
+- `docker/docker-compose.dev.yml` minimal PostgreSQL 16 service
+- `tests/test_database_metadata.py` metadata verification test suite
+- `tests/test_database_migrations.py` real PostgreSQL migration lifecycle test suite
+
+### Tooling & Verification
+
+| Check | Result |
+|---|---|
+| `uv run ruff check .` | All checks passed (0 errors) ✅ |
+| `uv run ruff format --check .` | 34 files already formatted ✅ |
+| `uv run mypy backend/` | Success: no issues found ✅ |
+| `uv run pytest tests/ -v` | 11 passed (including PostgreSQL migration lifecycle) ✅ |
+
+### Architectural Decisions Locked
+ADR-014: SQLAlchemy 2.0 async engine and Alembic migration system.
+
+### Next Task
+TASK-1D: FastAPI Foundation
