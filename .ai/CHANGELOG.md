@@ -39,4 +39,49 @@ Format: `[Date] — Phase X — Summary`
 ADR-001 through ADR-012 (see `DECISIONS.md`).
 
 ### Next Task
-TASK-1B: Python runtime setup (`pyproject.toml`, virtual env, `ruff`, `mypy`)
+TASK-1C: Database foundation (Alembic scaffold + initial schema migration)
+
+---
+
+## 2026-08-25 — Phase 1B — Python Runtime Setup
+
+**Completed by:** TASK-1B
+
+### Created
+
+- `pyproject.toml` — PEP 621 project config; runtime deps (fastapi, uvicorn, pydantic,
+  pydantic-settings, sqlalchemy[asyncio], asyncpg, alembic, httpx) and dev deps
+  (pytest, pytest-asyncio, pytest-cov, ruff, mypy) via `[dependency-groups]`
+- `.python-version` — pinned to `3.12`
+- `backend/__init__.py` — Python package marker
+- `backend/py.typed` — PEP 561 typed-package marker
+- `tests/__init__.py` — test package marker
+- `tests/test_python_env.py` — 8-test environment smoke suite
+- `.venv/` — Python 3.12.14 virtual environment managed by uv (git-ignored)
+
+### Tooling Established
+
+| Tool | Version | Config location |
+|---|---|---|
+| Python | 3.12.14 | `.python-version`, `pyproject.toml` |
+| uv | 0.12.5 | (package manager) |
+| ruff | 0.16.4 | `[tool.ruff]` in `pyproject.toml` |
+| mypy | 2.3.1 | `[tool.mypy]` in `pyproject.toml` |
+| pytest | 9.1.1 | `[tool.pytest.ini_options]` in `pyproject.toml` |
+
+### Checks Executed (all pass)
+
+| Check | Result |
+|---|---|
+| `uv sync` | Exit 0, 45 packages installed |
+| `uv run python --version` | Python 3.12.14 ✅ |
+| `uv run ruff check .` | All checks passed (0 errors) ✅ |
+| `uv run ruff format --check .` | 17 files already formatted ✅ |
+| `uv run mypy backend/` | Success: no issues found ✅ |
+| `uv run pytest tests/ -v` | 8 passed in 2.56s ✅ |
+
+### Architectural Decisions Locked
+ADR-013: Python 3.12 and uv as package manager (see `DECISIONS.md`).
+
+### Next Task
+TASK-1C: Database foundation

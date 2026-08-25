@@ -8,7 +8,7 @@
 
 ## Current Task
 
-Repository foundation and persistent project context.
+Python runtime setup complete. Next: TASK-1C — Database Foundation.
 
 ---
 
@@ -22,19 +22,26 @@ Repository foundation and persistent project context.
 - [x] `.env.example` created
 - [x] `README.md` created
 - [x] `.ai/` project-memory files created and populated
+- [x] TASK-1B: Python runtime setup complete
+  - Python 3.12.14 (managed by uv)
+  - `pyproject.toml` with all planned runtime and dev dependencies
+  - `.python-version` pinned to 3.12
+  - Ruff (lint + format), mypy, pytest configured
+  - `backend/__init__.py` and `backend/py.typed` created
+  - All checks pass: ruff check ✅ ruff format ✅ mypy ✅ pytest (8/8) ✅
 
 ---
 
 ## In Progress
 
-- [ ] Repository foundation (this task — wrapping up)
+- [ ] TASK-1C: Database foundation (Alembic migrations scaffold, initial schema DDL)
 
 ---
 
 ## Blocked / Pending
 
 ### Phase 1 Remaining
-- [ ] 1B: Python runtime setup (`pyproject.toml`, `uv` / `pip-tools`, virtual env)
+- [x] 1B: Python runtime setup — ✅ Done
 - [ ] 1C: Database foundation (Alembic migrations scaffold, initial schema DDL)
 - [ ] 1D: FastAPI skeleton (app factory, health endpoint, CORS, error handlers)
 - [ ] 1E: Test infrastructure (pytest config, test database fixture, CI script)
@@ -62,4 +69,4 @@ See `DECISIONS.md` for full ADR list.
 
 ## Last Updated
 
-2026-08-25 — Phase 1A complete (foundation files and directory structure).
+2026-08-25 — Phase 1B complete (Python 3.12 runtime, uv, ruff, mypy, pytest).

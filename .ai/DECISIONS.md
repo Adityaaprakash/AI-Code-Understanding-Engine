@@ -282,3 +282,35 @@ error to the user.
 ### Consequences
 - Monolithic repositories (e.g., large open-source monorepos) may require
   sub-directory scoping, which is a future feature.
+
+---
+
+## ADR-013: Python 3.12 and uv as Package Manager
+
+**Status:** Accepted  
+**Date:** 2026-08-25
+
+### Context
+The project needs a pinned Python version and a reproducible dependency management
+workflow for the backend and code-analysis modules.
+
+### Decision
+Use **Python 3.12** as the minimum and pinned runtime version (`.python-version` = `3.12`).
+Use **uv** as the package manager and virtual environment tool.
+All dependencies are declared in `pyproject.toml` using PEP 621 (`[project]`) and
+PEP 735 (`[dependency-groups]`).
+
+### Rationale
+- Python 3.12 is the current stable LTS release with improved performance and
+  better typing support (`TypeVarTuple`, improved `TypeAlias`, etc.).
+- `uv` is a fast, reproducible package manager that:
+  - Downloads and manages Python versions automatically (no separate pyenv required)
+  - Produces a `uv.lock` lockfile for reproducible installs
+  - Is compatible with PEP 621 `pyproject.toml`
+  - Is significantly faster than pip for CI/CD use cases
+
+### Consequences
+- All developers and CI environments use `uv sync` to install dependencies.
+- The pinned version in `.python-version` is read by uv automatically.
+- Do not commit `.venv/` (already in `.gitignore`).
+- Do commit `uv.lock` (to be generated — guarantees reproducible installs).

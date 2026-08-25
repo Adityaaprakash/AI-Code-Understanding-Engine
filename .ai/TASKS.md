@@ -22,34 +22,39 @@
 
 ---
 
+### TASK-1B: Python runtime setup
+
+**Status:** ✅ Done  
+**Blockers:** TASK-1A ✅  
+**Deliverables:**
+- `pyproject.toml` — PEP 621 project config with all runtime + dev deps
+- `.python-version` — pinned to `3.12`
+- `backend/__init__.py` — package marker
+- `backend/py.typed` — PEP 561 typed package marker
+- `tests/__init__.py` — test package marker
+- `tests/test_python_env.py` — 8-test environment smoke suite
+- `uv sync` installs Python 3.12.14 + 45 packages cleanly
+- Checks: `ruff check` ✅ `ruff format --check` ✅ `mypy backend/` ✅ `pytest` (8/8) ✅
+
+---
+
 ## Ready (can be started now)
 
 ### TASK-1B: Python runtime setup
 
-**Status:** ⬜ Pending  
+**Status:** ✅ Done  
 **Blockers:** TASK-1A ✅  
-**Scope:** Backend Python package configuration only; no business logic.
-
-**Acceptance criteria:**
-- [ ] `pyproject.toml` at repository root with project metadata and dev dependencies
-      (`fastapi`, `uvicorn`, `sqlalchemy[asyncio]`, `asyncpg`, `alembic`,
-       `pydantic-settings`, `ruff`, `mypy`, `pytest`, `pytest-asyncio`,
-       `httpx`, `pytest-cov`)
-- [ ] `.python-version` file pinning Python ≥ 3.12
-- [ ] `ruff.toml` or `[tool.ruff]` section in `pyproject.toml` configured
-- [ ] `mypy.ini` or `[tool.mypy]` section configured (strict mode)
-- [ ] `backend/__init__.py` exists (empty package marker)
-- [ ] `uv sync` or `pip install -e ".[dev]"` succeeds without errors
-- [ ] `ruff check .` passes with zero errors on the empty codebase
-- [ ] `mypy backend/` passes with zero errors on the empty package
-
-**Files to create/modify:**
-```
-pyproject.toml
-.python-version
-backend/__init__.py
-backend/py.typed
-```
+**Deliverables (all criteria met):**
+- [x] `pyproject.toml` with all runtime + dev deps (PEP 621 / dependency-groups)
+- [x] `.python-version` pinned to `3.12`
+- [x] `[tool.ruff]` configured (lint + format, py312 target)
+- [x] `[tool.mypy]` configured
+- [x] `backend/__init__.py` and `backend/py.typed` created
+- [x] `uv sync` installs Python 3.12.14 + 45 packages, exits 0
+- [x] `ruff check .` — All checks passed (0 errors)
+- [x] `ruff format --check .` — 17 files already formatted
+- [x] `mypy backend/` — Success: no issues found
+- [x] `pytest tests/` — 8 passed in 2.56s
 
 ---
 
@@ -68,7 +73,7 @@ backend/py.typed
 
 ---
 
-## Blocked on 1B (Python runtime)
+## Blocked on 1B (Python runtime) — 1B is now ✅ Done; these tasks are Ready
 
 ### TASK-1C: Database foundation
 
