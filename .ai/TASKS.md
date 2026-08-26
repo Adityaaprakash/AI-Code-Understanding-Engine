@@ -158,6 +158,25 @@ service needed for this task.
 
 ---
 
+### TASK-1H: Phase 1 Final Verification
+
+**Status:** ✅ Done
+**Blockers:** TASK-1A ✅, TASK-1B ✅, TASK-1C ✅, TASK-1D ✅, TASK-1E ✅, TASK-1F ✅, TASK-1G ✅
+**Scope:** Final verification gate for Phase 1 Foundation stack.
+
+**Acceptance criteria:**
+- [x] Repository structure, `.ai/` memory, and configuration files verified
+- [x] Python 3.12 runtime, ruff lint, ruff format, and mypy type checks pass
+- [x] PostgreSQL 16 + pgvector extension + 7 domain tables + Alembic migration lifecycle verified
+- [x] FastAPI `/health`, `/openapi.json`, `/docs`, `/api/v1` endpoints verified
+- [x] Worker container startup, DB check, and graceful shutdown verified
+- [x] Docker Compose 3-service stack (`postgres`, `backend`, `worker`) healthy and operational
+- [x] Frontend build, ESLint, Prettier, Vite dev server, and backend communication verified
+- [x] All 27 pytest tests pass with zero regressions
+- [x] Git workspace clean of accidental artifacts or temporary debug scripts
+
+---
+
 ## Notes for AI Agents
 
 - Each task above is independently implementable; do not merge tasks.
