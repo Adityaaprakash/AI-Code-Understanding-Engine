@@ -186,3 +186,44 @@ ADR-016: Pytest async fixture architecture with transactional rollback isolation
 
 ### Next Task
 TASK-1F: Docker Compose Foundation
+
+---
+
+## 2026-08-26 — Phase 1F — Docker Compose Foundation
+
+**Completed by:** TASK-1F
+
+### Created
+
+- `docker/docker-compose.yml`: Full development Compose file with `postgres`, `backend`, and `worker` services
+- `docker/Dockerfile.backend`: Multi-stage-equivalent Dockerfile — `python:3.12-slim` + uv install + `uvicorn backend.main:app`
+- `docker/Dockerfile.worker`: Dockerfile — same base image, runs `python -m backend.worker`
+- `backend/worker.py`: Async worker process scaffold with graceful SIGINT/SIGTERM shutdown, PostgreSQL connectivity check on startup, no Phase 2 business logic
+
+### Modified
+
+- `docker/docker-compose.dev.yml`: Extended from postgres-only (TASK-1C) to include `backend` and `worker` services with health checks and dependency ordering
+- `backend/core/config.py`: Replaced `BeforeValidator`-based CORS parsing with `@field_validator(mode="before")` to properly parse JSON array strings passed via Docker Compose environment variables
+
+### Tooling & Verification
+
+| Check | Result |
+|---|---|
+| `docker compose config` | Parses successfully ✅ |
+| `docker compose up -d --build` | All 3 services built and started ✅ |
+| `postgres` container | `healthy` (pg_isready healthcheck, pgvector/pgvector:pg16) ✅ |
+| `backend` container | `running healthy` (curl `/health` healthcheck) ✅ |
+| `worker` container | `running` (polling loop active) ✅ |
+| `GET http://localhost:8000/health` | HTTP 200 `{"status": "ok"}` ✅ |
+| pgvector extension | `vector 0.8.6` confirmed via `pg_extension` table ✅ |
+| Alembic migrations | `0001_initial_schema (head)` ✅ |
+| `uv run ruff check .` | All checks passed (0 errors) ✅ |
+| `uv run ruff format --check .` | 51 files already formatted ✅ |
+| `uv run mypy backend/` | Success: no issues found in 26 source files ✅ |
+| `uv run pytest tests/ -v` | 27 passed in 4.56s ✅ |
+
+### Architectural Decisions Locked
+ADR-017: Docker Compose development environment uses `pgvector/pgvector:pg16` image to provide PostgreSQL 16 with pgvector extension. Backend and worker share the same `python:3.12-slim` + uv build pattern. `CORS_ORIGINS` accepts both comma-separated strings and JSON array strings from environment variables.
+
+### Next Task
+TASK-1G: Frontend Scaffold (Vite + React + TypeScript)

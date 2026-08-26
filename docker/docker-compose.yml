@@ -1,6 +1,6 @@
-# docker/docker-compose.dev.yml
+# docker/docker-compose.yml
 # =============================================================================
-# AI Code Understanding Engine — Local Development Compose Services
+# AI Code Understanding Engine — Primary Development Compose Services
 # Includes PostgreSQL (with pgvector), FastAPI backend, and Background Worker
 # =============================================================================
 

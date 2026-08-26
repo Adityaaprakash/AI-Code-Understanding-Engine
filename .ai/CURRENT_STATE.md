@@ -8,7 +8,7 @@
 
 ## Current Task
 
-TASK-1E (Test Infrastructure) complete. Next: TASK-1F — Docker Compose Foundation.
+TASK-1F (Docker Compose Foundation) complete. Next: TASK-1G — Frontend Scaffold.
 
 ---
 
@@ -52,12 +52,22 @@ TASK-1E (Test Infrastructure) complete. Next: TASK-1F — Docker Compose Foundat
   - Transactional AsyncSession fixture with auto-rollback for 100% test isolation against PostgreSQL
   - Local/CI verification runner `scripts/ci_check.py`
   - All checks pass: ruff check ✅ ruff format ✅ mypy ✅ pytest (27 passed, 92% coverage) ✅
+- [x] TASK-1F: Docker Compose Foundation complete
+  - `docker/docker-compose.dev.yml` extended with `backend` and `worker` services (was postgres-only)
+  - `docker/docker-compose.yml` created as primary Compose file (identical to dev variant)
+  - `docker/Dockerfile.backend` — builds FastAPI app using `uv sync`, runs `uvicorn backend.main:app`
+  - `docker/Dockerfile.worker` — builds worker process using `uv sync`, runs `python -m backend.worker`
+  - `backend/worker.py` — async polling scaffold with graceful shutdown, PostgreSQL connectivity check, no business logic
+  - `backend/core/config.py` — CORS_ORIGINS field_validator updated to accept JSON string from env vars
+  - PostgreSQL uses `pgvector/pgvector:pg16` image; pgvector 0.8.6 confirmed available
+  - All 3 services start via `docker compose up -d` with correct dependency ordering
+  - All checks pass: ruff check ✅ ruff format ✅ mypy (26 sources) ✅ pytest (27 passed) ✅
 
 ---
 
 ## In Progress
 
-- [ ] TASK-1F: Docker Compose Foundation (postgres, backend, worker services)
+- [ ] TASK-1G: Frontend Scaffold (Vite + React + TypeScript)
 
 ---
 
@@ -68,7 +78,7 @@ TASK-1E (Test Infrastructure) complete. Next: TASK-1F — Docker Compose Foundat
 - [x] 1C: Database foundation — ✅ Done
 - [x] 1D: FastAPI skeleton — ✅ Done
 - [x] 1E: Test infrastructure — ✅ Done
-- [ ] 1F: Docker Compose foundation (postgres, backend, frontend, worker services)
+- [x] 1F: Docker Compose foundation — ✅ Done
 - [ ] 1G: Frontend scaffold (Vite + React + TypeScript, ESLint, Prettier)
 
 ### Phase 2+
@@ -92,4 +102,4 @@ See `DECISIONS.md` for full ADR list.
 
 ## Last Updated
 
-2026-08-26 — Phase 1E complete (Reusable pytest fixtures, async client, transactional DB session fixture, custom markers, coverage, CI check runner).
+2026-08-26 — Phase 1F complete (Docker Compose foundation: postgres+pgvector, backend FastAPI container, worker scaffold container; all 3 services start and verified healthy).

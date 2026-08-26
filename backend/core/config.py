@@ -7,24 +7,13 @@ Integrates with `db_settings` from `backend.db.config` to maintain a single sour
 of truth for database configuration.
 """
 
-from typing import Annotated
+import json
+from typing import Any
 
-from pydantic import BeforeValidator, Field
+from pydantic import Field, field_validator
 from pydantic_settings import BaseSettings, SettingsConfigDict
 
 from backend.db.config import db_settings
-
-
-def parse_cors_origins(v: list[str] | str) -> list[str]:
-    """Parse a comma-separated string or list of origins into a list of strings."""
-    if isinstance(v, str):
-        if not v.strip():
-            return []
-        return [origin.strip() for origin in v.split(",")]
-    return v
-
-
-CorsOrigins = Annotated[list[str], BeforeValidator(parse_cors_origins)]
 
 
 class Settings(BaseSettings):
@@ -46,7 +35,27 @@ class Settings(BaseSettings):
     API_V1_STR: str = "/api/v1"
 
     # CORS
-    CORS_ORIGINS: CorsOrigins = Field(default=["http://localhost:3000", "http://localhost:5173"])
+    CORS_ORIGINS: list[str] = Field(default=["http://localhost:3000", "http://localhost:5173"])
+
+    @field_validator("CORS_ORIGINS", mode="before")
+    @classmethod
+    def parse_cors_origins(cls, v: Any) -> list[str]:
+        """Parse a comma-separated string, JSON string, or list of origins."""
+        if isinstance(v, str):
+            v_str = v.strip()
+            if v_str.startswith("[") and v_str.endswith("]"):
+                try:
+                    parsed = json.loads(v_str)
+                    if isinstance(parsed, list):
+                        return [str(item).strip() for item in parsed]
+                except Exception:
+                    pass
+            if not v_str:
+                return []
+            return [origin.strip() for origin in v_str.split(",")]
+        if isinstance(v, list):
+            return [str(origin).strip() for origin in v]
+        return []
 
 
 # Singleton settings instance

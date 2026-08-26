@@ -124,19 +124,19 @@
 
 ### TASK-1F: Docker Compose foundation
 
-**Status:** ⬜ Pending  
+**Status:** ✅ Done  
 **Blockers:** TASK-1C ✅, TASK-1D ✅, TASK-1E ✅  
 **Scope:** Docker Compose that brings up postgres + backend + worker; no frontend
 service needed for this task.
 
 **Acceptance criteria:**
-- [ ] `docker/docker-compose.yml` with services: `postgres`, `backend`, `worker`
-- [ ] `docker/Dockerfile.backend` — Python image, installs deps, runs uvicorn
-- [ ] `docker/Dockerfile.worker` — same image, runs worker entrypoint
-- [ ] `docker compose up` starts all services without errors
-- [ ] `GET http://localhost:8000/health` returns HTTP 200 when running
-- [ ] PostgreSQL data persisted in a named Docker volume
-- [ ] All secrets sourced from `.env` file (not hardcoded in Compose file)
+- [x] `docker/docker-compose.yml` with services: `postgres`, `backend`, `worker`
+- [x] `docker/Dockerfile.backend` — Python image, installs deps, runs uvicorn
+- [x] `docker/Dockerfile.worker` — same image, runs worker entrypoint
+- [x] `docker compose up` starts all services without errors
+- [x] `GET http://localhost:8000/health` returns HTTP 200 when running
+- [x] PostgreSQL data persisted in a named Docker volume
+- [x] All secrets sourced from `.env` file / env variable defaults (not hardcoded in Compose file)
 
 ---
 
