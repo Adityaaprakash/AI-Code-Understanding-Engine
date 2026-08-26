@@ -8,7 +8,7 @@
 
 ## Current Task
 
-TASK-1D (FastAPI Foundation) complete. Next: TASK-1E — Test Infrastructure.
+TASK-1E (Test Infrastructure) complete. Next: TASK-1F — Docker Compose Foundation.
 
 ---
 
@@ -45,12 +45,19 @@ TASK-1D (FastAPI Foundation) complete. Next: TASK-1E — Test Infrastructure.
   - Database session dependency boundary `get_db_session` wired for FastAPI `Depends()`
   - OpenAPI `/docs`, `/redoc`, `/openapi.json` exposed
   - All checks pass: ruff check ✅ ruff format ✅ mypy ✅ pytest (19 passed, 1 skipped) ✅
+- [x] TASK-1E: Test infrastructure complete
+  - Reusable pytest fixtures in `tests/conftest.py` (`app_instance`, `async_client`, `sync_client`, `database_url`, `db_engine`, `db_session`)
+  - Strict pytest markers registered in `pyproject.toml` (`unit`, `api`, `integration`, `db`)
+  - Smoke tests in `tests/test_health.py` and test infrastructure verification in `tests/test_infrastructure.py`
+  - Transactional AsyncSession fixture with auto-rollback for 100% test isolation against PostgreSQL
+  - Local/CI verification runner `scripts/ci_check.py`
+  - All checks pass: ruff check ✅ ruff format ✅ mypy ✅ pytest (27 passed, 92% coverage) ✅
 
 ---
 
 ## In Progress
 
-- [ ] TASK-1E: Test Infrastructure (pytest fixtures, test database setup, CI script)
+- [ ] TASK-1F: Docker Compose Foundation (postgres, backend, worker services)
 
 ---
 
@@ -60,7 +67,7 @@ TASK-1D (FastAPI Foundation) complete. Next: TASK-1E — Test Infrastructure.
 - [x] 1B: Python runtime setup — ✅ Done
 - [x] 1C: Database foundation — ✅ Done
 - [x] 1D: FastAPI skeleton — ✅ Done
-- [ ] 1E: Test infrastructure (pytest config, test database fixture, CI script)
+- [x] 1E: Test infrastructure — ✅ Done
 - [ ] 1F: Docker Compose foundation (postgres, backend, frontend, worker services)
 - [ ] 1G: Frontend scaffold (Vite + React + TypeScript, ESLint, Prettier)
 
@@ -85,4 +92,4 @@ See `DECISIONS.md` for full ADR list.
 
 ## Last Updated
 
-2026-08-25 — Phase 1D complete (FastAPI application factory, CORS, error handling, health endpoint, settings, tests).
+2026-08-26 — Phase 1E complete (Reusable pytest fixtures, async client, transactional DB session fixture, custom markers, coverage, CI check runner).

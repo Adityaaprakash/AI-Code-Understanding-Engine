@@ -1,5 +1,7 @@
 """TASK-1C metadata checks that do not require a running database."""
 
+import pytest
+
 import backend.db.models  # noqa: F401 - registers every model on Base.metadata
 from backend.db.base import Base
 
@@ -14,11 +16,13 @@ EXPECTED_TABLES = {
 }
 
 
+@pytest.mark.unit
 def test_metadata_contains_exactly_the_initial_schema_tables() -> None:
     """The declarative base must not silently introduce extra tables."""
     assert set(Base.metadata.tables) == EXPECTED_TABLES
 
 
+@pytest.mark.unit
 def test_metadata_contains_the_documented_foreign_key_delete_actions() -> None:
     """Relationship integrity is represented in the authoritative ORM metadata."""
     foreign_keys = {

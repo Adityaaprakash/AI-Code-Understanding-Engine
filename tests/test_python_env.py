@@ -14,7 +14,10 @@ Application tests will be added once application code exists (TASK-1D+).
 
 import sys
 
+import pytest
 
+
+@pytest.mark.unit
 def test_python_version_is_312() -> None:
     """The project requires Python 3.12 as defined in .python-version and pyproject.toml."""
     assert sys.version_info.major == 3, "Expected Python 3"

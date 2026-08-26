@@ -137,6 +137,12 @@ addopts = [
     "--tb=short",
     "--strict-markers",
 ]
+markers = [
+    "unit: pure unit tests without external dependencies or database connections",
+    "api: FastAPI application endpoints and HTTP route tests",
+    "integration: cross-component or integration tests",
+    "db: database tests requiring a live PostgreSQL connection",
+]
 filterwarnings = [
     "error",
     # pytest-asyncio emits a deprecation warning about fixture loop scope in some versions

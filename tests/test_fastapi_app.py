@@ -9,15 +9,10 @@ from fastapi.testclient import TestClient
 
 from backend.core.errors import AppException
 from backend.db.session import get_db_session
-from backend.main import app, create_app
+from backend.main import create_app
 
 
-@pytest.fixture
-def client() -> TestClient:
-    """TestClient fixture for FastAPI application testing."""
-    return TestClient(app)
-
-
+@pytest.mark.unit
 def test_app_imports_and_instantiates() -> None:
     """Application factory produces a valid FastAPI application instance."""
     test_app = create_app()
@@ -26,16 +21,20 @@ def test_app_imports_and_instantiates() -> None:
     assert test_app.version == "0.1.0"
 
 
-def test_health_endpoint(client: TestClient) -> None:
+@pytest.mark.api
+@pytest.mark.unit
+def test_health_endpoint(sync_client: TestClient) -> None:
     """GET /health returns HTTP 200 and {'status': 'ok'}."""
-    response = client.get("/health")
+    response = sync_client.get("/health")
     assert response.status_code == status.HTTP_200_OK
     assert response.json() == {"status": "ok"}
 
 
-def test_api_v1_router_registration(client: TestClient) -> None:
+@pytest.mark.api
+@pytest.mark.unit
+def test_api_v1_router_registration(sync_client: TestClient) -> None:
     """The /api/v1 router is registered and responds to root GET request."""
-    response = client.get("/api/v1")
+    response = sync_client.get("/api/v1")
     assert response.status_code == status.HTTP_200_OK
     data = response.json()
     assert data["message"] == "CodeLens AI API v1"
@@ -43,9 +42,11 @@ def test_api_v1_router_registration(client: TestClient) -> None:
     assert data["version"] == "v1"
 
 
-def test_openapi_schema(client: TestClient) -> None:
+@pytest.mark.api
+@pytest.mark.unit
+def test_openapi_schema(sync_client: TestClient) -> None:
     """Application exposes valid OpenAPI schema at /openapi.json."""
-    response = client.get("/openapi.json")
+    response = sync_client.get("/openapi.json")
     assert response.status_code == status.HTTP_200_OK
     schema = response.json()
     assert schema["info"]["title"] == "CodeLens AI — AI Code Understanding Engine"
@@ -53,24 +54,29 @@ def test_openapi_schema(client: TestClient) -> None:
     assert "/api/v1" in schema["paths"]
 
 
-def test_docs_and_redoc_endpoints(client: TestClient) -> None:
+@pytest.mark.api
+@pytest.mark.unit
+def test_docs_and_redoc_endpoints(sync_client: TestClient) -> None:
     """Application exposes Swagger /docs and ReDoc /redoc UI pages."""
-    docs_response = client.get("/docs")
+    docs_response = sync_client.get("/docs")
     assert docs_response.status_code == status.HTTP_200_OK
     assert "swagger-ui" in docs_response.text.lower()
 
-    redoc_response = client.get("/redoc")
+    redoc_response = sync_client.get("/redoc")
     assert redoc_response.status_code == status.HTTP_200_OK
     assert "redoc" in redoc_response.text.lower()
 
 
-def test_cors_headers(client: TestClient) -> None:
+@pytest.mark.api
+@pytest.mark.unit
+def test_cors_headers(sync_client: TestClient) -> None:
     """CORS middleware attaches headers for configured origins."""
-    response = client.get("/health", headers={"Origin": "http://localhost:3000"})
+    response = sync_client.get("/health", headers={"Origin": "http://localhost:3000"})
     assert response.status_code == status.HTTP_200_OK
     assert response.headers.get("access-control-allow-origin") == "http://localhost:3000"
 
 
+@pytest.mark.unit
 def test_custom_app_exception_handler() -> None:
     """Custom AppException is handled and formatted into standardized error response."""
     test_app = create_app()
@@ -96,6 +102,7 @@ def test_custom_app_exception_handler() -> None:
     }
 
 
+@pytest.mark.unit
 def test_unhandled_exception_handler() -> None:
     """Unhandled server exceptions return HTTP 500 without leaking tracebacks."""
     test_app = create_app()
@@ -114,6 +121,7 @@ def test_unhandled_exception_handler() -> None:
     assert "Secret database crash" not in response.text
 
 
+@pytest.mark.unit
 def test_database_session_dependency_injection_boundary() -> None:
     """Verify get_db_session can be referenced as a FastAPI dependency."""
     test_app = create_app()

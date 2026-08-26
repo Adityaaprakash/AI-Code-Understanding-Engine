@@ -149,3 +149,40 @@ ADR-015: FastAPI application factory, Pydantic Settings, and standardized error 
 
 ### Next Task
 TASK-1E: Test Infrastructure
+
+---
+
+## 2026-08-26 — Phase 1E — Test Infrastructure
+
+**Completed by:** TASK-1E
+
+### Created
+
+- `tests/conftest.py`: Async pytest fixture layer (`app_instance`, `async_client`, `sync_client`, `database_url`, `db_engine`, `db_session`)
+- `tests/test_health.py`: Dedicated smoke tests for `/health` endpoint using async and sync clients
+- `tests/test_infrastructure.py`: Infrastructure verification test suite testing custom markers, async HTTP execution, and PostgreSQL transactional rollback isolation
+- `scripts/ci_check.py`: Local/CI quality gate test script executing ruff, mypy, pytest, and coverage checks
+
+### Modified
+
+- `pyproject.toml`: Configured strict pytest markers (`unit`, `api`, `integration`, `db`) under `[tool.pytest.ini_options]`
+- `tests/test_python_env.py`: Decorated with `@pytest.mark.unit`
+- `tests/test_database_metadata.py`: Decorated with `@pytest.mark.unit`
+- `tests/test_database_migrations.py`: Decorated with `@pytest.mark.db` and `@pytest.mark.integration`
+- `tests/test_fastapi_app.py`: Updated to use `sync_client` fixture and decorated with `@pytest.mark.api` and `@pytest.mark.unit`
+
+### Tooling & Verification
+
+| Check | Result |
+|---|---|
+| `uv run ruff check .` | All checks passed (0 errors) ✅ |
+| `uv run ruff format --check .` | 50 files already formatted ✅ |
+| `uv run mypy backend/` | Success: no issues found in 17 source files ✅ |
+| `uv run pytest tests/ --cov=backend -v` | 27 passed in 7.83s with 92% code coverage ✅ |
+| `uv run python scripts/ci_check.py` | All CI quality gates passed ✅ |
+
+### Architectural Decisions Locked
+ADR-016: Pytest async fixture architecture with transactional rollback isolation for PostgreSQL integration testing.
+
+### Next Task
+TASK-1F: Docker Compose Foundation

@@ -32,6 +32,8 @@ async def _table_names(database_url: str) -> set[str]:
         await connection.close()
 
 
+@pytest.mark.db
+@pytest.mark.integration
 @pytest.mark.skipif(
     "DATABASE_URL" not in os.environ,
     reason="requires DATABASE_URL for a real PostgreSQL integration test",

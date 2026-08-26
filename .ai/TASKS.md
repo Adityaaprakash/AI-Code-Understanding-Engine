@@ -107,16 +107,16 @@
 
 ### TASK-1E: Test infrastructure
 
-**Status:** ⬜ Pending  
+**Status:** ✅ Done  
 **Blockers:** TASK-1B ✅, TASK-1C ✅, TASK-1D ✅  
-**Scope:** pytest configuration and test fixtures.
-
-**Acceptance criteria:**
-- [ ] `pytest.ini` or `[tool.pytest.ini_options]` in `pyproject.toml`
-- [ ] `tests/conftest.py` with async test client fixture
-- [ ] `tests/test_health.py` — smoke test: `GET /health` returns HTTP 200
-- [ ] `pytest tests/` passes with zero failures
-- [ ] Coverage report generated (`pytest --cov=backend`)
+**Deliverables (all criteria met):**
+- [x] `[tool.pytest.ini_options]` in `pyproject.toml` with strict markers (`unit`, `api`, `integration`, `db`)
+- [x] `tests/conftest.py` with `app_instance`, `async_client`, `sync_client`, `database_url`, `db_engine`, `db_session` fixtures
+- [x] `tests/test_health.py` — smoke test: `GET /health` returns HTTP 200
+- [x] `tests/test_infrastructure.py` — infrastructure test suite verifying markers, async HTTP client, and PostgreSQL transaction isolation
+- [x] `scripts/ci_check.py` local/CI quality check script
+- [x] `pytest tests/` passes with 27 passed, zero failures
+- [x] Code coverage report generated (`pytest --cov=backend` -> 92% coverage)
 
 ---
 
@@ -125,7 +125,7 @@
 ### TASK-1F: Docker Compose foundation
 
 **Status:** ⬜ Pending  
-**Blockers:** TASK-1C ⬜, TASK-1D ⬜, TASK-1E ⬜  
+**Blockers:** TASK-1C ✅, TASK-1D ✅, TASK-1E ✅  
 **Scope:** Docker Compose that brings up postgres + backend + worker; no frontend
 service needed for this task.
 
