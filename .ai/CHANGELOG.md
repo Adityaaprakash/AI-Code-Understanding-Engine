@@ -227,3 +227,46 @@ ADR-017: Docker Compose development environment uses `pgvector/pgvector:pg16` im
 
 ### Next Task
 TASK-1G: Frontend Scaffold (Vite + React + TypeScript)
+
+---
+
+## 2026-08-26 — Phase 1G — Frontend Scaffold
+
+**Completed by:** TASK-1G
+
+### Created
+
+- `frontend/package.json`: Vite + React 18 + TypeScript + ESLint + Prettier project definition
+- `frontend/tsconfig.json`, `tsconfig.app.json`, `tsconfig.node.json`: TypeScript configuration
+- `frontend/vite.config.ts`: Vite bundler configuration with React plugin and dev server port 3000
+- `frontend/eslint.config.js`: ESLint flat config with `typescript-eslint` and `react-hooks` rules
+- `frontend/.prettierrc`: Prettier formatting rules
+- `frontend/.env.example`: Environment variable template (`VITE_API_BASE_URL`)
+- `frontend/index.html`: Main HTML entry point
+- `frontend/src/vite-env.d.ts`: TypeScript module declarations for `ImportMetaEnv` and `ImportMeta`
+- `frontend/src/types/index.ts`: Common frontend type interfaces (`HealthResponse`)
+- `frontend/src/services/api.ts`: API service client (`fetchHealth()`) connecting to FastAPI backend
+- `frontend/src/hooks/useHealthCheck.ts`: Custom hook managing API health state
+- `frontend/src/components/Header.tsx`: Header component displaying project identity
+- `frontend/src/pages/HomePage.tsx`: Main landing page with system status card
+- `frontend/src/App.tsx` & `main.tsx`: React application root shell
+- `frontend/src/index.css`: Vanilla CSS design system with custom dark theme, glassmorphism, and status indicators
+
+### Tooling & Verification
+
+| Check | Result |
+|---|---|
+| `npm run build` | Bundled 31 modules cleanly (0 TS errors) ✅ |
+| `npm run lint` | ESLint passed with 0 errors and 0 warnings ✅ |
+| `npm run format:check` | All matched files use Prettier code style ✅ |
+| Vite dev server (`npm run dev`) | Ready in 373 ms on `http://localhost:3000/` ✅ |
+| Backend ruff check | All checks passed (0 errors) ✅ |
+| Backend ruff format | 51 files already formatted ✅ |
+| Backend mypy check | Success: no issues found in 26 source files ✅ |
+| Backend pytest suite | 27 passed in 4.25s (no regressions) ✅ |
+
+### Architectural Decisions Locked
+ADR-018: Frontend scaffold established with Vite, React 18, TypeScript, ESLint (flat config), and Prettier. Service layer uses environment-configured `VITE_API_BASE_URL` to interact with FastAPI `/api/v1` backend endpoints.
+
+### Next Task
+Phase 2 — Repository Ingestion & Code Analysis (TASK-2A: Repository Ingestion Engine)

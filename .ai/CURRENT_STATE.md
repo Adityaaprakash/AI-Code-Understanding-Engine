@@ -8,7 +8,7 @@
 
 ## Current Task
 
-TASK-1F (Docker Compose Foundation) complete. Next: TASK-1G — Frontend Scaffold.
+TASK-1G (Frontend Scaffold) complete. Phase 1 (Foundation) is 100% complete! Next: Phase 2 — Repository Ingestion & Code Analysis.
 
 ---
 
@@ -62,12 +62,21 @@ TASK-1F (Docker Compose Foundation) complete. Next: TASK-1G — Frontend Scaffol
   - PostgreSQL uses `pgvector/pgvector:pg16` image; pgvector 0.8.6 confirmed available
   - All 3 services start via `docker compose up -d` with correct dependency ordering
   - All checks pass: ruff check ✅ ruff format ✅ mypy (26 sources) ✅ pytest (27 passed) ✅
+- [x] TASK-1G: Frontend Scaffold complete
+  - Vite + React 18 + TypeScript scaffold initialized under `frontend/`
+  - ESLint (flat config `eslint.config.js` with react-hooks and typescript-eslint) configured
+  - Prettier (`.prettierrc`) configured with `format` and `format:check` scripts
+  - Clean directory architecture: `components/`, `pages/`, `services/`, `types/`, `hooks/`
+  - App shell with Header component, HomePage, and System Status card displaying live/stub backend status
+  - Environment-driven API client boundary (`fetchHealth()` in `src/services/api.ts` using `import.meta.env.VITE_API_BASE_URL`)
+  - `vite-env.d.ts` module declarations for `ImportMetaEnv` and `ImportMeta`
+  - All checks pass: `npm run build` ✅ `npm run lint` ✅ `npm run format:check` ✅ Vite dev server (port 3000) ✅ Backend regression (27/27 passed) ✅
 
 ---
 
 ## In Progress
 
-- [ ] TASK-1G: Frontend Scaffold (Vite + React + TypeScript)
+- [ ] Phase 2 — Repository Ingestion & Code Analysis (TASK-2A: Repository Ingestion Engine)
 
 ---
 
@@ -79,7 +88,7 @@ TASK-1F (Docker Compose Foundation) complete. Next: TASK-1G — Frontend Scaffol
 - [x] 1D: FastAPI skeleton — ✅ Done
 - [x] 1E: Test infrastructure — ✅ Done
 - [x] 1F: Docker Compose foundation — ✅ Done
-- [ ] 1G: Frontend scaffold (Vite + React + TypeScript, ESLint, Prettier)
+- [x] 1G: Frontend scaffold — ✅ Done
 
 ### Phase 2+
 - [ ] AST parsing and Canonical IR
@@ -102,4 +111,4 @@ See `DECISIONS.md` for full ADR list.
 
 ## Last Updated
 
-2026-08-26 — Phase 1F complete (Docker Compose foundation: postgres+pgvector, backend FastAPI container, worker scaffold container; all 3 services start and verified healthy).
+2026-08-26 — Phase 1G complete (Vite + React + TypeScript frontend scaffold established under `frontend/` with ESLint, Prettier, API client service boundary, health check hook, and clean dark mode UI shell. Phase 1 Foundation complete!).

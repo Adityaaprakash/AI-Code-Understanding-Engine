@@ -140,6 +140,24 @@ service needed for this task.
 
 ---
 
+### TASK-1G: Frontend scaffold
+
+**Status:** ✅ Done
+**Blockers:** TASK-1D ✅, TASK-1F ✅
+**Scope:** Vite + React + TypeScript scaffold with ESLint, Prettier, and API service layer foundation.
+
+**Acceptance criteria:**
+- [x] Vite + React + TypeScript project created in `frontend/`
+- [x] ESLint configured and passing (`npm run lint` -> 0 errors)
+- [x] Prettier configured and passing (`npm run format:check`)
+- [x] `npm run build` succeeds (TypeScript compilation + Vite bundling)
+- [x] Minimal CodeLens AI app shell created (`App.tsx`, `HomePage.tsx`, `Header.tsx`, `index.css`)
+- [x] Directory structure established (`components/`, `pages/`, `services/`, `types/`, `hooks/`)
+- [x] API client boundary in `src/services/api.ts` accessing `import.meta.env.VITE_API_BASE_URL`
+- [x] Backend regression test suite passes cleanly (27/27 passed)
+
+---
+
 ## Notes for AI Agents
 
 - Each task above is independently implementable; do not merge tasks.
