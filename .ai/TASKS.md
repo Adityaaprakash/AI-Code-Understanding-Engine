@@ -177,6 +177,36 @@ service needed for this task.
 
 ---
 
+## Phase 2 — Ingestion, AST & Canonical Code IR
+
+### TASK-2A: Parser Abstraction
+
+**Status:** ✅ Done  
+**Blockers:** Phase 1 ✅  
+**Scope:** Establish language-independent parser abstraction contract, models, diagnostics, and language parser stubs.
+
+**Acceptance criteria:**
+- [x] Language-independent `LanguageParser` abstract base class contract
+- [x] Strongly typed `Language` enum (`java`, `python`, `typescript`) and `DiagnosticSeverity` enum
+- [x] Consistent `ParseDiagnostic` and `ParseResult` abstractions with success/failure helpers
+- [x] Concrete parser stubs `JavaParser`, `PythonParser`, `TypeScriptParser` inheriting from `LanguageParser`
+- [x] `code-analyzer/code_analyzer/parsers/` module structure with PEP 561 marker
+- [x] Unit test suite in `tests/test_parser_abstraction.py` verifying contract, models, diagnostics, and stubs
+- [x] All quality checks pass (`uv sync`, `ruff check`, `ruff format --check`, `mypy backend/ code-analyzer/`, `pytest tests/`)
+
+---
+
+## Ready (Phase 2)
+
+### TASK-2B: Java AST
+
+**Status:** ⬜ Pending  
+**Blockers:** TASK-2A ✅  
+**Scope:** Implement tree-sitter AST extraction logic for Java source files.
+
+
+---
+
 ## Notes for AI Agents
 
 - Each task above is independently implementable; do not merge tasks.

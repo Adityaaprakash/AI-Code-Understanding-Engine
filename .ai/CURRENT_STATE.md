@@ -2,13 +2,13 @@
 
 ## Active Phase
 
-**Phase 1 — Foundation**
+**Phase 2 — Ingestion, AST & Canonical Code IR**
 
 ---
 
 ## Current Task
 
-TASK-1H (Phase 1 Final Verification) complete. Phase 1 (Foundation) is 100% complete and fully verified! Next: Phase 2 — TASK-2A (Repository Ingestion Engine).
+TASK-2A (Parser Abstraction) complete. Language-independent parser interface contract, models, diagnostics, and language parser stubs established. Next: TASK-2B (Java AST).
 
 ---
 
@@ -23,69 +23,26 @@ TASK-1H (Phase 1 Final Verification) complete. Phase 1 (Foundation) is 100% comp
 - [x] `README.md` created
 - [x] `.ai/` project-memory files created and populated
 - [x] TASK-1B: Python runtime setup complete
-  - Python 3.12.14 (managed by uv)
-  - `pyproject.toml` with all planned runtime and dev dependencies
-  - `.python-version` pinned to 3.12
-  - Ruff (lint + format), mypy, pytest configured
-  - `backend/__init__.py` and `backend/py.typed` created
-  - All checks pass: ruff check ✅ ruff format ✅ mypy ✅ pytest (8/8) ✅
 - [x] TASK-1C: Database foundation complete
-  - Async-first SQLAlchemy 2.0 ORM models for all 7 entities
-  - Declarative Base, async engine, and session factory in `backend/db/`
-  - Alembic migrations environment initialized with async driver support
-  - Initial migration `0001_initial_schema` with pgvector, pg_trgm extensions, constraints, and indexes
-  - PostgreSQL dev container configured in `docker/docker-compose.dev.yml`
-  - All checks pass: ruff check ✅ ruff format ✅ mypy ✅ pytest (11/11 against PostgreSQL) ✅
 - [x] TASK-1D: FastAPI foundation complete
-  - Application factory `create_app()` in `backend/main.py`
-  - `/health` endpoint returning `{"status": "ok"}`
-  - Pydantic Settings layer in `backend/core/config.py` with environment variable driven configuration & CORS origin parsing
-  - Standardized error response envelope & handlers (`AppException`, validation HTTP 422, unhandled 500)
-  - `api_v1_router` foundation registered under `/api/v1`
-  - Database session dependency boundary `get_db_session` wired for FastAPI `Depends()`
-  - OpenAPI `/docs`, `/redoc`, `/openapi.json` exposed
-  - All checks pass: ruff check ✅ ruff format ✅ mypy ✅ pytest (19 passed, 1 skipped) ✅
 - [x] TASK-1E: Test infrastructure complete
-  - Reusable pytest fixtures in `tests/conftest.py` (`app_instance`, `async_client`, `sync_client`, `database_url`, `db_engine`, `db_session`)
-  - Strict pytest markers registered in `pyproject.toml` (`unit`, `api`, `integration`, `db`)
-  - Smoke tests in `tests/test_health.py` and test infrastructure verification in `tests/test_infrastructure.py`
-  - Transactional AsyncSession fixture with auto-rollback for 100% test isolation against PostgreSQL
-  - Local/CI verification runner `scripts/ci_check.py`
-  - All checks pass: ruff check ✅ ruff format ✅ mypy ✅ pytest (27 passed, 92% coverage) ✅
 - [x] TASK-1F: Docker Compose Foundation complete
-  - `docker/docker-compose.dev.yml` extended with `backend` and `worker` services (was postgres-only)
-  - `docker/docker-compose.yml` created as primary Compose file (identical to dev variant)
-  - `docker/Dockerfile.backend` — builds FastAPI app using `uv sync`, runs `uvicorn backend.main:app`
-  - `docker/Dockerfile.worker` — builds worker process using `uv sync`, runs `python -m backend.worker`
-  - `backend/worker.py` — async polling scaffold with graceful shutdown, PostgreSQL connectivity check, no business logic
-  - `backend/core/config.py` — CORS_ORIGINS field_validator updated to accept JSON string from env vars
-  - PostgreSQL uses `pgvector/pgvector:pg16` image; pgvector 0.8.6 confirmed available
-  - All 3 services start via `docker compose up -d` with correct dependency ordering
-  - All checks pass: ruff check ✅ ruff format ✅ mypy (26 sources) ✅ pytest (27 passed) ✅
 - [x] TASK-1G: Frontend Scaffold complete
-  - Vite + React 18 + TypeScript scaffold initialized under `frontend/`
-  - ESLint (flat config `eslint.config.js` with react-hooks and typescript-eslint) configured
-  - Prettier (`.prettierrc`) configured with `format` and `format:check` scripts
-  - Clean directory architecture: `components/`, `pages/`, `services/`, `types/`, `hooks/`
-  - App shell with Header component, HomePage, and System Status card displaying live/stub backend status
-  - Environment-driven API client boundary (`fetchHealth()` in `src/services/api.ts` using `import.meta.env.VITE_API_BASE_URL`)
-  - `vite-env.d.ts` module declarations for `ImportMetaEnv` and `ImportMeta`
-  - All checks pass: `npm run build` ✅ `npm run lint` ✅ `npm run format:check` ✅ Vite dev server (port 3000) ✅ Backend regression (27/27 passed) ✅
 - [x] TASK-1H: Phase 1 Verification complete
-  - Full end-to-end verification of Phase 1 Foundation stack executed and verified 100%
-  - Repository structure, Python 3.12 runtime, ruff check, ruff format check, mypy backend all passed cleanly
-  - PostgreSQL 16 + pgvector 0.8.6 extension + 7 domain tables + Alembic migration downgrade/upgrade cycle verified
-  - FastAPI endpoints `/health`, `/openapi.json`, `/docs`, `/api/v1` returning HTTP 200
-  - Background worker container running with active polling loop and clean DB connection
-  - Docker Compose 3-service stack (`postgres`, `backend`, `worker`) validated and running healthy
-  - Frontend build (`npm run build`), lint (`npm run lint`), format (`npm run format:check`), dev server start, and CORS header (`http://localhost:3000`) verified
-  - Backend test suite (27 passed) & zero git workspace pollution confirmed
+- [x] TASK-2A: Parser Abstraction complete
+  - Strongly typed `Language` enum (`java`, `python`, `typescript`) and `DiagnosticSeverity` enum
+  - Pydantic models `ParseDiagnostic` and `ParseResult` with error tracking and factory methods
+  - Abstract base class contract `LanguageParser` defining `language` property and `parse(source_code, source_path)` method
+  - Concrete stubs `JavaParser`, `PythonParser`, `TypeScriptParser` inheriting from `LanguageParser`
+  - Hatchling wheel target package `code-analyzer/code_analyzer` configured in `pyproject.toml`
+  - Focused test suite in `tests/test_parser_abstraction.py` (7 tests covering all requirements)
+  - All checks pass: `uv sync` ✅ `ruff check` ✅ `ruff format --check` ✅ `mypy backend/ code-analyzer/` ✅ `pytest tests/` (34 passed) ✅
 
 ---
 
 ## In Progress
 
-- [ ] Phase 2 — Repository Ingestion & Code Analysis (TASK-2A: Repository Ingestion Engine)
+- [ ] TASK-2B — Java AST
 
 ---
 
@@ -100,16 +57,14 @@ TASK-1H (Phase 1 Final Verification) complete. Phase 1 (Foundation) is 100% comp
 - [x] 1G: Frontend scaffold — ✅ Done
 - [x] 1H: Phase 1 verification — ✅ Done
 
-### Phase 2+
-- [ ] AST parsing and Canonical IR
-- [ ] Repository ingestion pipeline
-- [ ] Embedding and vector indexing
-- [ ] Symbol graph construction
-- [ ] BM25 + vector + graph retrieval
-- [ ] Retrieval fusion and reranking
-- [ ] Provider-agnostic LLM interface
-- [ ] React query UI
-- [ ] Evaluation framework
+### Phase 2 (Ingestion, AST & Canonical Code IR)
+- [x] 2A: Parser Abstraction — ✅ Done
+- [ ] 2B: Java AST
+- [ ] 2C: Python AST
+- [ ] 2D: TypeScript AST
+- [ ] 2E: Canonical Code IR Definition
+- [ ] 2F: Symbol Extraction & Resolution
+- [ ] 2G: Incremental AST & IR Pipeline
 
 ---
 
@@ -121,4 +76,5 @@ See `DECISIONS.md` for full ADR list.
 
 ## Last Updated
 
-2026-08-26 — Phase 1H complete (All Phase 1 verification gates passed: Python 3.12, ruff, mypy, PostgreSQL 16 + pgvector, Alembic lifecycle, FastAPI endpoints, worker container, Docker Compose, frontend build/lint/format, CORS, pytest suite 27/27 passed, clean workspace).
+2026-08-26 — TASK-2A complete (Parser abstraction contract, models, diagnostics, language stubs, and unit test suite verified; 34/34 tests passing).
+

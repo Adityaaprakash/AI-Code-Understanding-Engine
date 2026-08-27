@@ -299,4 +299,41 @@ Phase 2 — Repository Ingestion & Code Analysis (TASK-2A: Repository Ingestion 
 All 8 Phase 1 tasks (1A through 1H) are 100% complete and fully verified. The local-first Docker Compose infrastructure, PostgreSQL pgvector database foundation, FastAPI application factory & routers, background worker process, pytest test isolation framework, and Vite React TypeScript frontend scaffold are operational.
 
 ### Next Task
-TASK-2A: Repository Ingestion Engine (Phase 2 — Repository Ingestion & Code Analysis)
+TASK-2A: Parser Abstraction (Phase 2 — Ingestion, AST & Canonical Code IR)
+
+---
+
+## 2026-08-26 — Phase 2A — Parser Abstraction
+
+**Completed by:** TASK-2A
+
+### Created
+
+- `code-analyzer/code_analyzer/parsers/models.py`: Strongly typed `Language` enum (`JAVA`, `PYTHON`, `TYPESCRIPT`), `DiagnosticSeverity` enum, `ParseDiagnostic` model, and `ParseResult` container model.
+- `code-analyzer/code_analyzer/parsers/base.py`: `LanguageParser` abstract base class contract defining `language` property and `parse(source_code, source_path)` method.
+- `code-analyzer/code_analyzer/parsers/java.py`: `JavaParser` concrete implementation stub for Java files.
+- `code-analyzer/code_analyzer/parsers/python.py`: `PythonParser` concrete implementation stub for Python files.
+- `code-analyzer/code_analyzer/parsers/typescript.py`: `TypeScriptParser` concrete implementation stub for TypeScript files.
+- `code-analyzer/code_analyzer/parsers/__init__.py`: Package exports for parser abstractions.
+- `code-analyzer/code_analyzer/__init__.py` & `code-analyzer/code_analyzer/py.typed`: Package marker and PEP 561 type annotation marker.
+- `tests/test_parser_abstraction.py`: Focused unit test suite for language representations, contract enforcement, success/failure result models, diagnostics, and parser stubs.
+
+### Modified
+
+- `pyproject.toml`: Included `code-analyzer/code_analyzer` in hatchling wheel build packages target.
+
+### Tooling & Verification
+
+| Check | Result |
+|---|---|
+| `uv sync` | Resolved & synced `code_analyzer` package cleanly ✅ |
+| `uv run ruff check .` | All checks passed (0 errors) ✅ |
+| `uv run ruff format --check .` | 59 files already formatted ✅ |
+| `uv run mypy backend/ code-analyzer/` | Success: no issues found in 33 source files ✅ |
+| `uv run pytest tests/ -v` | 34 passed in 4.38s (27 backend + 7 parser unit tests) ✅ |
+
+### Architectural Decisions
+Parser abstraction contract established under `code_analyzer.parsers`. Language AST parsers inherit from `LanguageParser` and produce standardized `ParseResult` objects containing strongly-typed `Language`, AST handle, diagnostics list, and success status.
+
+### Next Task
+TASK-2B — Java AST
