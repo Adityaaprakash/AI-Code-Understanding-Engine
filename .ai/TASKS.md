@@ -216,13 +216,39 @@ service needed for this task.
 
 ---
 
-## Ready (Phase 2)
+### TASK-2C: Python AST Parser
 
-### TASK-2C: Python AST
-
-**Status:** ⬜ Pending  
+**Status:** ✅ Done  
 **Blockers:** TASK-2B ✅  
-**Scope:** Implement tree-sitter AST extraction logic for Python source files.
+**Scope:** Implement tree-sitter AST parsing and structural extraction logic for Python source files.
+
+**Acceptance criteria:**
+- [x] Tree-sitter Python dependency added (`tree-sitter-python>=0.21.0`)
+- [x] Strongly typed Python extraction models (`PythonModule`, `PythonClass`, `PythonFunction`, `PythonField`, `PythonImport`, `PythonDecorator`, `PythonParameter`, `SourceLocation`)
+- [x] `PythonParser` concrete implementation returning `ParseResult` with language `Language.PYTHON`
+- [x] Structural extraction of imports, module functions, classes, methods, async functions, import aliases, decorators, decorated classes, and nested declarations
+- [x] Source locations preserved (1-indexed start/end lines, 0-indexed start/end columns)
+- [x] Graceful error handling for syntax errors via `ParseDiagnostic` without crashing
+- [x] Dedicated test suite in `tests/test_python_parser.py` (12 passing tests)
+- [x] All quality checks pass (`uv sync`, `ruff check`, `ruff format --check`, `mypy backend/ code-analyzer/`, `pytest tests/`)
+
+---
+
+### TASK-2D: TypeScript AST Parser
+
+**Status:** ✅ Done  
+**Blockers:** TASK-2C ✅  
+**Scope:** Implement tree-sitter AST parsing and structural extraction logic for TypeScript source files.
+
+**Acceptance criteria:**
+- [x] Tree-sitter TypeScript dependency added (`tree-sitter-typescript>=0.21.0`)
+- [x] Strongly typed TypeScript extraction models (`TypeScriptStructure`, `TypeScriptClass`, `TypeScriptInterface`, `TypeScriptFunction`, `TypeScriptField`, `TypeScriptImport`, `TypeScriptExport`, `TypeScriptType`, `TypeScriptParameter`, `SourceLocation`)
+- [x] `TypeScriptParser` concrete implementation returning `ParseResult` with language `Language.TYPESCRIPT`
+- [x] Structural extraction of imports, exports, classes, interfaces, functions, async functions, generics, named export aliases, type aliases, constructors, fields, methods
+- [x] Source locations preserved (1-indexed start/end lines, 0-indexed start/end columns)
+- [x] Graceful error handling for syntax errors via `ParseDiagnostic` without crashing
+- [x] Dedicated test suite in `tests/test_typescript_parser.py` (13 passing tests)
+- [x] All quality checks pass (`uv sync`, `ruff check`, `ruff format --check`, `mypy backend/ code-analyzer/`, `pytest tests/`)
 
 
 

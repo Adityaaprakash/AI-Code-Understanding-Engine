@@ -118,8 +118,9 @@ def test_language_parser_stubs() -> None:
         assert isinstance(parser, LanguageParser)
         assert parser.language == expected_lang
 
-        # Test stub parse call preserves contract
-        res = parser.parse("class Test {}", source_path=f"test.{expected_lang}")
+        # Test parse call preserves contract
+        code = "class Test:\n    pass" if expected_lang == Language.PYTHON else "class Test {}"
+        res = parser.parse(code, source_path=f"test.{expected_lang}")
         assert isinstance(res, ParseResult)
         assert res.language == expected_lang
         assert res.source_path == f"test.{expected_lang}"

@@ -3,6 +3,27 @@
 All notable changes to this project are recorded here.
 Format: `[Date] — Phase X — Summary`
 
+## 2026-08-27 — Phase 2C & 2D — Python AST & TypeScript AST Parsers
+
+**Completed by:** TASK-2C & TASK-2D
+
+### Added
+- Dependency `tree-sitter-python>=0.21.0` and `tree-sitter-typescript>=0.21.0` to `pyproject.toml`.
+- Strongly typed Python AST models and AST extraction walker in `code-analyzer/code_analyzer/parsers/python_ast.py` (`PythonModule`, `PythonClass`, `PythonFunction`, `PythonField`, `PythonImport`, `PythonDecorator`, `PythonParameter`, `SourceLocation`).
+- Concrete `PythonParser` in `code-analyzer/code_analyzer/parsers/python.py` implementing `LanguageParser` interface for Python source code.
+- Strongly typed TypeScript AST models and AST extraction walker in `code-analyzer/code_analyzer/parsers/typescript_ast.py` (`TypeScriptStructure`, `TypeScriptClass`, `TypeScriptInterface`, `TypeScriptFunction`, `TypeScriptField`, `TypeScriptImport`, `TypeScriptExport`, `TypeScriptType`, `TypeScriptParameter`, `SourceLocation`).
+- Concrete `TypeScriptParser` in `code-analyzer/code_analyzer/parsers/typescript.py` implementing `LanguageParser` interface for TypeScript source code.
+- Package exports in `code-analyzer/code_analyzer/parsers/__init__.py` for Python and TypeScript models and parsers.
+- Unit test suite `tests/test_python_parser.py` (12 test cases covering module functions, classes, methods, async functions, imports, import aliases, decorators, decorated classes, nested declarations, syntax failures, source locations).
+- Unit test suite `tests/test_typescript_parser.py` (13 test cases covering classes, interfaces, functions, async functions, generics, imports, exports, named export aliases, type aliases, nested members, syntax failures, source locations).
+
+### Verification
+- `uv sync` ✅
+- `uv run ruff check .` ✅
+- `uv run ruff format --check .` ✅
+- `uv run mypy backend/ code-analyzer/` ✅
+- `uv run pytest tests/ -v` ✅ (70 passed, 4 skipped)
+
 ---
 
 ## 2026-08-25 — Phase 1A — Repository Foundation

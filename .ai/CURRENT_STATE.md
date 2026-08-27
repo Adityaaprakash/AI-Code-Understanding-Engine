@@ -8,7 +8,7 @@
 
 ## Current Task
 
-TASK-2B (Java AST) complete. Tree-sitter Java AST parser implemented, extracting package, imports, classes, interfaces, constructors, methods, fields, and generic/nested structures with source locations and diagnostic reporting. Next: TASK-2C (Python AST).
+TASK-2C (Python AST) and TASK-2D (TypeScript AST) complete. Tree-sitter Python and TypeScript AST parsers implemented, extracting module structures, classes, interfaces, functions/methods, imports, exports, decorators, types, and generic/nested structures with source locations and diagnostic reporting. Next: TASK-2E (Canonical Code IR Definition).
 
 ---
 
@@ -31,19 +31,23 @@ TASK-2B (Java AST) complete. Tree-sitter Java AST parser implemented, extracting
 - [x] TASK-1H: Phase 1 Verification complete
 - [x] TASK-2A: Parser Abstraction complete
 - [x] TASK-2B: Java AST complete
-  - Dependencies `tree-sitter>=0.22.0` and `tree-sitter-java>=0.21.0` added to `pyproject.toml`
-  - Strongly typed Java extraction models (`JavaStructure`, `JavaClass`, `JavaMethod`, `JavaField`, `JavaImport`, `JavaPackage`, `JavaParameter`, `SourceLocation`) in `code-analyzer/code_analyzer/parsers/java_ast.py`
-  - Tree-sitter AST extraction walker in `java_ast.py` extracting package declarations, normal/static/wildcard imports, classes, interfaces, methods, constructors, fields (with multiple declarators), nested declarations, and generics
-  - Concrete `JavaParser` in `code_analyzer/code_analyzer/parsers/java.py` implementing `LanguageParser` interface
-  - Fault-tolerant syntax diagnostic extraction capturing tree-sitter `ERROR` and `MISSING` nodes as `ParseDiagnostic` objects
-  - Dedicated unit test suite `tests/test_java_parser.py` (11 test cases covering all requirements)
-  - All checks pass: `uv sync` ✅ `ruff check` ✅ `ruff format --check` ✅ `mypy backend/ code-analyzer/` ✅ `pytest tests/` (45 passed) ✅
+- [x] TASK-2C: Python AST complete
+  - Added `tree-sitter-python>=0.21.0` dependency to `pyproject.toml`
+  - Strongly typed Python extraction models (`PythonModule`, `PythonClass`, `PythonFunction`, `PythonField`, `PythonImport`, `PythonDecorator`, `PythonParameter`, `SourceLocation`) in `python_ast.py`
+  - Concrete `PythonParser` in `python.py` implementing `LanguageParser` interface
+  - Dedicated unit test suite `tests/test_python_parser.py` (12 test cases covering all requirements)
+- [x] TASK-2D: TypeScript AST complete
+  - Added `tree-sitter-typescript>=0.21.0` dependency to `pyproject.toml`
+  - Strongly typed TypeScript extraction models (`TypeScriptStructure`, `TypeScriptClass`, `TypeScriptInterface`, `TypeScriptFunction`, `TypeScriptField`, `TypeScriptImport`, `TypeScriptExport`, `TypeScriptType`, `TypeScriptParameter`, `SourceLocation`) in `typescript_ast.py`
+  - Concrete `TypeScriptParser` in `typescript.py` implementing `LanguageParser` interface
+  - Dedicated unit test suite `tests/test_typescript_parser.py` (13 test cases covering all requirements)
+  - All quality gates pass: `uv sync` ✅ `ruff check` ✅ `ruff format --check` ✅ `mypy backend/ code-analyzer/` ✅ `pytest tests/` (70 passed) ✅
 
 ---
 
 ## In Progress
 
-- [ ] TASK-2C — Python AST
+- [ ] TASK-2E — Canonical Code IR Definition
 
 ---
 
@@ -61,8 +65,8 @@ TASK-2B (Java AST) complete. Tree-sitter Java AST parser implemented, extracting
 ### Phase 2 (Ingestion, AST & Canonical Code IR)
 - [x] 2A: Parser Abstraction — ✅ Done
 - [x] 2B: Java AST — ✅ Done
-- [ ] 2C: Python AST
-- [ ] 2D: TypeScript AST
+- [x] 2C: Python AST — ✅ Done
+- [x] 2D: TypeScript AST — ✅ Done
 - [ ] 2E: Canonical Code IR Definition
 - [ ] 2F: Symbol Extraction & Resolution
 - [ ] 2G: Incremental AST & IR Pipeline
@@ -77,6 +81,7 @@ See `DECISIONS.md` for full ADR list.
 
 ## Last Updated
 
-2026-08-27 — TASK-2B complete (Tree-sitter Java AST parser and structural extractor implemented; 45/45 tests passing).
+2026-08-27 — TASK-2C and TASK-2D complete (Tree-sitter Python and TypeScript AST parsers implemented; all 70 tests passing).
+
 
 
