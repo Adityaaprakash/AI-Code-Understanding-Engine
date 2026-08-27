@@ -337,3 +337,37 @@ Parser abstraction contract established under `code_analyzer.parsers`. Language 
 
 ### Next Task
 TASK-2B — Java AST
+
+---
+
+## 2026-08-27 — Phase 2B — Java AST Parser
+
+**Completed by:** TASK-2B
+
+### Created
+
+- `code-analyzer/code_analyzer/parsers/java_ast.py`: Strongly typed Java extraction models (`JavaStructure`, `JavaClass`, `JavaMethod`, `JavaField`, `JavaImport`, `JavaPackage`, `JavaParameter`, `SourceLocation`) and Tree-sitter AST extraction walker.
+- `tests/test_java_parser.py`: Dedicated unit test suite covering 11 specific scenarios (basic parsing, package extraction, import extraction, class extraction, interface extraction, method extraction, field extraction, nested declarations, generic declarations, syntax failures, and source locations).
+
+### Modified
+
+- `pyproject.toml`: Added `tree-sitter>=0.22.0` and `tree-sitter-java>=0.21.0` runtime dependencies.
+- `code-analyzer/code_analyzer/parsers/java.py`: Implemented concrete `JavaParser` subclassing `LanguageParser` using `tree-sitter-java` and `java_ast.py` extraction walker.
+- `code-analyzer/code_analyzer/parsers/__init__.py`: Exported `JavaParser` and Java AST extraction models.
+
+### Tooling & Verification
+
+| Check | Result |
+|---|---|
+| `uv sync` | Installed `tree-sitter` (0.26.0) & `tree-sitter-java` (0.23.5) cleanly ✅ |
+| `uv run ruff check .` | All checks passed (0 errors) ✅ |
+| `uv run ruff format --check .` | 61 files already formatted ✅ |
+| `uv run mypy backend/ code-analyzer/` | Success: no issues found in 34 source files ✅ |
+| `uv run pytest tests/ -v` | 45 passed (27 backend + 7 TASK-2A parser abstraction + 11 TASK-2B Java AST tests) ✅ |
+
+### Architectural Decisions
+Tree-sitter Java parser integrated cleanly inside the `code-analyzer` layer. Exposes typed `JavaStructure` objects via `ParseResult.ast`. Error/missing token nodes are gracefully converted into `ParseDiagnostic` entries without throwing raw parser exceptions.
+
+### Next Task
+TASK-2C — Python AST
+

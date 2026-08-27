@@ -198,11 +198,32 @@ service needed for this task.
 
 ## Ready (Phase 2)
 
-### TASK-2B: Java AST
+### TASK-2B: Java AST Parser
+
+**Status:** ✅ Done  
+**Blockers:** TASK-2A ✅  
+**Scope:** Implement tree-sitter AST parsing and structural extraction logic for Java source files.
+
+**Acceptance criteria:**
+- [x] Tree-sitter Java dependencies added (`tree-sitter>=0.22.0`, `tree-sitter-java>=0.21.0`)
+- [x] Strongly typed Java extraction models (`JavaStructure`, `JavaClass`, `JavaMethod`, `JavaField`, `JavaImport`, `JavaPackage`, `JavaParameter`, `SourceLocation`)
+- [x] `JavaParser` concrete implementation returning `ParseResult` with language `Language.JAVA`
+- [x] Structural extraction of package declarations, normal/static/wildcard imports, classes, interfaces, constructors, methods, fields, nested declarations, and generic declarations
+- [x] Source locations preserved (1-indexed start/end lines, 0-indexed start/end columns)
+- [x] Graceful error handling for syntax errors via `ParseDiagnostic` without crashing
+- [x] Dedicated test suite in `tests/test_java_parser.py` (11 passing tests)
+- [x] All quality checks pass (`uv sync`, `ruff check`, `ruff format --check`, `mypy backend/ code-analyzer/`, `pytest tests/`)
+
+---
+
+## Ready (Phase 2)
+
+### TASK-2C: Python AST
 
 **Status:** ⬜ Pending  
-**Blockers:** TASK-2A ✅  
-**Scope:** Implement tree-sitter AST extraction logic for Java source files.
+**Blockers:** TASK-2B ✅  
+**Scope:** Implement tree-sitter AST extraction logic for Python source files.
+
 
 
 ---

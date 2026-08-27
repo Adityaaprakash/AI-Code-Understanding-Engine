@@ -8,7 +8,7 @@
 
 ## Current Task
 
-TASK-2A (Parser Abstraction) complete. Language-independent parser interface contract, models, diagnostics, and language parser stubs established. Next: TASK-2B (Java AST).
+TASK-2B (Java AST) complete. Tree-sitter Java AST parser implemented, extracting package, imports, classes, interfaces, constructors, methods, fields, and generic/nested structures with source locations and diagnostic reporting. Next: TASK-2C (Python AST).
 
 ---
 
@@ -30,19 +30,20 @@ TASK-2A (Parser Abstraction) complete. Language-independent parser interface con
 - [x] TASK-1G: Frontend Scaffold complete
 - [x] TASK-1H: Phase 1 Verification complete
 - [x] TASK-2A: Parser Abstraction complete
-  - Strongly typed `Language` enum (`java`, `python`, `typescript`) and `DiagnosticSeverity` enum
-  - Pydantic models `ParseDiagnostic` and `ParseResult` with error tracking and factory methods
-  - Abstract base class contract `LanguageParser` defining `language` property and `parse(source_code, source_path)` method
-  - Concrete stubs `JavaParser`, `PythonParser`, `TypeScriptParser` inheriting from `LanguageParser`
-  - Hatchling wheel target package `code-analyzer/code_analyzer` configured in `pyproject.toml`
-  - Focused test suite in `tests/test_parser_abstraction.py` (7 tests covering all requirements)
-  - All checks pass: `uv sync` ✅ `ruff check` ✅ `ruff format --check` ✅ `mypy backend/ code-analyzer/` ✅ `pytest tests/` (34 passed) ✅
+- [x] TASK-2B: Java AST complete
+  - Dependencies `tree-sitter>=0.22.0` and `tree-sitter-java>=0.21.0` added to `pyproject.toml`
+  - Strongly typed Java extraction models (`JavaStructure`, `JavaClass`, `JavaMethod`, `JavaField`, `JavaImport`, `JavaPackage`, `JavaParameter`, `SourceLocation`) in `code-analyzer/code_analyzer/parsers/java_ast.py`
+  - Tree-sitter AST extraction walker in `java_ast.py` extracting package declarations, normal/static/wildcard imports, classes, interfaces, methods, constructors, fields (with multiple declarators), nested declarations, and generics
+  - Concrete `JavaParser` in `code_analyzer/code_analyzer/parsers/java.py` implementing `LanguageParser` interface
+  - Fault-tolerant syntax diagnostic extraction capturing tree-sitter `ERROR` and `MISSING` nodes as `ParseDiagnostic` objects
+  - Dedicated unit test suite `tests/test_java_parser.py` (11 test cases covering all requirements)
+  - All checks pass: `uv sync` ✅ `ruff check` ✅ `ruff format --check` ✅ `mypy backend/ code-analyzer/` ✅ `pytest tests/` (45 passed) ✅
 
 ---
 
 ## In Progress
 
-- [ ] TASK-2B — Java AST
+- [ ] TASK-2C — Python AST
 
 ---
 
@@ -59,7 +60,7 @@ TASK-2A (Parser Abstraction) complete. Language-independent parser interface con
 
 ### Phase 2 (Ingestion, AST & Canonical Code IR)
 - [x] 2A: Parser Abstraction — ✅ Done
-- [ ] 2B: Java AST
+- [x] 2B: Java AST — ✅ Done
 - [ ] 2C: Python AST
 - [ ] 2D: TypeScript AST
 - [ ] 2E: Canonical Code IR Definition
@@ -76,5 +77,6 @@ See `DECISIONS.md` for full ADR list.
 
 ## Last Updated
 
-2026-08-26 — TASK-2A complete (Parser abstraction contract, models, diagnostics, language stubs, and unit test suite verified; 34/34 tests passing).
+2026-08-27 — TASK-2B complete (Tree-sitter Java AST parser and structural extractor implemented; 45/45 tests passing).
+
 
