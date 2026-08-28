@@ -269,6 +269,25 @@ service needed for this task.
 - [x] Dedicated unit test suite `tests/test_code_ir.py` (17 passing tests)
 - [x] All quality checks pass (`uv sync`, `ruff check`, `ruff format --check`, `mypy backend/ code-analyzer/`, `pytest tests/`)
 
+---
+
+### TASK-2F: AST → Code IR Normalization
+
+**Status:** ✅ Done  
+**Blockers:** TASK-2E ✅  
+**Scope:** Implement language-specific normalizers translating Java, Python, and TypeScript AST models into language-independent Canonical Code IR.
+
+**Acceptance criteria:**
+- [x] Concrete normalizer classes for Java (`JavaNormalizer`), Python (`PythonNormalizer`), and TypeScript (`TypeScriptNormalizer`) implementing abstract `ASTNormalizer` base class
+- [x] Unified normalization entry point `normalize_parse_result(parse_result, repository_id, ...)`
+- [x] Mapping language-specific AST structures to canonical entities (`File`, `Module`, `Class`, `Interface`, `Function`, `Method`, `Variable`, `Parameter`, `Reference`, `Symbol`)
+- [x] Generic type representation parser (`parse_type_representation`) converting generic type annotations into `TypeRepresentation`
+- [x] Location helper (`to_ir_source_location`) mapping parser line/column positions to IR `SourceLocation`
+- [x] Deterministic identity generation via `generate_entity_id` across all entities and references
+- [x] Hierarchical containment without language-specific model leakage
+- [x] Dedicated unit test suite `tests/test_normalization.py` (13 passing tests)
+- [x] All quality checks pass (`uv sync`, `ruff check`, `ruff format --check`, `pytest tests/`)
+
 ## Notes for AI Agents
 
 - Each task above is independently implementable; do not merge tasks.

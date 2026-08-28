@@ -8,7 +8,7 @@
 
 ## Current Task
 
-TASK-2E (Canonical Code IR) complete. Defined and implemented strongly typed, language-independent, deterministic, serializable Canonical Code IR models in `code_analyzer.ir` covering Repository, File, Module, Class, Interface, Function, Method, Variable, Parameter, Reference, and Symbol entities with UUID v5 deterministic identity and source location tracking. Next: TASK-2F (AST → Code IR Normalization).
+TASK-2F (AST → Code IR Normalization) complete. Implemented language-specific normalizers (JavaNormalizer, PythonNormalizer, TypeScriptNormalizer) translating ASTs into language-independent Canonical Code IR. Next: TASK-2G (Symbol Extraction & Resolution).
 
 ---
 
@@ -34,19 +34,20 @@ TASK-2E (Canonical Code IR) complete. Defined and implemented strongly typed, la
 - [x] TASK-2C: Python AST complete
 - [x] TASK-2D: TypeScript AST complete
 - [x] TASK-2E: Canonical Code IR complete
-  - Package structure `code_analyzer/ir/` (`enums.py`, `location.py`, `types.py`, `identity.py`, `entities.py`, `__init__.py`)
-  - Strongly typed Pydantic frozen models for all 10 core entities (`Repository`, `File`, `Module`, `Class`, `Interface`, `Function`, `Method`, `Variable`, `Parameter`, `Reference`, `Symbol`)
-  - Deterministic entity identity generator (`generate_entity_id`) using UUID v5 and seed keys
-  - Source location tracking (`SourceLocation`) with 1-indexed line and 0-indexed column range validation
-  - Full JSON round-trip serialization and deserialization support
-  - Dedicated unit test suite `tests/test_code_ir.py` (17 test cases covering all requirements)
-  - All quality gates pass: `uv sync` ✅ `ruff check` ✅ `ruff format --check` ✅ `mypy backend/ code-analyzer/` ✅ `pytest tests/` (83 passed) ✅
+- [x] TASK-2F: AST → Code IR Normalization complete
+  - Normalization boundary `code_analyzer/normalization/` (`base.py`, `java.py`, `python.py`, `typescript.py`, `result.py`, `type_helper.py`, `location_helper.py`, `__init__.py`)
+  - Unified normalization entry point `normalize_parse_result(parse_result, repository_id, file_path, content_hash, loc)`
+  - Mapped Java, Python, and TypeScript AST nodes cleanly to canonical entities (`File`, `Module`, `Class`, `Interface`, `Function`, `Method`, `Variable`, `Parameter`, `Reference`, `Symbol`)
+  - Helper functions for generic type representation parsing (`List<String>`, `list[str]`, `Promise<User>`) and source location mapping
+  - Deterministic entity identity generation via `generate_entity_id` across all language normalizers
+  - Comprehensive unit test suite `tests/test_normalization.py` with 13 test cases covering Java, Python, TypeScript, cross-language consistency, and idempotency
+  - All quality gates pass: `uv sync` ✅ `ruff check` ✅ `ruff format --check` ✅ `pytest tests/` (100 passed) ✅
 
 ---
 
 ## In Progress
 
-- [ ] TASK-2F — AST → Code IR Normalization
+- [ ] TASK-2G — Symbol Extraction & Resolution
 
 ---
 
@@ -67,7 +68,7 @@ TASK-2E (Canonical Code IR) complete. Defined and implemented strongly typed, la
 - [x] 2C: Python AST — ✅ Done
 - [x] 2D: TypeScript AST — ✅ Done
 - [x] 2E: Canonical Code IR Definition — ✅ Done
-- [ ] 2F: AST → Code IR Normalization
+- [x] 2F: AST → Code IR Normalization — ✅ Done
 - [ ] 2G: Symbol Extraction & Resolution
 - [ ] 2H: Incremental AST & IR Pipeline
 
@@ -81,7 +82,7 @@ See `DECISIONS.md` for full ADR list.
 
 ## Last Updated
 
-2026-08-28 — TASK-2E complete (Canonical Code IR definition and models implemented; all 83 tests passing).
+2026-08-28 — TASK-2F complete (AST → Code IR Normalization layer implemented; all 100 tests passing).
 
 
 

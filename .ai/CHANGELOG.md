@@ -1,6 +1,31 @@
 # Changelog — AI Code Understanding Engine
 
 All notable changes to this project are recorded here.
+## 2026-08-28 — Phase 2F — AST → Code IR Normalization
+
+**Completed by:** TASK-2F
+
+### Added
+- Normalization boundary package `code_analyzer.normalization` translating language-specific AST models into language-independent Canonical Code IR.
+- Abstract base class `ASTNormalizer[T]` in `code-analyzer/code_analyzer/normalization/base.py`.
+- Concrete language normalizers:
+  - `JavaNormalizer` in `code-analyzer/code_analyzer/normalization/java.py` (Java package → Module, class/interface → Class/Interface, method → Method, field → Variable, extends/implements → Reference).
+  - `PythonNormalizer` in `code-analyzer/code_analyzer/normalization/python.py` (file path → Module, function → Function/Method, class → Class, bases → Reference, async/decorators preserved).
+  - `TypeScriptNormalizer` in `code-analyzer/code_analyzer/normalization/typescript.py` (file path → Module, class/interface → Class/Interface, type alias → Variable/Symbol, exports/generics preserved).
+- Unified normalization entry point `normalize_parse_result(parse_result, repository_id, ...)` in `code-analyzer/code_analyzer/normalization/__init__.py`.
+- Result container model `NormalizationResult` in `code-analyzer/code_analyzer/normalization/result.py`.
+- Type representation helper `parse_type_representation` in `code-analyzer/code_analyzer/normalization/type_helper.py` parsing generic type strings (`List<String>`, `list[str]`, `Promise<User>`) recursively.
+- Location helper `to_ir_source_location` in `code-analyzer/code_analyzer/normalization/location_helper.py`.
+- Comprehensive unit test suite `tests/test_normalization.py` (13 test cases covering Java, Python, TypeScript, cross-language consistency, AST isolation, and idempotency).
+
+### Verification
+- `uv sync` ✅
+- `uv run ruff check code-analyzer tests` ✅
+- `uv run ruff format --check code-analyzer tests` ✅
+- `uv run pytest` ✅ (100 passed)
+
+---
+
 ## 2026-08-28 — Phase 2E — Canonical Code IR
 
 **Completed by:** TASK-2E

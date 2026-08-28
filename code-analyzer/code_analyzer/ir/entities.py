@@ -1,5 +1,7 @@
 """Canonical Code IR entity data models."""
 
+from typing import Any
+
 from pydantic import BaseModel, ConfigDict, Field, field_validator
 
 from code_analyzer.ir.enums import EntityKind, ReferenceKind, Visibility
@@ -19,7 +21,7 @@ class IREntity(BaseModel):
     qualified_name: str | None = None
     location: SourceLocation | None = None
     doc_comment: str | None = None
-    metadata: dict[str, str] = Field(default_factory=dict)
+    metadata: dict[str, Any] = Field(default_factory=dict)
 
     @field_validator("id")
     @classmethod
@@ -115,7 +117,7 @@ class Class(IREntity):
     field_ids: list[str] = Field(default_factory=list)
     nested_class_ids: list[str] = Field(default_factory=list)
     is_abstract: bool = False
-    visibility: Visibility = Visibility.PUBLIC
+    visibility: Visibility | None = None
 
 
 class Interface(IREntity):
@@ -132,7 +134,7 @@ class Interface(IREntity):
     extends_refs: list[Reference] = Field(default_factory=list)
     method_ids: list[str] = Field(default_factory=list)
     field_ids: list[str] = Field(default_factory=list)
-    visibility: Visibility = Visibility.PUBLIC
+    visibility: Visibility | None = None
 
 
 class Function(IREntity):
@@ -148,7 +150,7 @@ class Function(IREntity):
     type_parameters: list[str] = Field(default_factory=list)
     modifiers: list[str] = Field(default_factory=list)
     is_async: bool = False
-    visibility: Visibility = Visibility.PUBLIC
+    visibility: Visibility | None = None
     parent_id: str | None = None
     call_refs: list[Reference] = Field(default_factory=list)
 
@@ -170,7 +172,7 @@ class Method(IREntity):
     is_abstract: bool = False
     is_constructor: bool = False
     overrides_ref: Reference | None = None
-    visibility: Visibility = Visibility.PUBLIC
+    visibility: Visibility | None = None
     call_refs: list[Reference] = Field(default_factory=list)
 
 
@@ -186,7 +188,7 @@ class Variable(IREntity):
     modifiers: list[str] = Field(default_factory=list)
     initializer: str | None = None
     is_constant: bool = False
-    visibility: Visibility = Visibility.PUBLIC
+    visibility: Visibility | None = None
 
 
 class Symbol(IREntity):
