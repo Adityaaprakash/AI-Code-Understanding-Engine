@@ -1,6 +1,6 @@
 # Canonical Code IR — AI Code Understanding Engine
 
-> **Status:** Contract defined. Implementation deferred to Phase 3.
+> **Status:** Implemented in TASK-2E (`code_analyzer.ir`).
 >
 > This document is the source of truth for the Canonical Code IR.
 > Any change to the IR must go through an ADR update (see `DECISIONS.md`).

@@ -8,7 +8,7 @@
 
 ## Current Task
 
-TASK-2C (Python AST) and TASK-2D (TypeScript AST) complete. Tree-sitter Python and TypeScript AST parsers implemented, extracting module structures, classes, interfaces, functions/methods, imports, exports, decorators, types, and generic/nested structures with source locations and diagnostic reporting. Next: TASK-2E (Canonical Code IR Definition).
+TASK-2E (Canonical Code IR) complete. Defined and implemented strongly typed, language-independent, deterministic, serializable Canonical Code IR models in `code_analyzer.ir` covering Repository, File, Module, Class, Interface, Function, Method, Variable, Parameter, Reference, and Symbol entities with UUID v5 deterministic identity and source location tracking. Next: TASK-2F (AST → Code IR Normalization).
 
 ---
 
@@ -32,22 +32,21 @@ TASK-2C (Python AST) and TASK-2D (TypeScript AST) complete. Tree-sitter Python a
 - [x] TASK-2A: Parser Abstraction complete
 - [x] TASK-2B: Java AST complete
 - [x] TASK-2C: Python AST complete
-  - Added `tree-sitter-python>=0.21.0` dependency to `pyproject.toml`
-  - Strongly typed Python extraction models (`PythonModule`, `PythonClass`, `PythonFunction`, `PythonField`, `PythonImport`, `PythonDecorator`, `PythonParameter`, `SourceLocation`) in `python_ast.py`
-  - Concrete `PythonParser` in `python.py` implementing `LanguageParser` interface
-  - Dedicated unit test suite `tests/test_python_parser.py` (12 test cases covering all requirements)
 - [x] TASK-2D: TypeScript AST complete
-  - Added `tree-sitter-typescript>=0.21.0` dependency to `pyproject.toml`
-  - Strongly typed TypeScript extraction models (`TypeScriptStructure`, `TypeScriptClass`, `TypeScriptInterface`, `TypeScriptFunction`, `TypeScriptField`, `TypeScriptImport`, `TypeScriptExport`, `TypeScriptType`, `TypeScriptParameter`, `SourceLocation`) in `typescript_ast.py`
-  - Concrete `TypeScriptParser` in `typescript.py` implementing `LanguageParser` interface
-  - Dedicated unit test suite `tests/test_typescript_parser.py` (13 test cases covering all requirements)
-  - All quality gates pass: `uv sync` ✅ `ruff check` ✅ `ruff format --check` ✅ `mypy backend/ code-analyzer/` ✅ `pytest tests/` (70 passed) ✅
+- [x] TASK-2E: Canonical Code IR complete
+  - Package structure `code_analyzer/ir/` (`enums.py`, `location.py`, `types.py`, `identity.py`, `entities.py`, `__init__.py`)
+  - Strongly typed Pydantic frozen models for all 10 core entities (`Repository`, `File`, `Module`, `Class`, `Interface`, `Function`, `Method`, `Variable`, `Parameter`, `Reference`, `Symbol`)
+  - Deterministic entity identity generator (`generate_entity_id`) using UUID v5 and seed keys
+  - Source location tracking (`SourceLocation`) with 1-indexed line and 0-indexed column range validation
+  - Full JSON round-trip serialization and deserialization support
+  - Dedicated unit test suite `tests/test_code_ir.py` (17 test cases covering all requirements)
+  - All quality gates pass: `uv sync` ✅ `ruff check` ✅ `ruff format --check` ✅ `mypy backend/ code-analyzer/` ✅ `pytest tests/` (83 passed) ✅
 
 ---
 
 ## In Progress
 
-- [ ] TASK-2E — Canonical Code IR Definition
+- [ ] TASK-2F — AST → Code IR Normalization
 
 ---
 
@@ -67,9 +66,10 @@ TASK-2C (Python AST) and TASK-2D (TypeScript AST) complete. Tree-sitter Python a
 - [x] 2B: Java AST — ✅ Done
 - [x] 2C: Python AST — ✅ Done
 - [x] 2D: TypeScript AST — ✅ Done
-- [ ] 2E: Canonical Code IR Definition
-- [ ] 2F: Symbol Extraction & Resolution
-- [ ] 2G: Incremental AST & IR Pipeline
+- [x] 2E: Canonical Code IR Definition — ✅ Done
+- [ ] 2F: AST → Code IR Normalization
+- [ ] 2G: Symbol Extraction & Resolution
+- [ ] 2H: Incremental AST & IR Pipeline
 
 ---
 
@@ -81,7 +81,7 @@ See `DECISIONS.md` for full ADR list.
 
 ## Last Updated
 
-2026-08-27 — TASK-2C and TASK-2D complete (Tree-sitter Python and TypeScript AST parsers implemented; all 70 tests passing).
+2026-08-28 — TASK-2E complete (Canonical Code IR definition and models implemented; all 83 tests passing).
 
 
 

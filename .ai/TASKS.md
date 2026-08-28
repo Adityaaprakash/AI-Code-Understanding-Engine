@@ -250,9 +250,24 @@ service needed for this task.
 - [x] Dedicated test suite in `tests/test_typescript_parser.py` (13 passing tests)
 - [x] All quality checks pass (`uv sync`, `ruff check`, `ruff format --check`, `mypy backend/ code-analyzer/`, `pytest tests/`)
 
-
-
 ---
+
+### TASK-2E: Canonical Code IR Definition
+
+**Status:** ✅ Done  
+**Blockers:** TASK-2D ✅  
+**Scope:** Design and implement language-independent, strongly typed, deterministic, and serializable Canonical Code IR models.
+
+**Acceptance criteria:**
+- [x] Package structure `code_analyzer/ir/` (`enums.py`, `location.py`, `types.py`, `identity.py`, `entities.py`, `__init__.py`)
+- [x] Strongly typed Pydantic frozen models for all 10 core entities (`Repository`, `File`, `Module`, `Class`, `Interface`, `Function`, `Method`, `Variable`, `Parameter`, `Reference`, `Symbol`)
+- [x] Strongly typed `EntityKind`, `ReferenceKind`, and `Visibility` enums
+- [x] Deterministic entity identity generator (`generate_entity_id`) using UUID v5 and logical key components
+- [x] Canonical source location model (`SourceLocation`) with 1-indexed line and 0-indexed column range validation
+- [x] Lightweight type representation model (`TypeRepresentation`)
+- [x] Full JSON round-trip serialization and deserialization support
+- [x] Dedicated unit test suite `tests/test_code_ir.py` (17 passing tests)
+- [x] All quality checks pass (`uv sync`, `ruff check`, `ruff format --check`, `mypy backend/ code-analyzer/`, `pytest tests/`)
 
 ## Notes for AI Agents
 

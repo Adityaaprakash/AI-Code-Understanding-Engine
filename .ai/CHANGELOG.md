@@ -1,7 +1,28 @@
 # Changelog — AI Code Understanding Engine
 
 All notable changes to this project are recorded here.
-Format: `[Date] — Phase X — Summary`
+## 2026-08-28 — Phase 2E — Canonical Code IR
+
+**Completed by:** TASK-2E
+
+### Added
+- Package `code_analyzer.ir` providing language-independent, strongly typed, deterministic, and serializable Canonical Code IR models.
+- Enumeration models in `code_analyzer/code_analyzer/ir/enums.py`: `EntityKind`, `ReferenceKind`, and `Visibility`.
+- Source location model in `code_analyzer/code_analyzer/ir/location.py`: `SourceLocation` with 1-indexed lines and 0-indexed columns validation.
+- Type representation model in `code_analyzer/code_analyzer/ir/types.py`: `TypeRepresentation`.
+- Deterministic identity strategy in `code-analyzer/code_analyzer/ir/identity.py`: `generate_entity_id` using UUID v5 and seed keys.
+- Core IR entity models in `code-analyzer/code_analyzer/ir/entities.py`: `IREntity`, `Repository`, `File`, `Module`, `Class`, `Interface`, `Function`, `Method`, `Variable`, `Parameter`, `Reference`, `Symbol`.
+- Package exports in `code-analyzer/code_analyzer/ir/__init__.py`.
+- Unit test suite `tests/test_code_ir.py` (17 test cases covering entity kinds, reference kinds, source locations, repositories, files, modules, classes, interfaces, functions, methods, variables, parameters, references, deterministic identity, JSON round-trip serialization, language neutrality, and containment hierarchy).
+
+### Verification
+- `uv sync` ✅
+- `uv run ruff check .` ✅
+- `uv run ruff format --check .` ✅
+- `uv run mypy backend/ code-analyzer/` ✅
+- `uv run pytest tests/ -v` ✅ (83 passed, 4 skipped)
+
+---
 
 ## 2026-08-27 — Phase 2C & 2D — Python AST & TypeScript AST Parsers
 
