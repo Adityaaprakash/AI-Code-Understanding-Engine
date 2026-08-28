@@ -1,6 +1,39 @@
 # Changelog — AI Code Understanding Engine
 
 All notable changes to this project are recorded here.
+## 2026-08-28 — Phase 2G — Parser / Canonical IR Testing & Hardening (Phase 2 Complete)
+
+**Completed by:** TASK-2G
+
+### Added
+- Phase 2 end-to-end integration and hardening test suite `tests/test_phase2_integration.py` (24 test cases).
+- Multi-language end-to-end pipeline verification (Java, Python, TypeScript source → parser → AST → normalizer → Canonical IR).
+- Cross-language entity consistency tests ensuring `EntityKind.CLASS`, `EntityKind.METHOD`, and `EntityKind.FUNCTION` map identically across languages.
+- AST language leakage prevention tests verifying no Tree-sitter nodes or language-specific AST models leak into canonical entities.
+- Deterministic ID stability and sensitivity verification across runs, entity names, file paths, and entity kinds.
+- Idempotency verification confirming multi-pass normalization returns identical structures.
+- Source location range correctness tests across multi-line classes, functions, methods, parameters, and nested declarations.
+- Generic type representation normalization tests for Java `List<String>`, Python `list[str]`, and TypeScript `Promise<User>`.
+- Malformed source fault tolerance & diagnostic preservation tests.
+- Empty source (`""`) and comment-only source file handling.
+- Multiple top-level declarations, nested declaration hierarchy, and duplicate name scoping tests.
+- Lossless JSON round-trip serialization/deserialization tests using `model_dump_json()` and `model_validate_json()`.
+- Immutability enforcement tests for frozen Pydantic IR entities.
+- Public API export verification for `code_analyzer.parsers`, `code_analyzer.ir`, and `code_analyzer.normalization`.
+- In-memory execution verification (no filesystem, Postgres, or server coupling required).
+- Performance sanity check verifying 500-line source file normalizes in under 2 seconds.
+
+### Verification
+- `uv sync` ✅
+- `uv run ruff check .` ✅
+- `uv run ruff format --check .` ✅
+- `uv run mypy backend/ code-analyzer/` ✅
+- `uv run pytest tests/ -v` ✅ (120 passed, 4 skipped)
+
+**PHASE 2 (INGESTION, AST & CANONICAL CODE IR) IS OFFICIALLY COMPLETE.**
+
+---
+
 ## 2026-08-28 — Phase 2F — AST → Code IR Normalization
 
 **Completed by:** TASK-2F

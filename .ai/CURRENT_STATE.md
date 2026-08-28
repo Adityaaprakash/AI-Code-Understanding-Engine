@@ -2,13 +2,13 @@
 
 ## Active Phase
 
-**Phase 2 — Ingestion, AST & Canonical Code IR**
+**Phase 3 — Code Graph Construction**
 
 ---
 
 ## Current Task
 
-TASK-2F (AST → Code IR Normalization) complete. Implemented language-specific normalizers (JavaNormalizer, PythonNormalizer, TypeScriptNormalizer) translating ASTs into language-independent Canonical Code IR. Next: TASK-2G (Symbol Extraction & Resolution).
+TASK-2G (Parser / Canonical IR Testing & Hardening) complete. Verified end-to-end multi-language parsing and normalization pipeline across Java, Python, and TypeScript with 24 integration tests covering language leakage, determinism, idempotency, location mapping, type representations, fault tolerance, and JSON round-trip serialization. Phase 2 is officially COMPLETE. Next: TASK-3A (Code Graph Schema & Models).
 
 ---
 
@@ -35,25 +35,35 @@ TASK-2F (AST → Code IR Normalization) complete. Implemented language-specific 
 - [x] TASK-2D: TypeScript AST complete
 - [x] TASK-2E: Canonical Code IR complete
 - [x] TASK-2F: AST → Code IR Normalization complete
-  - Normalization boundary `code_analyzer/normalization/` (`base.py`, `java.py`, `python.py`, `typescript.py`, `result.py`, `type_helper.py`, `location_helper.py`, `__init__.py`)
-  - Unified normalization entry point `normalize_parse_result(parse_result, repository_id, file_path, content_hash, loc)`
-  - Mapped Java, Python, and TypeScript AST nodes cleanly to canonical entities (`File`, `Module`, `Class`, `Interface`, `Function`, `Method`, `Variable`, `Parameter`, `Reference`, `Symbol`)
-  - Helper functions for generic type representation parsing (`List<String>`, `list[str]`, `Promise<User>`) and source location mapping
-  - Deterministic entity identity generation via `generate_entity_id` across all language normalizers
-  - Comprehensive unit test suite `tests/test_normalization.py` with 13 test cases covering Java, Python, TypeScript, cross-language consistency, and idempotency
-  - All quality gates pass: `uv sync` ✅ `ruff check` ✅ `ruff format --check` ✅ `pytest tests/` (100 passed) ✅
+- [x] TASK-2G: Parser / Canonical IR Testing & Hardening complete
+  - Comprehensive Phase 2 integration test suite `tests/test_phase2_integration.py` (24 test cases)
+  - End-to-end pipeline verification for Java, Python, and TypeScript
+  - Cross-language entity consistency tests (Class → `EntityKind.CLASS`, Method → `EntityKind.METHOD`, Function → `EntityKind.FUNCTION`)
+  - Language leakage testing ensuring no tree-sitter or parser objects leak into IR
+  - Deterministic ID stability & sensitivity testing
+  - Normalization idempotency verification
+  - Source location range correctness verification
+  - Generic type representation normalization (`List<String>`, `list[str]`, `Promise<User>`)
+  - Malformed source fault tolerance & diagnostic preservation
+  - Empty source and comment-only file handling
+  - Multiple declarations, nested declarations, and duplicate name scoping
+  - Lossless Pydantic JSON round-trip serialization/deserialization
+  - Canonical IR immutability enforcement
+  - In-memory execution without external database/disk coupling
+  - Performance sanity check (500-line source file normalizes in < 2 seconds)
+  - All quality gates pass: `uv sync` ✅ `ruff check .` ✅ `ruff format --check .` ✅ `mypy backend/ code-analyzer/` ✅ `pytest tests/` (124 passed) ✅
 
 ---
 
 ## In Progress
 
-- [ ] TASK-2G — Symbol Extraction & Resolution
+- [ ] TASK-3A — Code Graph Schema & Models
 
 ---
 
 ## Blocked / Pending
 
-### Phase 1 Remaining
+### Phase 1 (Foundation & Core Infrastructure) — ✅ Phase Complete
 - [x] 1B: Python runtime setup — ✅ Done
 - [x] 1C: Database foundation — ✅ Done
 - [x] 1D: FastAPI skeleton — ✅ Done
@@ -62,27 +72,33 @@ TASK-2F (AST → Code IR Normalization) complete. Implemented language-specific 
 - [x] 1G: Frontend scaffold — ✅ Done
 - [x] 1H: Phase 1 verification — ✅ Done
 
-### Phase 2 (Ingestion, AST & Canonical Code IR)
+### Phase 2 (Ingestion, AST & Canonical Code IR) — ✅ Phase Complete
 - [x] 2A: Parser Abstraction — ✅ Done
 - [x] 2B: Java AST — ✅ Done
 - [x] 2C: Python AST — ✅ Done
 - [x] 2D: TypeScript AST — ✅ Done
 - [x] 2E: Canonical Code IR Definition — ✅ Done
 - [x] 2F: AST → Code IR Normalization — ✅ Done
-- [ ] 2G: Symbol Extraction & Resolution
-- [ ] 2H: Incremental AST & IR Pipeline
+- [x] 2G: Parser / Canonical IR Testing & Hardening — ✅ Done
+
+### Phase 3 (Code Graph Construction)
+- [ ] 3A: Code Graph Schema & Models
+- [ ] 3B: Symbol Resolution Engine
+- [ ] 3C: Call Graph & Dependency Graph Builder
+- [ ] 3D: Graph Query API
+- [ ] 3E: Phase 3 Verification
 
 ---
 
 ## Known Decisions Made This Phase
 
-See `DECISIONS.md` for full ADR list.
+No new architectural decisions required for routine testing/hardening.
 
 ---
 
 ## Last Updated
 
-2026-08-28 — TASK-2F complete (AST → Code IR Normalization layer implemented; all 100 tests passing).
+2026-08-28 — TASK-2G complete. Phase 2 fully complete with all 124 tests passing and 100% quality gate compliance.
 
 
 

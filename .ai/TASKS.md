@@ -288,6 +288,35 @@ service needed for this task.
 - [x] Dedicated unit test suite `tests/test_normalization.py` (13 passing tests)
 - [x] All quality checks pass (`uv sync`, `ruff check`, `ruff format --check`, `pytest tests/`)
 
+---
+
+### TASK-2G: Parser / Canonical IR Testing & Hardening
+
+**Status:** ✅ Done  
+**Blockers:** TASK-2F ✅  
+**Scope:** Thoroughly test and harden the complete multi-language parsing and normalization pipeline across Java, Python, and TypeScript.
+
+**Acceptance criteria:**
+- [x] End-to-end integration tests for Java, Python, and TypeScript pipelines in `tests/test_phase2_integration.py`
+- [x] Cross-language entity consistency verified (`EntityKind.CLASS`, `EntityKind.METHOD`, `EntityKind.FUNCTION`)
+- [x] Language leakage protection verified (no Tree-sitter nodes or language ASTs exposed)
+- [x] Deterministic identity stability & sensitivity verified across runs, names, file paths, and kinds
+- [x] Normalization idempotency verified
+- [x] Source location line/column correctness verified
+- [x] Generic type representation normalization verified across Java, Python, and TypeScript
+- [x] Malformed source fault tolerance & parser diagnostic preservation verified
+- [x] Empty file and comment-only file handling verified
+- [x] Multiple declarations, nested structures, and duplicate name scoping verified
+- [x] Lossless JSON round-trip serialization (`model_dump_json()` / `model_validate_json()`) verified
+- [x] Immutability of frozen Pydantic IR entities verified
+- [x] Public API exports verified (`code_analyzer.parsers`, `code_analyzer.ir`, `code_analyzer.normalization`)
+- [x] In-memory execution without filesystem or external server dependency verified
+- [x] Performance sanity check verified (< 2s for 500-line source)
+- [x] Full regression suite passing (124 tests passed)
+- [x] All quality gates pass (`uv sync`, `ruff check .`, `ruff format --check .`, `mypy backend/ code-analyzer/`, `pytest tests/`)
+
+**PHASE 2 IS NOW OFFICIALLY COMPLETE.**
+
 ## Notes for AI Agents
 
 - Each task above is independently implementable; do not merge tasks.

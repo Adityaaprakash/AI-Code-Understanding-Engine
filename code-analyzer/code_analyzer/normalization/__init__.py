@@ -56,8 +56,8 @@ def normalize_parse_result(
         )
 
     if parse_result.language == Language.JAVA:
-        normalizer = JavaNormalizer()
-        res = normalizer.normalize(
+        java_norm = JavaNormalizer()
+        res = java_norm.normalize(
             parse_result.ast,
             repository_id=repository_id,
             file_path=resolved_path,
@@ -66,8 +66,8 @@ def normalize_parse_result(
             loc=loc,
         )
     elif parse_result.language == Language.PYTHON:
-        normalizer = PythonNormalizer()
-        res = normalizer.normalize(
+        py_norm = PythonNormalizer()
+        res = py_norm.normalize(
             parse_result.ast,
             repository_id=repository_id,
             file_path=resolved_path,
@@ -76,8 +76,8 @@ def normalize_parse_result(
             loc=loc,
         )
     elif parse_result.language == Language.TYPESCRIPT:
-        normalizer = TypeScriptNormalizer()
-        res = normalizer.normalize(
+        ts_norm = TypeScriptNormalizer()
+        res = ts_norm.normalize(
             parse_result.ast,
             repository_id=repository_id,
             file_path=resolved_path,
