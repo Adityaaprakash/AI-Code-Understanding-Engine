@@ -1,6 +1,26 @@
 # Changelog — AI Code Understanding Engine
 
 All notable changes to this project are recorded here.
+## 2026-08-29 — Phase 3B/3C — Symbol, Import & Reference Resolution
+
+**Completed by:** TASK-3B/3C
+
+### Added
+- Package `code_analyzer.resolution` providing deterministic symbol registration, language-specific import resolution, and scope-aware reference resolution for Java, Python, and TypeScript.
+- `SymbolTable` (`symbol_table.py`): In-memory symbol registry with O(1) index lookups by symbol ID, qualified name, simple name, scope, and suffix. Enforces strict repository isolation.
+- `ImportResolver` (`import_resolver.py`): Language-aware import resolver for Java (direct, wildcard, external stdlib), Python (from-import, module, aliases), and TypeScript (named, relative paths, external specifiers).
+- `ReferenceResolver` (`reference_resolver.py`): Deterministic reference resolver with strict precedence chain (Exact QName → Import Alias → Method on Type → Scope Simple Name → File Simple Name → Repo Simple Name → Suffix Fallback). Returns `RESOLVED`, `UNRESOLVED`, `AMBIGUOUS`, `EXTERNAL`, or `BUILTIN` without guessing.
+- `ResolutionContext` (`context.py`): Resolution context container maintaining repository isolation, local import alias bindings, and lexical scope hierarchy (`ScopeKind`).
+- `ResolutionResult` (`result.py`): Canonical resolution result model with confidence score, diagnostic messages, candidate symbol IDs for ambiguous matches, and metadata attributes.
+- Comprehensive unit test suite `tests/test_resolution.py` (49 passing tests covering registration, lookups, language-specific imports, reference resolution, builtins, ambiguity, external dependencies, determinism, location preservation, JSON roundtrips, and end-to-end multi-file pipelines for Java, Python, and TypeScript).
+
+### Verification
+- `uv sync` ✅
+- `ruff check .` ✅
+- `ruff format --check .` ✅
+- `mypy backend code-analyzer/code_analyzer graph` ✅
+- `pytest tests/` (181 passed, 4 skipped in 13.2s) ✅
+
 ## 2026-08-29 — Phase 3A — Code Graph Schema & Models
 
 **Completed by:** TASK-3A

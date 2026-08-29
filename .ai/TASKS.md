@@ -338,6 +338,21 @@ service needed for this task.
 - [x] Dedicated unit test suite in `tests/test_code_graph_schema.py` (12 passing tests)
 - [x] All quality gates pass (`uv sync`, `ruff check .`, `ruff format --check .`, `mypy backend code-analyzer/code_analyzer graph`, `pytest tests/`)
 
+### TASK-3B/3C: Symbol, Import & Reference Resolution
+
+**Status:** ✅ Done  
+**Blockers:** TASK-3A ✅  
+**Scope:** Implement deterministic symbol registration, language-specific import resolution, and reference resolution for Java, Python, and TypeScript.
+
+**Acceptance criteria:**
+- [x] Created `code_analyzer.resolution` package (`symbol_table.py`, `import_resolver.py`, `reference_resolver.py`, `context.py`, `result.py`, `__init__.py`, `py.typed`)
+- [x] In-memory `SymbolTable` with deterministic lookups by ID, qualified name, scope, simple name, and suffix; enforced repository isolation
+- [x] Language-aware `ImportResolver` supporting Java (direct, wildcard, external stdlib), Python (from-import, module, aliases), and TypeScript (named, relative paths, external specifiers)
+- [x] Deterministic `ReferenceResolver` with strict resolution precedence (exact QName → import alias → method on type → scope simple name → file simple name → repo simple name → suffix fallback), returning `RESOLVED`, `UNRESOLVED`, `AMBIGUOUS`, `EXTERNAL`, or `BUILTIN` without guessing
+- [x] Multi-file end-to-end integration tests for Java, Python, and TypeScript
+- [x] Dedicated unit test suite in `tests/test_resolution.py` (49 tests) bringing full test suite to 181 passing tests (4 skipped)
+- [x] All quality gates pass (`uv sync`, `ruff check .`, `ruff format --check .`, `mypy backend code-analyzer/code_analyzer graph`, `pytest tests/`)
+
 ## Notes for AI Agents
 
 - Each task above is independently implementable; do not merge tasks.

@@ -8,9 +8,7 @@
 
 ## Current Task
 
-## Current Task
-
-TASK-3A (Code Graph Schema & Models) complete. Established foundational graph models (`GraphNode`, `GraphEdge`, `CodeGraph`), enums (`NodeKind`, `EdgeKind`, `ResolutionStatus`), deterministic edge ID generator `generate_edge_id`, and abstract contracts for Phase 3 symbol resolution, relationship extraction, persistence, and graph traversal. Dedicated test suite `tests/test_code_graph_schema.py` (12 passing tests) bringing total suite to 136 passing unit tests.
+TASK-3B/3C — Symbol, Import & Reference Resolution complete. Next Task: TASK-3D — Relationship Extraction.
 
 ---
 
@@ -39,21 +37,20 @@ TASK-3A (Code Graph Schema & Models) complete. Established foundational graph mo
 - [x] TASK-2F: AST → Code IR Normalization complete
 - [x] TASK-2G: Parser / Canonical IR Testing & Hardening complete
 - [x] TASK-3A: Code Graph Schema & Models complete
-  - Package structure `graph/` (`enums.py`, `nodes.py`, `edges.py`, `models.py`, `contracts.py`, `__init__.py`, `py.typed`)
-  - Strongly typed `NodeKind`, `EdgeKind`, and `ResolutionStatus` enums
-  - Immutable, frozen `GraphNode` model with factory method `GraphNode.from_ir_entity` converting Canonical Code IR entities
-  - Deterministic edge identity generator `generate_edge_id` using UUID v5 and edge attributes
-  - Immutable, frozen `GraphEdge` model with factory method `GraphEdge.from_ir_reference` converting IR references into graph edges
-  - `CodeGraph` container model supporting graph manipulation, neighbor retrieval, inbound/outbound edge lookups, and lossless JSON serialization
-  - Abstract contracts defined in `contracts.py` for symbol registration (`SymbolRegistrarContract`), import resolution (`ImportResolverContract`), reference resolution (`ReferenceResolverContract`), relationship extraction (`RelationshipExtractorContract`), graph construction (`GraphBuilderContract`), graph persistence (`GraphStoreContract`), and query analysis (`GraphQueryEngineContract`)
-  - Dedicated unit test suite in `tests/test_code_graph_schema.py` (12 passing tests)
-  - All quality gates pass: `uv sync` ✅ `ruff check .` ✅ `ruff format --check .` ✅ `mypy backend code-analyzer/code_analyzer graph` ✅ `pytest tests/` (136 passed) ✅
+- [x] TASK-3B/3C: Symbol, Import & Reference Resolution complete
+  - Created `code_analyzer.resolution` package (`symbol_table.py`, `import_resolver.py`, `reference_resolver.py`, `context.py`, `result.py`, `__init__.py`, `py.typed`)
+  - In-memory `SymbolTable` with deterministic lookups by ID, qualified name, scope, simple name, and suffix; enforced repository isolation
+  - Language-aware `ImportResolver` supporting Java (direct, wildcard, external stdlib), Python (from-import, module, aliases), and TypeScript (named, relative paths, external specifiers)
+  - Deterministic `ReferenceResolver` with strict resolution precedence (exact QName → import alias → method on type → scope simple name → file simple name → repo simple name → suffix fallback), returning `RESOLVED`, `UNRESOLVED`, `AMBIGUOUS`, `EXTERNAL`, or `BUILTIN` without guessing
+  - Multi-file end-to-end integration tests for Java, Python, and TypeScript
+  - Dedicated unit test suite in `tests/test_resolution.py` (49 tests) bringing full test suite to 181 passing tests (4 skipped)
+  - All quality gates pass: `ruff check .` ✅ `ruff format --check .` ✅ `mypy backend code-analyzer/code_analyzer graph` ✅ `pytest tests/` (181 passed) ✅
 
 ---
 
 ## In Progress
 
-- [ ] TASK-3B — Symbol Registration & Table
+- [ ] TASK-3D — Relationship Extraction
 
 ---
 
@@ -79,12 +76,10 @@ TASK-3A (Code Graph Schema & Models) complete. Established foundational graph mo
 
 ### Phase 3 (Symbol Resolution & Code Knowledge Graph)
 - [x] 3A: Code Graph Schema & Models — ✅ Done
-- [ ] 3B: Symbol Registration & Table
-- [ ] 3C: Import Resolution Engine
-- [ ] 3D: Reference Resolution Engine
+- [x] 3B/3C: Symbol, Import & Reference Resolution — ✅ Done
+- [ ] 3D: Symbol Relationship Extraction
 - [ ] 3E: Graph Persistence & Querying
-- [ ] 3F: Symbol Relationship Extraction
-- [ ] 3G: Dependency & Impact Analysis
+- [ ] 3F: Dependency & Impact Analysis
 
 ---
 
@@ -92,12 +87,13 @@ TASK-3A (Code Graph Schema & Models) complete. Established foundational graph mo
 
 - Graph architecture operates purely on derived entities from Canonical Code IR without modifying Phase 2 IR models.
 - Abstract contract interfaces (`contracts.py`) specify signatures for Phase 3 symbol resolution, import resolution, reference resolution, relationship extraction, persistence, and traversal engines.
+- Symbol resolution is strictly high-precision and deterministic: when evidence is insufficient or multiple candidates exist, `UNRESOLVED` or `AMBIGUOUS` is returned rather than guessing.
 
 ---
 
 ## Last Updated
 
-2026-08-29 — TASK-3A complete. Foundational Code Knowledge Graph models, enums, edge identity generation, container, and abstract contracts established with 136/136 tests passing.
+2026-08-29 — TASK-3B/3C complete. In-memory SymbolTable, language-specific ImportResolvers (Java, Python, TypeScript), and deterministic ReferenceResolver established with 181/181 tests passing. Next task is TASK-3D — Relationship Extraction.
 
 
 
