@@ -1,6 +1,30 @@
 # Changelog — AI Code Understanding Engine
 
 All notable changes to this project are recorded here.
+## 2026-08-29 — Phase 3A — Code Graph Schema & Models
+
+**Completed by:** TASK-3A
+
+### Added
+- Package `graph` providing language-independent Code Knowledge Graph data models, edge identity generation, graph container, and abstract Phase 3 component contracts.
+- Enumerations in `graph/enums.py`: `NodeKind`, `EdgeKind`, and `ResolutionStatus`.
+- Graph node model in `graph/nodes.py`: `GraphNode` (immutable, frozen Pydantic model) with factory method `GraphNode.from_ir_entity` deriving graph nodes directly from Phase 2 Canonical Code IR entities (`Class`, `Function`, `Method`, `Variable`, `File`, `Module`, `Repository`, `Interface`, `Parameter`, `Symbol`).
+- Edge identity generator in `graph/edges.py`: `generate_edge_id` using UUID v5 and seed key format.
+- Graph edge model in `graph/edges.py`: `GraphEdge` (immutable, frozen Pydantic model) with factory method `GraphEdge.from_ir_reference` mapping Canonical IR references into directed graph edges.
+- Code graph container model in `graph/models.py`: `CodeGraph` supporting graph storage, inbound/outbound edge queries, neighbor retrieval (`get_neighbors`), node/edge lookups, and lossless JSON serialization.
+- Phase 3 component contracts in `graph/contracts.py`: `SymbolRegistrarContract`, `ImportResolverContract`, `ReferenceResolverContract`, `RelationshipExtractorContract`, `GraphBuilderContract`, `GraphStoreContract`, `GraphQueryEngineContract`, `DependencyAnalyzerContract`, and `ImpactAnalyzerContract`.
+- Package exports in `graph/__init__.py` and PEP 561 typed package marker `graph/py.typed`.
+- Unit test suite `tests/test_code_graph_schema.py` (12 test cases covering node kinds, edge kinds, resolution statuses, graph node validation and immutability, IR entity derivation, edge identity determinism, graph edge validation, IR reference derivation, graph container operations, JSON serialization roundtrip, abstract contracts enforcement, and end-to-end IR topology derivation).
+
+### Verification
+- `uv sync` ✅
+- `uv run ruff check .` ✅
+- `uv run ruff format --check .` ✅
+- `uv run mypy backend code-analyzer/code_analyzer graph` ✅
+- `uv run pytest tests/ -v` ✅ (136 passed)
+
+---
+
 ## 2026-08-28 — Phase 2G — Parser / Canonical IR Testing & Hardening (Phase 2 Complete)
 
 **Completed by:** TASK-2G

@@ -317,6 +317,27 @@ service needed for this task.
 
 **PHASE 2 IS NOW OFFICIALLY COMPLETE.**
 
+---
+
+## Phase 3 — Symbol Resolution & Code Knowledge Graph
+
+### TASK-3A: Code Graph Schema & Models
+
+**Status:** ✅ Done  
+**Blockers:** Phase 2 ✅  
+**Scope:** Establish the foundational data model and contracts for the Code Knowledge Graph derived from Canonical Code IR.
+
+**Acceptance criteria:**
+- [x] Package structure `graph/` (`enums.py`, `nodes.py`, `edges.py`, `models.py`, `contracts.py`, `__init__.py`, `py.typed`)
+- [x] Strongly typed `NodeKind`, `EdgeKind`, and `ResolutionStatus` enums
+- [x] Immutable, frozen `GraphNode` model with factory method `GraphNode.from_ir_entity` converting Canonical Code IR entities
+- [x] Deterministic edge identity generator `generate_edge_id` using UUID v5 and edge attributes
+- [x] Immutable, frozen `GraphEdge` model with factory method `GraphEdge.from_ir_reference` converting IR references into graph edges
+- [x] `CodeGraph` container model supporting graph manipulation, neighbor retrieval, inbound/outbound edge lookups, and lossless JSON serialization
+- [x] Abstract contracts defined in `contracts.py` for symbol registration (`SymbolRegistrarContract`), import resolution (`ImportResolverContract`), reference resolution (`ReferenceResolverContract`), relationship extraction (`RelationshipExtractorContract`), graph construction (`GraphBuilderContract`), graph persistence (`GraphStoreContract`), and query analysis (`GraphQueryEngineContract`)
+- [x] Dedicated unit test suite in `tests/test_code_graph_schema.py` (12 passing tests)
+- [x] All quality gates pass (`uv sync`, `ruff check .`, `ruff format --check .`, `mypy backend code-analyzer/code_analyzer graph`, `pytest tests/`)
+
 ## Notes for AI Agents
 
 - Each task above is independently implementable; do not merge tasks.
@@ -324,3 +345,4 @@ service needed for this task.
   unless all criteria are met.
 - After completing a task: update `CURRENT_STATE.md`, `CHANGELOG.md`,
   and this file.
+
