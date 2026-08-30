@@ -57,7 +57,7 @@ def test_alembic_importable() -> None:
 
 def test_asyncpg_importable() -> None:
     """asyncpg must be installed and importable."""
-    import asyncpg  # type: ignore[import-untyped]
+    import asyncpg
 
     assert asyncpg.__version__, "asyncpg version string should be non-empty"
 

@@ -45,7 +45,15 @@ TASK-3E & TASK-3F — Graph Storage & Traversal complete. Phase 3 complete. Next
   - Implemented `GraphQueryEngine` in `graph/query_engine.py` adhering to `GraphQueryEngineContract` for deterministic, language-independent graph traversal.
   - Implemented callers, callees, dependency closures, dependent closures, and reverse impact radius calculations with BFS cycle prevention and `DEPENDENCY_EDGE_KINDS` semantic edge filtering.
   - Added unit and integration test suites in `tests/test_graph_store.py` (22 tests) and `tests/test_graph_traversal.py` (10 tests) including synthetic 1,000-node performance tests and full end-to-end pipeline verification.
-  - All quality gates pass: `ruff check .` ✅ `ruff format --check .` ✅ `mypy graph tests` ✅ `pytest` (224 passed) ✅
+- [x] TASK-3G: Code Knowledge Graph Testing & Hardening complete
+  - Implemented `tests/test_graph_hardening.py` covering 11 critical categories of graph invariants.
+  - Verified schema immutability, ID constraints, and JSON round-tripping.
+  - Validated false-positive and false-negative prevention in symbol resolution and alias handling.
+  - Enforced storage engine invariants: O(1) indexing, cascading removal, and duplicate/conflict detection.
+  - Validated traversal safety: directionality, cycle safety, depth-limited traversals, and self-loop handling.
+  - Confirmed sub-second traversal scalability across synthetic 5,000-node adversarial topologies (large fan-in/fan-out star graphs).
+  - Validated end-to-end multi-file, cross-language pipeline integrity.
+  - All 239/239 tests pass cleanly across the codebase with zero regressions. Next task is TASK-3H — Initial Impact Analysis.
 
 ---
 
