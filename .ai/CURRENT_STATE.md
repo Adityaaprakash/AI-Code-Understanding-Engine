@@ -8,7 +8,7 @@
 
 ## Current Task
 
-TASK-3D — Relationship Extraction complete. Next Task: TASK-3E — Graph Persistence & Querying.
+TASK-3E & TASK-3F — Graph Storage & Traversal complete. Phase 3 complete. Next Task: Phase 4 — Hybrid Retrieval Engine.
 
 ---
 
@@ -39,20 +39,19 @@ TASK-3D — Relationship Extraction complete. Next Task: TASK-3E — Graph Persi
 - [x] TASK-3A: Code Graph Schema & Models complete
 - [x] TASK-3B/3C: Symbol, Import & Reference Resolution complete
 - [x] TASK-3D: Relationship Extraction complete
-  - Created `code_analyzer.resolution.relationship_extractor.RelationshipExtractor` implementing `RelationshipExtractorContract`
-  - Extracted structural `DECLARES` edges for entity parent-child ownership (File → Class, Class → Method, Method → Parameter, etc.)
-  - Extracted signature type `USES` relationships for variable declared types, function return types, and parameter types
-  - Classified resolved `Reference` objects into directed semantic edge kinds (`CALLS`, `IMPORTS`, `EXTENDS`, `IMPLEMENTS`, `USES`, `OVERRIDES`, `READS`, `REFERENCES`)
-  - Filtered out `UNRESOLVED`, `AMBIGUOUS`, `BUILTIN`, and `EXTERNAL` references to prevent false repository edges
-  - Generated deterministic edge UUID v5 identifiers via `generate_edge_id` for idempotency and deduplication
-  - Multi-file integration tests for Java, Python, and TypeScript, and end-to-end `CodeGraph` container pipeline verification in `tests/test_relationship_extractor.py` (16 tests)
-  - All quality gates pass: `ruff check .` ✅ `mypy backend code-analyzer/code_analyzer graph` ✅ `pytest tests/` (201 passed) ✅
+- [x] TASK-3E/3F: Graph Storage Engine & Traversal Query Engine complete
+  - Implemented `InMemoryGraphStore` in `graph/store.py` adhering to `GraphStoreContract` with $O(1)$ adjacency indexing (`outbound_index`, `inbound_index`, and kind-filtered indices).
+  - Enforced graph integrity constraints, idempotent insertion, conflict detection, cascading node removal, and async snapshot persistence (`save_graph`, `load_graph`, `delete_graph`).
+  - Implemented `GraphQueryEngine` in `graph/query_engine.py` adhering to `GraphQueryEngineContract` for deterministic, language-independent graph traversal.
+  - Implemented callers, callees, dependency closures, dependent closures, and reverse impact radius calculations with BFS cycle prevention and `DEPENDENCY_EDGE_KINDS` semantic edge filtering.
+  - Added unit and integration test suites in `tests/test_graph_store.py` (22 tests) and `tests/test_graph_traversal.py` (10 tests) including synthetic 1,000-node performance tests and full end-to-end pipeline verification.
+  - All quality gates pass: `ruff check .` ✅ `ruff format --check .` ✅ `mypy graph tests` ✅ `pytest` (224 passed) ✅
 
 ---
 
 ## In Progress
 
-- [ ] TASK-3E — Graph Persistence & Querying
+- None (Phase 3 complete)
 
 ---
 

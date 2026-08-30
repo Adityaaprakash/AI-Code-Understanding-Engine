@@ -371,6 +371,23 @@ service needed for this task.
 - [x] Dedicated test suite in `tests/test_relationship_extractor.py` (16 passing tests)
 - [x] All quality gates pass (`uv run ruff check .`, `uv run mypy code-analyzer graph`, `uv run pytest tests/` (201 passed))
 
+### TASK-3E/3F: Graph Storage Engine & Traversal Query Engine
+
+**Status:** ✅ Done  
+**Blockers:** TASK-3D ✅  
+**Scope:** Implement production-grade in-memory graph storage and deterministic BFS traversal query engine for callers/callees/dependency/dependent analysis.
+
+**Acceptance criteria:**
+- [x] Created `InMemoryGraphStore` in `graph/store.py` implementing `GraphStoreContract` with $O(1)$ adjacency indexing (`outbound_index`, `inbound_index`, and kind-filtered indices)
+- [x] Enforced graph consistency checks, idempotent entity re-insertion, conflict detection, cascading node removal, and async snapshot persistence (`save_graph`, `load_graph`, `delete_graph`)
+- [x] Created `GraphQueryEngine` in `graph/query_engine.py` implementing `GraphQueryEngineContract` for deterministic, language-independent graph traversal
+- [x] Implemented direct callers (`get_callers`), direct callees (`get_callees`), dependency closure (`get_dependencies`), dependent closure (`get_dependents`), and reverse impact radius (`get_impact_radius`) queries
+- [x] Implemented `DEPENDENCY_EDGE_KINDS` edge-kind policy filtering out structural containment edges (`DECLARES`, `CONTAINS`, `EXPORTS`) from dependency analysis by default
+- [x] BFS traversal with cycle prevention (`visited` set and `queue`) and depth limiting (`max_depth`)
+- [x] Deterministic node sorting key `(node.kind.value, node.qualified_name, node.id)`
+- [x] Dedicated unit and integration test suites in `tests/test_graph_store.py` (22 tests) and `tests/test_graph_traversal.py` (10 tests) including 1,000-node synthetic benchmark tests and full end-to-end pipeline verification
+- [x] All quality gates pass (`uv run ruff check .`, `uv run ruff format --check .`, `uv run mypy graph tests`, `uv run pytest` (224 passed))
+
 ## Notes for AI Agents
 
 - Each task above is independently implementable; do not merge tasks.

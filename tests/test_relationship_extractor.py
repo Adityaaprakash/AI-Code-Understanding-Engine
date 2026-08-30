@@ -77,8 +77,12 @@ class TestRelationshipExtractorUnit:
         st = SymbolTable()
 
         file_ent = _make_file("order/OrderService.java", Language.JAVA)
-        cls_id = generate_entity_id(EntityKind.CLASS, "order/OrderService.java", "com.example.OrderService")
-        mth_id = generate_entity_id(EntityKind.METHOD, "order/OrderService.java", "com.example.OrderService.process")
+        cls_id = generate_entity_id(
+            EntityKind.CLASS, "order/OrderService.java", "com.example.OrderService"
+        )
+        mth_id = generate_entity_id(
+            EntityKind.METHOD, "order/OrderService.java", "com.example.OrderService.process"
+        )
 
         cls_ent = Class(
             id=cls_id,
@@ -115,8 +119,12 @@ class TestRelationshipExtractorUnit:
         st = SymbolTable()
 
         file_ent = _make_file("services/order.py", Language.PYTHON)
-        caller_id = generate_entity_id(EntityKind.METHOD, "services/order.py", "OrderService.checkout")
-        callee_id = generate_entity_id(EntityKind.METHOD, "services/payment.py", "PaymentService.process")
+        caller_id = generate_entity_id(
+            EntityKind.METHOD, "services/order.py", "OrderService.checkout"
+        )
+        callee_id = generate_entity_id(
+            EntityKind.METHOD, "services/payment.py", "PaymentService.process"
+        )
 
         st.register(
             SymbolEntry(
@@ -154,9 +162,7 @@ class TestRelationshipExtractorUnit:
             )
         }
 
-        _, edges = extractor.extract_from_normalization_result(
-            norm, st, resolution_results=res_map
-        )
+        _, edges = extractor.extract_from_normalization_result(norm, st, resolution_results=res_map)
 
         calls_edges = [e for e in edges if e.kind == EdgeKind.CALLS]
         assert len(calls_edges) == 1
@@ -188,9 +194,7 @@ class TestRelationshipExtractorUnit:
             "ref-ext-1": ResolutionResult.resolved("ref-ext-1", "BasePaymentService", base_id)
         }
 
-        _, edges = extractor.extract_from_normalization_result(
-            norm, st, resolution_results=res_map
-        )
+        _, edges = extractor.extract_from_normalization_result(norm, st, resolution_results=res_map)
 
         ext_edges = [e for e in edges if e.kind == EdgeKind.EXTENDS]
         assert len(ext_edges) == 1
@@ -221,9 +225,7 @@ class TestRelationshipExtractorUnit:
             "ref-impl-1": ResolutionResult.resolved("ref-impl-1", "IPaymentGateway", iface_id)
         }
 
-        _, edges = extractor.extract_from_normalization_result(
-            norm, st, resolution_results=res_map
-        )
+        _, edges = extractor.extract_from_normalization_result(norm, st, resolution_results=res_map)
 
         impl_edges = [e for e in edges if e.kind == EdgeKind.IMPLEMENTS]
         assert len(impl_edges) == 1
@@ -250,13 +252,9 @@ class TestRelationshipExtractorUnit:
         )
 
         norm = NormalizationResult(file=file_ent, references=[ref])
-        res_map = {
-            "ref-uses-1": ResolutionResult.resolved("ref-uses-1", "PaymentService", type_id)
-        }
+        res_map = {"ref-uses-1": ResolutionResult.resolved("ref-uses-1", "PaymentService", type_id)}
 
-        _, edges = extractor.extract_from_normalization_result(
-            norm, st, resolution_results=res_map
-        )
+        _, edges = extractor.extract_from_normalization_result(norm, st, resolution_results=res_map)
 
         uses_edges = [e for e in edges if e.kind == EdgeKind.USES]
         assert len(uses_edges) == 1
@@ -269,7 +267,9 @@ class TestRelationshipExtractorUnit:
         st = SymbolTable()
 
         file_ent = _make_file("OrderService.java", Language.JAVA)
-        imported_sym_id = generate_entity_id(EntityKind.CLASS, "PaymentService.java", "com.example.payment.PaymentService")
+        imported_sym_id = generate_entity_id(
+            EntityKind.CLASS, "PaymentService.java", "com.example.payment.PaymentService"
+        )
 
         ref = Reference(
             id="ref-imp-1",
@@ -282,12 +282,12 @@ class TestRelationshipExtractorUnit:
 
         norm = NormalizationResult(file=file_ent, references=[ref])
         res_map = {
-            "ref-imp-1": ResolutionResult.resolved("ref-imp-1", "com.example.payment.PaymentService", imported_sym_id)
+            "ref-imp-1": ResolutionResult.resolved(
+                "ref-imp-1", "com.example.payment.PaymentService", imported_sym_id
+            )
         }
 
-        _, edges = extractor.extract_from_normalization_result(
-            norm, st, resolution_results=res_map
-        )
+        _, edges = extractor.extract_from_normalization_result(norm, st, resolution_results=res_map)
 
         imp_edges = [e for e in edges if e.kind == EdgeKind.IMPORTS]
         assert len(imp_edges) == 1
@@ -318,12 +318,12 @@ class TestRelationshipExtractorNegativeCases:
 
         norm = NormalizationResult(file=file_ent, references=[ref])
         res_map = {
-            "ref-unresolved": ResolutionResult.unresolved("ref-unresolved", "unknown_module.unknown_func")
+            "ref-unresolved": ResolutionResult.unresolved(
+                "ref-unresolved", "unknown_module.unknown_func"
+            )
         }
 
-        _, edges = extractor.extract_from_normalization_result(
-            norm, st, resolution_results=res_map
-        )
+        _, edges = extractor.extract_from_normalization_result(norm, st, resolution_results=res_map)
 
         assert len(edges) == 0  # No false edge created!
 
@@ -346,9 +346,7 @@ class TestRelationshipExtractorNegativeCases:
             "ref-ambig": ResolutionResult.ambiguous("ref-ambig", "process", ["sym-1", "sym-2"])
         }
 
-        _, edges = extractor.extract_from_normalization_result(
-            norm, st, resolution_results=res_map
-        )
+        _, edges = extractor.extract_from_normalization_result(norm, st, resolution_results=res_map)
 
         assert len(edges) == 0
 
@@ -367,13 +365,9 @@ class TestRelationshipExtractorNegativeCases:
         )
 
         norm = NormalizationResult(file=file_ent, references=[ref])
-        res_map = {
-            "ref-builtin": ResolutionResult.builtin("ref-builtin", "print")
-        }
+        res_map = {"ref-builtin": ResolutionResult.builtin("ref-builtin", "print")}
 
-        _, edges = extractor.extract_from_normalization_result(
-            norm, st, resolution_results=res_map
-        )
+        _, edges = extractor.extract_from_normalization_result(norm, st, resolution_results=res_map)
 
         assert len(edges) == 0
 
@@ -392,13 +386,9 @@ class TestRelationshipExtractorNegativeCases:
         )
 
         norm = NormalizationResult(file=file_ent, references=[ref])
-        res_map = {
-            "ref-ext": ResolutionResult.external("ref-ext", "java.util.List")
-        }
+        res_map = {"ref-ext": ResolutionResult.external("ref-ext", "java.util.List")}
 
-        _, edges = extractor.extract_from_normalization_result(
-            norm, st, resolution_results=res_map
-        )
+        _, edges = extractor.extract_from_normalization_result(norm, st, resolution_results=res_map)
 
         assert len(edges) == 0
 
@@ -435,9 +425,7 @@ class TestRelationshipExtractorNegativeCases:
             "r2": ResolutionResult.resolved("r2", "process", tgt_id),
         }
 
-        _, edges = extractor.extract_from_normalization_result(
-            norm, st, resolution_results=res_map
-        )
+        _, edges = extractor.extract_from_normalization_result(norm, st, resolution_results=res_map)
 
         # Identical source, target, kind, line produce identical edge ID -> deduplicated!
         assert len(edges) == 1
@@ -480,9 +468,15 @@ public class OrderService {
     }
 }
 """
-        ir_pay = normalize_parse_result(parser.parse(pay_src, "payment/PaymentGateway.java"), REPO_ID)
-        ir_stripe = normalize_parse_result(parser.parse(stripe_src, "payment/StripeGateway.java"), REPO_ID)
-        ir_order = normalize_parse_result(parser.parse(order_src, "order/OrderService.java"), REPO_ID)
+        ir_pay = normalize_parse_result(
+            parser.parse(pay_src, "payment/PaymentGateway.java"), REPO_ID
+        )
+        ir_stripe = normalize_parse_result(
+            parser.parse(stripe_src, "payment/StripeGateway.java"), REPO_ID
+        )
+        ir_order = normalize_parse_result(
+            parser.parse(order_src, "order/OrderService.java"), REPO_ID
+        )
 
         st = SymbolTable()
         st.register_normalization_result(ir_pay, REPO_ID)
@@ -523,9 +517,7 @@ class PaymentService(BaseService):
         st.register_normalization_result(ir_pay, REPO_ID)
 
         extractor = RelationshipExtractor()
-        nodes, edges = extractor.extract_repository_relationships(
-            [ir_base, ir_pay], st, REPO_ID
-        )
+        nodes, edges = extractor.extract_repository_relationships([ir_base, ir_pay], st, REPO_ID)
 
         assert len(nodes) > 0
         assert len(edges) > 0
@@ -553,9 +545,7 @@ export class ConsoleLogger implements ILogger {
         st.register_normalization_result(ir_impl, REPO_ID)
 
         extractor = RelationshipExtractor()
-        nodes, edges = extractor.extract_repository_relationships(
-            [ir_iface, ir_impl], st, REPO_ID
-        )
+        nodes, edges = extractor.extract_repository_relationships([ir_iface, ir_impl], st, REPO_ID)
 
         assert len(nodes) > 0
         assert len(edges) > 0
@@ -590,7 +580,9 @@ public class OrderService {
     }
 }
 """
-    ir_pay = normalize_parse_result(parser.parse(payment_src, "payment/PaymentService.java"), REPO_ID)
+    ir_pay = normalize_parse_result(
+        parser.parse(payment_src, "payment/PaymentService.java"), REPO_ID
+    )
     ir_order = normalize_parse_result(parser.parse(order_src, "order/OrderService.java"), REPO_ID)
 
     # 1. Symbol Registration

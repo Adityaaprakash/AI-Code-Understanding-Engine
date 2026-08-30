@@ -1,6 +1,34 @@
 # Changelog — AI Code Understanding Engine
 
 All notable changes to this project are recorded here.
+## 2026-08-30 — Phase 3E/3F — Graph Storage Engine & Traversal Query Engine
+
+**Completed by:** TASK-3E & TASK-3F
+
+### Added
+- `InMemoryGraphStore` (`graph/store.py`) implementing `GraphStoreContract`:
+  - Production-grade in-memory graph store with $O(1)$ adjacency indexing (`outbound_index`, `inbound_index`, `_outbound_kind_index`, `_inbound_kind_index`).
+  - Graph integrity enforcement preventing orphaned edges and invalid node references when `enforce_consistency=True`.
+  - Strict idempotency checking (safe re-insertion of identical entities) and conflict detection (raising `ValueError` on attribute mismatches).
+  - Cascading node removal (`remove_node`) automatically pruning incident inbound/outbound edges.
+  - Async repository-scoped snapshot persistence (`save_graph`, `load_graph`, `delete_graph`) and `CodeGraph` model export (`to_codegraph` / `from_codegraph`).
+- `GraphQueryEngine` (`graph/query_engine.py`) implementing `GraphQueryEngineContract`:
+  - Language-independent, deterministic graph traversal engine.
+  - Direct caller queries (`get_callers`) and direct callee queries (`get_callees`) using `EdgeKind.CALLS`.
+  - Transitively bounded dependency closures (`get_dependencies`) and dependent closures (`get_dependents`).
+  - Reverse impact radius calculation (`get_impact_radius`) for blast radius analysis.
+  - BFS breadth-first search graph traversal (`traverse`) with cycle prevention (`visited` set and `queue`) and maximum depth limiting (`max_depth`).
+  - Default `DEPENDENCY_EDGE_KINDS` semantic edge policy filtering out structural containment edges (`DECLARES`, `CONTAINS`, `EXPORTS`) from dependency closures.
+  - Deterministic result sorting using `(node.kind.value, node.qualified_name, node.id)`.
+- Public exports in `graph` package (`InMemoryGraphStore`, `GraphQueryEngine`, `DEPENDENCY_EDGE_KINDS`).
+- Dedicated unit and integration test suites in `tests/test_graph_store.py` (22 tests) and `tests/test_graph_traversal.py` (10 tests), including synthetic 1,000-node sparse graph performance tests and full end-to-end pipeline verification (Source Code → Parser → Canonical IR → Symbol Resolution → Relationship Extraction → Graph Store → Traversal Engine).
+
+### Verification
+- `uv run ruff check .` ✅
+- `uv run ruff format --check .` ✅
+- `uv run mypy graph tests` ✅
+- `uv run pytest` (224 passed in 0.50s) ✅
+
 ## 2026-08-29 — Phase 3D — Relationship Extraction
 
 **Completed by:** TASK-3D

@@ -56,9 +56,7 @@ class RelationshipExtractor(RelationshipExtractorContract):
         """
         self.resolver = reference_resolver or ReferenceResolver()
 
-    def extract_relationships(
-        self, ir_file: File
-    ) -> tuple[list[GraphNode], list[GraphEdge]]:
+    def extract_relationships(self, ir_file: File) -> tuple[list[GraphNode], list[GraphEdge]]:
         """Extract nodes and edges from a parsed IR file entity (Contract Implementation).
 
         Args:
@@ -145,14 +143,11 @@ class RelationshipExtractor(RelationshipExtractorContract):
             )
 
             # Pre-resolve references if not provided
-            res_map = resolution_results or self.resolver.resolve_all(
-                norm_result.references, ctx
-            )
+            res_map = resolution_results or self.resolver.resolve_all(norm_result.references, ctx)
 
             for ref in norm_result.references:
                 res_result = res_map.get(ref.id)
                 if res_result is None:
-
                     # Fallback to direct resolution
                     res_result = self.resolver.resolve(ref, ctx)
 
@@ -438,9 +433,7 @@ class RelationshipExtractor(RelationshipExtractorContract):
                         p_type = str(param.declared_type).strip()
                         matches = symbol_table.lookup_by_simple_name(
                             p_type, repository_id
-                        ) or symbol_table.lookup_by_qualified_name(
-                            p_type, repository_id
-                        )
+                        ) or symbol_table.lookup_by_qualified_name(p_type, repository_id)
                         if matches:
                             target_id = matches[0].symbol_id
                             edge_id = generate_edge_id(
