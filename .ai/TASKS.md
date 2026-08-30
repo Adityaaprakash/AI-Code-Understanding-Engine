@@ -353,6 +353,24 @@ service needed for this task.
 - [x] Dedicated unit test suite in `tests/test_resolution.py` (49 tests) bringing full test suite to 181 passing tests (4 skipped)
 - [x] All quality gates pass (`uv sync`, `ruff check .`, `ruff format --check .`, `mypy backend code-analyzer/code_analyzer graph`, `pytest tests/`)
 
+### TASK-3D: Relationship Extraction
+
+**Status:** ✅ Done  
+**Blockers:** TASK-3B/3C ✅  
+**Scope:** Implement semantic relationship extraction engine mapping Canonical IR entities and resolved references to directed Code Knowledge Graph relationships.
+
+**Acceptance criteria:**
+- [x] Created `code_analyzer.resolution.relationship_extractor.RelationshipExtractor` implementing `RelationshipExtractorContract`
+- [x] Structural `DECLARES` edge generation mapping parent-child entity ownership (File → Class, Class → Method, Method → Parameter, etc.)
+- [x] Signature type `USES` edge generation for variable declared types, function return types, and parameter types matched against `SymbolTable`
+- [x] Semantic `ReferenceKind` mapping to directed graph edges (`CALLS`, `IMPORTS`, `EXTENDS`, `IMPLEMENTS`, `USES`, `OVERRIDES`, `READS`, `REFERENCES`)
+- [x] Strict resolution filtering: `UNRESOLVED`, `AMBIGUOUS`, `BUILTIN`, and `EXTERNAL` references produce zero repository-local graph edges
+- [x] Deterministic identity generation via `generate_edge_id` (UUID v5) guaranteeing idempotency and deduplication
+- [x] Multi-file language integration tests for Java, Python, and TypeScript
+- [x] End-to-end `CodeGraph` container pipeline assembly and JSON roundtrip serialization
+- [x] Dedicated test suite in `tests/test_relationship_extractor.py` (16 passing tests)
+- [x] All quality gates pass (`uv run ruff check .`, `uv run mypy code-analyzer graph`, `uv run pytest tests/` (201 passed))
+
 ## Notes for AI Agents
 
 - Each task above is independently implementable; do not merge tasks.

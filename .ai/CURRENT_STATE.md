@@ -8,7 +8,7 @@
 
 ## Current Task
 
-TASK-3B/3C — Symbol, Import & Reference Resolution complete. Next Task: TASK-3D — Relationship Extraction.
+TASK-3D — Relationship Extraction complete. Next Task: TASK-3E — Graph Persistence & Querying.
 
 ---
 
@@ -38,19 +38,21 @@ TASK-3B/3C — Symbol, Import & Reference Resolution complete. Next Task: TASK-3
 - [x] TASK-2G: Parser / Canonical IR Testing & Hardening complete
 - [x] TASK-3A: Code Graph Schema & Models complete
 - [x] TASK-3B/3C: Symbol, Import & Reference Resolution complete
-  - Created `code_analyzer.resolution` package (`symbol_table.py`, `import_resolver.py`, `reference_resolver.py`, `context.py`, `result.py`, `__init__.py`, `py.typed`)
-  - In-memory `SymbolTable` with deterministic lookups by ID, qualified name, scope, simple name, and suffix; enforced repository isolation
-  - Language-aware `ImportResolver` supporting Java (direct, wildcard, external stdlib), Python (from-import, module, aliases), and TypeScript (named, relative paths, external specifiers)
-  - Deterministic `ReferenceResolver` with strict resolution precedence (exact QName → import alias → method on type → scope simple name → file simple name → repo simple name → suffix fallback), returning `RESOLVED`, `UNRESOLVED`, `AMBIGUOUS`, `EXTERNAL`, or `BUILTIN` without guessing
-  - Multi-file end-to-end integration tests for Java, Python, and TypeScript
-  - Dedicated unit test suite in `tests/test_resolution.py` (49 tests) bringing full test suite to 181 passing tests (4 skipped)
-  - All quality gates pass: `ruff check .` ✅ `ruff format --check .` ✅ `mypy backend code-analyzer/code_analyzer graph` ✅ `pytest tests/` (181 passed) ✅
+- [x] TASK-3D: Relationship Extraction complete
+  - Created `code_analyzer.resolution.relationship_extractor.RelationshipExtractor` implementing `RelationshipExtractorContract`
+  - Extracted structural `DECLARES` edges for entity parent-child ownership (File → Class, Class → Method, Method → Parameter, etc.)
+  - Extracted signature type `USES` relationships for variable declared types, function return types, and parameter types
+  - Classified resolved `Reference` objects into directed semantic edge kinds (`CALLS`, `IMPORTS`, `EXTENDS`, `IMPLEMENTS`, `USES`, `OVERRIDES`, `READS`, `REFERENCES`)
+  - Filtered out `UNRESOLVED`, `AMBIGUOUS`, `BUILTIN`, and `EXTERNAL` references to prevent false repository edges
+  - Generated deterministic edge UUID v5 identifiers via `generate_edge_id` for idempotency and deduplication
+  - Multi-file integration tests for Java, Python, and TypeScript, and end-to-end `CodeGraph` container pipeline verification in `tests/test_relationship_extractor.py` (16 tests)
+  - All quality gates pass: `ruff check .` ✅ `mypy backend code-analyzer/code_analyzer graph` ✅ `pytest tests/` (201 passed) ✅
 
 ---
 
 ## In Progress
 
-- [ ] TASK-3D — Relationship Extraction
+- [ ] TASK-3E — Graph Persistence & Querying
 
 ---
 
@@ -77,7 +79,7 @@ TASK-3B/3C — Symbol, Import & Reference Resolution complete. Next Task: TASK-3
 ### Phase 3 (Symbol Resolution & Code Knowledge Graph)
 - [x] 3A: Code Graph Schema & Models — ✅ Done
 - [x] 3B/3C: Symbol, Import & Reference Resolution — ✅ Done
-- [ ] 3D: Symbol Relationship Extraction
+- [x] 3D: Symbol Relationship Extraction — ✅ Done
 - [ ] 3E: Graph Persistence & Querying
 - [ ] 3F: Dependency & Impact Analysis
 
@@ -88,12 +90,13 @@ TASK-3B/3C — Symbol, Import & Reference Resolution complete. Next Task: TASK-3
 - Graph architecture operates purely on derived entities from Canonical Code IR without modifying Phase 2 IR models.
 - Abstract contract interfaces (`contracts.py`) specify signatures for Phase 3 symbol resolution, import resolution, reference resolution, relationship extraction, persistence, and traversal engines.
 - Symbol resolution is strictly high-precision and deterministic: when evidence is insufficient or multiple candidates exist, `UNRESOLVED` or `AMBIGUOUS` is returned rather than guessing.
+- Relationship extraction strictly filters for `RESOLVED` status: unresolved, ambiguous, builtin, or external references yield no repository-local graph edges.
 
 ---
 
 ## Last Updated
 
-2026-08-29 — TASK-3B/3C complete. In-memory SymbolTable, language-specific ImportResolvers (Java, Python, TypeScript), and deterministic ReferenceResolver established with 181/181 tests passing. Next task is TASK-3D — Relationship Extraction.
+2026-08-29 — TASK-3D complete. RelationshipExtractor implemented with language integration tests for Java, Python, and TypeScript, full end-to-end CodeGraph pipeline verification, and 201/201 tests passing. Next task is TASK-3E — Graph Persistence & Querying.
 
 
 

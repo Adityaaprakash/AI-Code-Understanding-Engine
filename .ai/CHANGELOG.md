@@ -1,6 +1,25 @@
 # Changelog — AI Code Understanding Engine
 
 All notable changes to this project are recorded here.
+## 2026-08-29 — Phase 3D — Relationship Extraction
+
+**Completed by:** TASK-3D
+
+### Added
+- `RelationshipExtractor` (`code_analyzer/resolution/relationship_extractor.py`) implementing `RelationshipExtractorContract`:
+  - Structural `DECLARES` edge generation for entity parent-child containment (File → Class/Module, Class → Method/Field, Method → Parameter).
+  - Signature `USES` edge generation for variable declared types, function return types, and parameter types matched against `SymbolTable`.
+  - Semantic relationship extraction mapping resolved `Reference` entities to directed graph edges (`CALLS`, `IMPORTS`, `EXTENDS`, `IMPLEMENTS`, `USES`, `OVERRIDES`, `READS`, `REFERENCES`).
+  - Strict resolution filtering: `UNRESOLVED`, `AMBIGUOUS`, `BUILTIN`, and `EXTERNAL` references are excluded from repository-local edge generation to guarantee graph precision.
+  - Deterministic edge ID generation via `generate_edge_id` (UUID v5) for graph idempotency and deduplication.
+- Public exports in `code_analyzer.resolution` (`RelationshipExtractor`).
+- Comprehensive test suite `tests/test_relationship_extractor.py` (16 passing tests covering unit extraction, negative non-edges, Java/Python/TypeScript multi-file repository extraction, and end-to-end `CodeGraph` pipeline validation).
+
+### Verification
+- `uv run ruff check .` ✅
+- `uv run mypy code-analyzer graph` ✅
+- `uv run pytest tests/` (201 passed in 1.56s) ✅
+
 ## 2026-08-29 — Phase 3B/3C — Symbol, Import & Reference Resolution
 
 **Completed by:** TASK-3B/3C

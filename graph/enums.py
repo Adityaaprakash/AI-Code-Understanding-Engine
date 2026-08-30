@@ -36,6 +36,7 @@ class EdgeKind(StrEnum):
     EXTENDS = "extends"
     IMPLEMENTS = "implements"
     TYPED_AS = "typed_as"
+    USES = "uses"
 
     # Polymorphism & Override
     OVERRIDES = "overrides"
