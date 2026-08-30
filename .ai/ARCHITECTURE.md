@@ -84,7 +84,10 @@ Owns fusion scoring and reranking.
 
 ### `graph/`
 Builds and maintains the symbol relationship graph. Reads the Canonical
-Code IR produced by `code-analyzer/` and writes edges to PostgreSQL.
+Code IR produced by `code-analyzer/` and provides graph storage (`InMemoryGraphStore`),
+traversal query engine (`GraphQueryEngine`), and impact analysis engine (`ImpactAnalyzer`).
+Executes reverse dependency BFS traversal to calculate direct/transitive blast radius
+and deterministic explanation paths.
 
 ### `llm/`
 Provider-agnostic LLM and embedding interfaces. Abstracts over

@@ -8,7 +8,7 @@
 
 ## Current Task
 
-TASK-3E & TASK-3F — Graph Storage & Traversal complete. Phase 3 complete. Next Task: Phase 4 — Hybrid Retrieval Engine.
+TASK-3H — Initial Impact Analysis complete. Phase 3 complete. Next Task: Phase 4 — Hybrid Retrieval Engine.
 
 ---
 
@@ -40,24 +40,19 @@ TASK-3E & TASK-3F — Graph Storage & Traversal complete. Phase 3 complete. Next
 - [x] TASK-3B/3C: Symbol, Import & Reference Resolution complete
 - [x] TASK-3D: Relationship Extraction complete
 - [x] TASK-3E/3F: Graph Storage Engine & Traversal Query Engine complete
-  - Implemented `InMemoryGraphStore` in `graph/store.py` adhering to `GraphStoreContract` with $O(1)$ adjacency indexing (`outbound_index`, `inbound_index`, and kind-filtered indices).
-  - Enforced graph integrity constraints, idempotent insertion, conflict detection, cascading node removal, and async snapshot persistence (`save_graph`, `load_graph`, `delete_graph`).
-  - Implemented `GraphQueryEngine` in `graph/query_engine.py` adhering to `GraphQueryEngineContract` for deterministic, language-independent graph traversal.
-  - Implemented callers, callees, dependency closures, dependent closures, and reverse impact radius calculations with BFS cycle prevention and `DEPENDENCY_EDGE_KINDS` semantic edge filtering.
-  - Added unit and integration test suites in `tests/test_graph_store.py` (22 tests) and `tests/test_graph_traversal.py` (10 tests) including synthetic 1,000-node performance tests and full end-to-end pipeline verification.
 - [x] TASK-3G: Code Knowledge Graph Testing & Hardening complete
-  - Implemented `tests/test_graph_hardening.py` covering 11 critical categories of graph invariants.
-  - Verified schema immutability, ID constraints, and JSON round-tripping.
-  - Validated false-positive and false-negative prevention in symbol resolution and alias handling.
-  - Enforced storage engine invariants: O(1) indexing, cascading removal, and duplicate/conflict detection.
-  - Validated traversal safety: directionality, cycle safety, depth-limited traversals, and self-loop handling.
-  - Confirmed sub-second traversal scalability across synthetic 5,000-node adversarial topologies (large fan-in/fan-out star graphs).
-  - Validated end-to-end multi-file, cross-language pipeline integrity.
-  - All 239/239 tests pass cleanly across the codebase with zero regressions. Next task is TASK-3H — Initial Impact Analysis.
+- [x] TASK-3H: Initial Impact Analysis complete
+  - Implemented `ImpactAnalyzer` in `graph/impact_analyzer.py` adhering to `ImpactAnalyzerContract` in `graph/contracts.py`.
+  - Created structured Pydantic models: `ImpactAnalysisResult`, `ImpactedNode`, `ImpactPath`, and `ImpactPathStep` with immutability (`frozen=True`) and lossless JSON serialization.
+  - Implemented reverse dependency BFS traversal ensuring minimum-depth computation, multi-path tracking, cycle safety, self-loop exclusion, and edge-kind filtering (`DEPENDENCY_EDGE_KINDS`).
+  - Added comprehensive test suite `tests/test_impact_analysis.py` covering all 32 required categories: direct vs transitive impact, depth limits (0, 1, 2, None), minimum depth shortest-path calculation, path step directionality, structural edge exclusion, missing root error handling, multi-language E2E pipelines (Java, Python, TypeScript), large fan-in (500 callers), 5,000 synthetic node performance, and adversarial topology correctness.
+  - All 251/251 tests pass cleanly with 100% ruff and mypy compliance.
 
 ---
 
 ## In Progress
+
+- None (Phase 3 complete)
 
 - None (Phase 3 complete)
 

@@ -101,7 +101,7 @@ def test_graph_node_validation_and_immutability() -> None:
 
     # Verify frozen immutability
     with pytest.raises(ValidationError):
-        setattr(node, "name", "ModifiedService")
+        node.name = "ModifiedService"
 
     # Verify invalid empty ID
     with pytest.raises(ValidationError):
@@ -175,7 +175,7 @@ def test_graph_edge_validation_and_immutability() -> None:
 
     # Immutability check
     with pytest.raises(ValidationError):
-        setattr(edge, "confidence", 0.5)
+        edge.confidence = 0.5
 
     # Invalid confidence check
     with pytest.raises(ValidationError):

@@ -388,6 +388,36 @@ service needed for this task.
 - [x] Dedicated unit and integration test suites in `tests/test_graph_store.py` (22 tests) and `tests/test_graph_traversal.py` (10 tests) including 1,000-node synthetic benchmark tests and full end-to-end pipeline verification
 - [x] All quality gates pass (`uv run ruff check .`, `uv run ruff format --check .`, `uv run mypy graph tests`, `uv run pytest` (224 passed))
 
+### TASK-3G: Code Knowledge Graph Testing & Hardening
+
+**Status:** ✅ Done  
+**Blockers:** TASK-3E/3F ✅  
+**Scope:** Aggregate, harden, and stress test the entire Phase 3 Code Knowledge Graph pipeline.
+
+**Acceptance criteria:**
+- [x] Created `tests/test_graph_hardening.py` covering 11 critical categories of graph invariants
+- [x] Verified schema immutability, ID constraints, and JSON round-tripping
+- [x] Validated false-positive and false-negative prevention in symbol resolution and alias handling
+- [x] Enforced storage engine invariants: O(1) indexing, cascading removal, and duplicate/conflict detection
+- [x] Validated traversal safety: directionality, cycle safety, depth-limited traversals, and self-loop handling
+- [x] Confirmed sub-second traversal scalability across synthetic 5,000-node adversarial topologies (large fan-in/fan-out star graphs)
+- [x] Validated end-to-end multi-file, cross-language pipeline integrity
+- [x] All quality gates pass (`uv run ruff check .`, `uv run mypy .`, `uv run pytest` (239 passed))
+
+### TASK-3H: Initial Impact Analysis
+
+**Status:** ✅ Done  
+**Blockers:** TASK-3G ✅  
+**Scope:** Implement production-grade impact analysis capability calculating direct/transitive impact radii and structured explanation paths.
+
+**Acceptance criteria:**
+- [x] Defined `ImpactAnalyzerContract` in `graph/contracts.py` and exported public API in `graph/__init__.py`
+- [x] Implemented `ImpactAnalyzer` in `graph/impact_analyzer.py` executing deterministic reverse dependency BFS traversal
+- [x] Created structured Pydantic models: `ImpactAnalysisResult`, `ImpactedNode`, `ImpactPath`, and `ImpactPathStep` with immutability (`frozen=True`) and lossless JSON serialization
+- [x] Supported direct vs transitive impact categorization, minimum-depth calculation (`minimum_depth`), path step edge direction preservation, self-loop exclusion, cycle safety, and custom/default edge kind filtering (`DEPENDENCY_EDGE_KINDS`)
+- [x] Built comprehensive test suite `tests/test_impact_analysis.py` covering all 32 required categories: depth limits (0, 1, 2, None), minimum depth shortest-path calculation, path step directionality, structural edge exclusion, missing root KeyError handling, multi-language E2E pipelines (Java, Python, TypeScript), large fan-in (500 callers), 5,000 synthetic node performance, and adversarial topology correctness
+- [x] All quality gates pass (`uv run ruff check .`, `uv run mypy .`, `uv run pytest` (251 passed))
+
 ## Notes for AI Agents
 
 - Each task above is independently implementable; do not merge tasks.

@@ -1,6 +1,7 @@
 """Abstract base class contracts and interfaces for Phase 3 Code Knowledge Graph components."""
 
 from abc import ABC, abstractmethod
+from typing import Any
 
 from code_analyzer.ir import File, IREntity, Reference
 from graph.edges import GraphEdge
@@ -201,3 +202,32 @@ class GraphQueryEngineContract(ABC):
             List of impacted GraphNode instances.
         """
         raise NotImplementedError
+
+
+class ImpactAnalyzerContract(ABC):
+    """Contract for deterministic, graph-based initial impact analysis (Task 3H)."""
+
+    @abstractmethod
+    def analyze_impact(
+        self,
+        node_id: str,
+        graph: Any,
+        max_depth: int | None = None,
+        edge_kinds: set[Any] | list[Any] | None = None,
+    ) -> Any:
+        """Compute structured impact analysis result for a modified symbol node.
+
+        Args:
+            node_id: Target/root node ID being modified.
+            graph: CodeGraph container or InMemoryGraphStore.
+            max_depth: Traversal depth limit (1 = direct dependents, None = unlimited).
+            edge_kinds: Optional custom edge kinds filter. Defaults to DEPENDENCY_EDGE_KINDS.
+
+        Returns:
+            ImpactAnalysisResult containing root metadata, impacted nodes, paths, and depth info.
+
+        Raises:
+            KeyError: If node_id is not found in graph.
+        """
+        raise NotImplementedError
+

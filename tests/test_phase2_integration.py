@@ -595,7 +595,7 @@ def test_canonical_entity_immutability() -> None:
 
     cls = norm.classes[0]
     with pytest.raises((ValidationError, TypeError)):
-        setattr(cls, "name", "Mutated")
+        cls.name = "Mutated"
 
 
 # =====================================================================

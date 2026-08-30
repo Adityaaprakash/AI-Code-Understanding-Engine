@@ -1,6 +1,34 @@
 # Changelog — AI Code Understanding Engine
 
 All notable changes to this project are recorded here.
+## 2026-08-30 — Phase 3H — Initial Impact Analysis
+
+**Completed by:** TASK-3H
+
+### Added
+- `ImpactAnalyzerContract` abstract base class in `graph/contracts.py`.
+- `ImpactAnalyzer` in `graph/impact_analyzer.py` executing deterministic reverse dependency BFS traversal on the Code Knowledge Graph.
+- Structured Pydantic result and explanation models in `graph/impact_analyzer.py`:
+  - `ImpactAnalysisResult`: Immutable container model for complete impact analysis output, including root symbol metadata, depth limits, total impacted count, and sorted lists of impacted nodes and explanation paths.
+  - `ImpactedNode`: Model representing an impacted symbol node, including minimum distance (`minimum_depth`), metadata, and sorted relationship kinds (`relationship_types`).
+  - `ImpactPath`: Explanatory path model representing a multi-hop traversal chain from the root symbol to an impacted dependent node.
+  - `ImpactPathStep`: Directional step model reflecting the original stored edge transition (`source_id -> target_id via kind`) in an impact context.
+- Dedicated unit and end-to-end integration test suite in `tests/test_impact_analysis.py` (12 tests covering 32 validation categories):
+  - Direct vs transitive impact radius determination.
+  - Max depth limits (`max_depth=0`, `1`, `2`, `None`).
+  - Minimum impact depth computation via BFS shortest-path guarantee.
+  - Edge directionality preservation in path explanation steps.
+  - Structural containment edge exclusion (`DECLARES` edge filtering).
+  - KeyError handling for missing root nodes.
+  - Multi-language E2E pipeline verification (Java, Python, TypeScript source parsing to IR, normalization, symbol table registration, reference resolution, relationship extraction, graph storage, and impact analysis).
+  - Scalability benchmarks on 500-caller fan-in star graphs and 5,000 synthetic node topologies with sub-second execution times.
+- Public exports in `graph/__init__.py`: `ImpactAnalyzer`, `ImpactAnalysisResult`, `ImpactedNode`, `ImpactPath`, and `ImpactPathStep`.
+
+### Verification
+- `uv run ruff check .` ✅ (0 errors)
+- `uv run mypy .` ✅ (0 errors across 91 source files)
+- `uv run pytest` ✅ (251 passed in 16s)
+
 ## 2026-08-30 — Phase 3E/3F — Graph Storage Engine & Traversal Query Engine
 
 **Completed by:** TASK-3E & TASK-3F

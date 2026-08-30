@@ -6,52 +6,32 @@ cycle safety, depth limits, cross-language equivalence, large graph scalability,
 adversarial topologies, and end-to-end pipeline integrity.
 """
 
-import asyncio
-import json
-from typing import Any
 
 import pytest
 from pydantic import ValidationError
 
 from code_analyzer.ir import (
-    Class,
     EntityKind,
     File,
-    Function,
-    Method,
-    Module,
-    Parameter,
     Reference,
     ReferenceKind,
     SourceLocation,
-    Variable,
-    generate_entity_id,
 )
 from code_analyzer.normalization import NormalizationResult, normalize_parse_result
 from code_analyzer.parsers import JavaParser, PythonParser, TypeScriptParser
 from code_analyzer.parsers.models import Language
 from code_analyzer.resolution import (
-    ImportResolver,
     ReferenceResolver,
     RelationshipExtractor,
     ResolutionContext,
-    ResolutionResult,
     SymbolEntry,
     SymbolTable,
 )
-from code_analyzer.resolution.result import ResolutionStatus
-from graph.contracts import (
-    GraphQueryEngineContract,
-    GraphStoreContract,
-    RelationshipExtractorContract,
-    SymbolRegistrarContract,
-)
-from graph.edges import GraphEdge, generate_edge_id
-from graph.enums import EdgeKind, NodeKind
-from graph.enums import ResolutionStatus as GraphResolutionStatus
+from graph.edges import GraphEdge
+from graph.enums import EdgeKind, NodeKind, ResolutionStatus
 from graph.models import CodeGraph
 from graph.nodes import GraphNode
-from graph.query_engine import DEPENDENCY_EDGE_KINDS, GraphQueryEngine
+from graph.query_engine import GraphQueryEngine
 from graph.store import InMemoryGraphStore
 
 REPO_ID = "repo-hardening-suite"
@@ -123,11 +103,11 @@ def test_node_and_edge_schema_invariants() -> None:
     # Immutability verification
     node = GraphNode(id="node-1", kind=NodeKind.CLASS, name="TestClass")
     with pytest.raises(ValidationError):
-        setattr(node, "name", "MutatedClass")
+        node.name = "MutatedClass"
 
     edge = GraphEdge(id="edge-1", source_id="src", target_id="tgt", kind=EdgeKind.CALLS)
     with pytest.raises(ValidationError):
-        setattr(edge, "confidence", 0.5)
+        edge.confidence = 0.5
 
 
 @pytest.mark.unit
@@ -306,7 +286,7 @@ def test_unresolved_ambiguous_builtin_relationship_safety() -> None:
         ],
     )
     st = SymbolTable()
-    nodes, edges = extractor.extract_from_normalization_result(norm, st)
+    _nodes, edges = extractor.extract_from_normalization_result(norm, st)
 
     # Builtin "print" and missing "NonExistentModule" must be excluded from edges
     semantic_edges = [e for e in edges if e.kind != EdgeKind.DECLARES]

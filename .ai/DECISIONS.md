@@ -314,3 +314,30 @@ PEP 735 (`[dependency-groups]`).
 - The pinned version in `.python-version` is read by uv automatically.
 - Do not commit `.venv/` (already in `.gitignore`).
 - Do commit `uv.lock` (to be generated — guarantees reproducible installs).
+
+---
+
+## ADR-014: Impact Analysis via Reverse Dependency Traversal
+
+**Status:** Accepted  
+**Date:** 2026-08-30
+
+### Context
+The Code Knowledge Graph must answer blast-radius and impact analysis questions ("Who depends on symbol X?", "What code is affected if symbol X changes?").
+
+### Decision
+Implement `ImpactAnalyzer` using Breadth-First Search (BFS) reverse dependency traversal over the Code Knowledge Graph:
+1. Inbound traversal (`dependent_id -> dependency_id`) following semantic dependency edge kinds (`CALLS`, `USES`, `EXTENDS`, `IMPLEMENTS`, `OVERRIDES`, `READS`, `REFERENCES`, `IMPORTS`).
+2. Minimum depth computation (`minimum_depth`) ensuring that if a symbol is reachable via multiple paths, its reported distance is the shortest hop distance from the root.
+3. Path explanation reconstruction (`ImpactPath` and `ImpactPathStep`) preserving original stored edge transition directionality (`source_id -> target_id via kind`).
+4. Strict cycle safety preventing infinite recursion on recursive or cyclic graph structures.
+5. Self-loop and structural containment edge exclusion (`DECLARES` edge filtering).
+
+### Rationale
+- Pure graph-derived traversal operates on pre-extracted semantic relationships without reparsing source code or fuzzy string matching.
+- BFS naturally discovers shortest paths for distance calculation.
+- Explanatory path structures enable downstream LLMs and UI components to explain *why* a symbol is impacted.
+
+### Consequences
+- Requires valid symbol resolution and relationship extraction.
+- Graph queries must use `InMemoryGraphStore` or PostgreSQL index lookup for reverse edges (`inbound_index`).
