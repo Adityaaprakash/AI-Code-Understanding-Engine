@@ -49,11 +49,15 @@ class CodeChunker(CodeChunkerContract):
         result: NormalizationResult,
         source_code: str | None = None,
         max_lines_per_chunk: int = 150,
+        commit_id: str | None = None,
+        commit_sha: str | None = None,
     ) -> CodeChunkCollection:
         """Generate deterministic semantic chunks from a single file NormalizationResult."""
         if not result or not result.file:
             return CodeChunkCollection(
                 repository_id=result.file.repository_id if result and result.file else "unknown",
+                commit_id=commit_id,
+                commit_sha=commit_sha,
                 chunks=[],
                 file_chunk_map={},
                 entity_chunk_map={},
@@ -72,6 +76,8 @@ class CodeChunker(CodeChunkerContract):
             result=result,
             source_code=source_code,
             max_lines_per_chunk=max_lines_per_chunk,
+            commit_id=commit_id,
+            commit_sha=commit_sha,
         )
         if file_chunk:
             key = (file_chunk.entity_id or file_id, file_chunk.chunk_type.value, 0)
@@ -89,6 +95,8 @@ class CodeChunker(CodeChunkerContract):
                 language=language,
                 source_code=source_code,
                 max_lines_per_chunk=max_lines_per_chunk,
+                commit_id=commit_id,
+                commit_sha=commit_sha,
             )
             for c in cls_chunks:
                 key = (c.entity_id or cls_entity.id, c.chunk_type.value, c.sub_chunk_index)
@@ -106,6 +114,8 @@ class CodeChunker(CodeChunkerContract):
                 language=language,
                 source_code=source_code,
                 max_lines_per_chunk=max_lines_per_chunk,
+                commit_id=commit_id,
+                commit_sha=commit_sha,
             )
             for c in iface_chunks:
                 key = (c.entity_id or iface_entity.id, c.chunk_type.value, c.sub_chunk_index)
@@ -123,6 +133,8 @@ class CodeChunker(CodeChunkerContract):
                 language=language,
                 source_code=source_code,
                 max_lines_per_chunk=max_lines_per_chunk,
+                commit_id=commit_id,
+                commit_sha=commit_sha,
             )
             for c in func_chunks:
                 key = (c.entity_id or func_entity.id, c.chunk_type.value, c.sub_chunk_index)
@@ -140,6 +152,8 @@ class CodeChunker(CodeChunkerContract):
                 language=language,
                 source_code=source_code,
                 max_lines_per_chunk=max_lines_per_chunk,
+                commit_id=commit_id,
+                commit_sha=commit_sha,
             )
             for c in method_chunks:
                 key = (c.entity_id or method_entity.id, c.chunk_type.value, c.sub_chunk_index)
@@ -161,6 +175,8 @@ class CodeChunker(CodeChunkerContract):
 
         return CodeChunkCollection(
             repository_id=repository_id,
+            commit_id=commit_id,
+            commit_sha=commit_sha,
             chunks=sorted_chunks,
             file_chunk_map=file_map,
             entity_chunk_map=entity_map,
@@ -171,6 +187,8 @@ class CodeChunker(CodeChunkerContract):
         results: list[NormalizationResult],
         source_files: dict[str, str] | None = None,
         max_lines_per_chunk: int = 150,
+        commit_id: str | None = None,
+        commit_sha: str | None = None,
     ) -> CodeChunkCollection:
         """Generate deterministic semantic chunks across multiple NormalizationResults."""
         source_files = source_files or {}
@@ -191,6 +209,8 @@ class CodeChunker(CodeChunkerContract):
                 result=res,
                 source_code=file_code,
                 max_lines_per_chunk=max_lines_per_chunk,
+                commit_id=commit_id,
+                commit_sha=commit_sha,
             )
             for c in file_coll.chunks:
                 all_chunks.append(c)
@@ -200,6 +220,8 @@ class CodeChunker(CodeChunkerContract):
 
         return CodeChunkCollection(
             repository_id=repo_id,
+            commit_id=commit_id,
+            commit_sha=commit_sha,
             chunks=all_chunks,
             file_chunk_map=file_map,
             entity_chunk_map=entity_map,
@@ -214,6 +236,8 @@ class CodeChunker(CodeChunkerContract):
         result: NormalizationResult,
         source_code: str | None,
         max_lines_per_chunk: int,
+        commit_id: str | None = None,
+        commit_sha: str | None = None,
     ) -> CodeChunk | None:
         """Construct the FILE_CONTEXT chunk representing top-level context."""
         file_entity = result.file
@@ -257,6 +281,8 @@ class CodeChunker(CodeChunkerContract):
             id=chunk_id,
             chunk_type=ChunkType.FILE_CONTEXT,
             repository_id=file_entity.repository_id,
+            commit_id=commit_id,
+            commit_sha=commit_sha,
             file_id=file_entity.id,
             file_path=file_entity.path,
             language=file_entity.language,
@@ -279,6 +305,8 @@ class CodeChunker(CodeChunkerContract):
         language: Any,
         source_code: str | None,
         max_lines_per_chunk: int,
+        commit_id: str | None = None,
+        commit_sha: str | None = None,
     ) -> list[CodeChunk]:
         """Construct CLASS_CONTEXT chunk and sub-chunks if oversized."""
         loc = cls_entity.location or SourceLocation(
@@ -310,6 +338,8 @@ class CodeChunker(CodeChunkerContract):
                     id=chunk_id,
                     chunk_type=ChunkType.CLASS_CONTEXT,
                     repository_id=repository_id,
+                    commit_id=commit_id,
+                    commit_sha=commit_sha,
                     file_id=file_id,
                     file_path=file_path,
                     language=language,
@@ -346,6 +376,8 @@ class CodeChunker(CodeChunkerContract):
             loc=loc,
             source_code=source_code,
             max_lines_per_chunk=max_lines_per_chunk,
+            commit_id=commit_id,
+            commit_sha=commit_sha,
         )
 
     def _build_interface_chunks(
@@ -357,6 +389,8 @@ class CodeChunker(CodeChunkerContract):
         language: Any,
         source_code: str | None,
         max_lines_per_chunk: int,
+        commit_id: str | None = None,
+        commit_sha: str | None = None,
     ) -> list[CodeChunk]:
         """Construct INTERFACE_CONTEXT chunk and sub-chunks if oversized."""
         loc = iface_entity.location or SourceLocation(
@@ -386,6 +420,8 @@ class CodeChunker(CodeChunkerContract):
                     id=chunk_id,
                     chunk_type=ChunkType.INTERFACE_CONTEXT,
                     repository_id=repository_id,
+                    commit_id=commit_id,
+                    commit_sha=commit_sha,
                     file_id=file_id,
                     file_path=file_path,
                     language=language,
@@ -418,6 +454,8 @@ class CodeChunker(CodeChunkerContract):
             loc=loc,
             source_code=source_code,
             max_lines_per_chunk=max_lines_per_chunk,
+            commit_id=commit_id,
+            commit_sha=commit_sha,
         )
 
     def _build_function_chunks(
@@ -429,6 +467,8 @@ class CodeChunker(CodeChunkerContract):
         language: Any,
         source_code: str | None,
         max_lines_per_chunk: int,
+        commit_id: str | None = None,
+        commit_sha: str | None = None,
     ) -> list[CodeChunk]:
         """Construct FUNCTION chunk and sub-chunks if oversized."""
         loc = func_entity.location or SourceLocation(
@@ -460,6 +500,8 @@ class CodeChunker(CodeChunkerContract):
                     id=chunk_id,
                     chunk_type=ChunkType.FUNCTION,
                     repository_id=repository_id,
+                    commit_id=commit_id,
+                    commit_sha=commit_sha,
                     file_id=file_id,
                     file_path=file_path,
                     language=language,
@@ -495,6 +537,8 @@ class CodeChunker(CodeChunkerContract):
             loc=loc,
             source_code=source_code,
             max_lines_per_chunk=max_lines_per_chunk,
+            commit_id=commit_id,
+            commit_sha=commit_sha,
         )
 
     def _build_method_chunks(
@@ -506,6 +550,8 @@ class CodeChunker(CodeChunkerContract):
         language: Any,
         source_code: str | None,
         max_lines_per_chunk: int,
+        commit_id: str | None = None,
+        commit_sha: str | None = None,
     ) -> list[CodeChunk]:
         """Construct METHOD chunk and sub-chunks if oversized."""
         loc = method_entity.location or SourceLocation(
@@ -540,6 +586,8 @@ class CodeChunker(CodeChunkerContract):
                     id=chunk_id,
                     chunk_type=ChunkType.METHOD,
                     repository_id=repository_id,
+                    commit_id=commit_id,
+                    commit_sha=commit_sha,
                     file_id=file_id,
                     file_path=file_path,
                     language=language,
@@ -577,6 +625,8 @@ class CodeChunker(CodeChunkerContract):
             loc=loc,
             source_code=source_code,
             max_lines_per_chunk=max_lines_per_chunk,
+            commit_id=commit_id,
+            commit_sha=commit_sha,
         )
 
     def _split_oversized_entity(
@@ -595,6 +645,8 @@ class CodeChunker(CodeChunkerContract):
         loc: SourceLocation,
         source_code: str | None,
         max_lines_per_chunk: int,
+        commit_id: str | None = None,
+        commit_sha: str | None = None,
     ) -> list[CodeChunk]:
         """Hierarchical deterministic fallback for splitting oversized entities into sub-chunks.
 
@@ -634,6 +686,8 @@ class CodeChunker(CodeChunkerContract):
             id=primary_chunk_id,
             chunk_type=primary_chunk_type,
             repository_id=repository_id,
+            commit_id=commit_id,
+            commit_sha=commit_sha,
             file_id=file_id,
             file_path=file_path,
             language=language,
@@ -684,6 +738,8 @@ class CodeChunker(CodeChunkerContract):
                     id=sub_chunk_id,
                     chunk_type=ChunkType.SUB_CHUNK,
                     repository_id=repository_id,
+                    commit_id=commit_id,
+                    commit_sha=commit_sha,
                     file_id=file_id,
                     file_path=file_path,
                     language=language,

@@ -8,7 +8,7 @@
 
 ## Current Task
 
-TASK-4A — AST/IR-Aware Code Chunking complete. Next Task: TASK-4B — Code Chunk Metadata Enrichment.
+TASK-4B — Code Chunk Metadata Enrichment complete. Next Task: TASK-4C — Dense Vector Embedding Infrastructure.
 
 ---
 
@@ -43,19 +43,20 @@ TASK-4A — AST/IR-Aware Code Chunking complete. Next Task: TASK-4B — Code Chu
 - [x] TASK-3G: Code Knowledge Graph Testing & Hardening complete
 - [x] TASK-3H: Initial Impact Analysis complete
 - [x] TASK-4A: AST/IR-Aware Code Chunking complete
-  - Implemented `CodeChunker` in `retrieval/chunker.py` adhering to `CodeChunkerContract` in `retrieval/contracts.py`.
-  - Created structured immutable Pydantic models: `CodeChunk` and `CodeChunkCollection` with field validation and lookup indices.
-  - Implemented deterministic UUID v5 chunk identity generator `generate_chunk_id` in `retrieval/identity.py` based on stable semantic seed keys (`repo|file|type|entity|loc|sub_index`).
-  - Established semantic chunk hierarchy (`FILE_CONTEXT`, `CLASS_CONTEXT`, `INTERFACE_CONTEXT`, `FUNCTION`, `METHOD`, `SUB_CHUNK`) with structural context preservation and source range tracking.
-  - Implemented deterministic fallback policy for oversized entities exceeding `max_lines_per_chunk` (default 150 lines), producing primary header chunks and line-range sub-chunks while maintaining parent entity identity and source order.
-  - Added comprehensive test suite `tests/test_chunking.py` covering all 28 required test categories and validation scenarios across Java, Python, and TypeScript fixtures, empty files, nested symbols, duplicate prevention, synthetic scale (1,000 entities in <1s), IR immutability, and graph separation.
-  - All 276/276 tests pass cleanly with 100% ruff check, ruff format, and mypy type checking compliance.
+- [x] TASK-4B: Code Chunk Metadata Enrichment complete
+  - Extended `CodeChunk` and `CodeChunkCollection` models to include optional `commit_id` and `commit_sha` metadata for version revision tracking.
+  - Added property aliases `symbol_name` (`name`) and `symbol_id` (`entity_id`) for standardized symbol access across retrieval layers.
+  - Implemented `to_index_dict()` method on `CodeChunk` providing complete, normalized metadata payloads for downstream vector embedding (4C) and BM25 indexing (4D) without duplicating Canonical IR.
+  - Added comprehensive validation for core identity strings, forward-slash path normalization, source location bounds, sub-chunk indexing ranges, and sub-chunk parent linkages.
+  - Propagated revision metadata through `CodeChunkerContract` and builder methods in `CodeChunker`.
+  - Added test suite `tests/test_chunk_metadata.py` covering repository/commit tracking, path normalization, property aliases, parent hierarchy linkages, sub-chunk metadata, validation rules, immutability, determinism, and index readiness.
+  - All 287/287 tests pass cleanly with 100% ruff check, ruff format, and mypy compliance.
 
 ---
 
 ## In Progress
 
-- TASK-4B — Code Chunk Metadata Enrichment (Next)
+- TASK-4C — Dense Vector Embedding Infrastructure (Next)
 
 ---
 

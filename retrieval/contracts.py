@@ -15,6 +15,8 @@ class CodeChunkerContract(ABC):
         result: NormalizationResult,
         source_code: str | None = None,
         max_lines_per_chunk: int = 150,
+        commit_id: str | None = None,
+        commit_sha: str | None = None,
     ) -> CodeChunkCollection:
         """Generate deterministic semantic chunks from a single file NormalizationResult.
 
@@ -22,6 +24,8 @@ class CodeChunkerContract(ABC):
             result: Normalized Canonical Code IR result for a single file.
             source_code: Optional original raw source text for snippet extraction.
             max_lines_per_chunk: Maximum line threshold for oversized entity sub-chunking.
+            commit_id: Optional internal commit ID.
+            commit_sha: Optional Git commit SHA.
 
         Returns:
             CodeChunkCollection containing ordered semantic chunks.
@@ -34,6 +38,8 @@ class CodeChunkerContract(ABC):
         results: list[NormalizationResult],
         source_files: dict[str, str] | None = None,
         max_lines_per_chunk: int = 150,
+        commit_id: str | None = None,
+        commit_sha: str | None = None,
     ) -> CodeChunkCollection:
         """Generate deterministic semantic chunks across a collection of NormalizationResults.
 
@@ -41,6 +47,8 @@ class CodeChunkerContract(ABC):
             results: List of NormalizationResults across repository files.
             source_files: Optional mapping of file_path -> raw source code text.
             max_lines_per_chunk: Maximum line threshold for oversized entity sub-chunking.
+            commit_id: Optional internal commit ID.
+            commit_sha: Optional Git commit SHA.
 
         Returns:
             Aggregated CodeChunkCollection for the entire repository.

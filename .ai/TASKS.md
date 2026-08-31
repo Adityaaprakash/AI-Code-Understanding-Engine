@@ -439,6 +439,22 @@ service needed for this task.
 - [x] Added comprehensive test suite `tests/test_chunking.py` covering all 28 required test categories and validation scenarios across Java, Python, and TypeScript fixtures, empty files, nested symbols, duplicate prevention, synthetic scale (1,000 entities in <1s), IR immutability, and graph separation
 - [x] All quality gates pass (`uv run ruff check .`, `uv run ruff format --check .`, `uv run mypy .`, `uv run pytest tests/` (276 passed))
 
+### TASK-4B: Code Chunk Metadata Enrichment
+
+**Status:** ✅ Done  
+**Blockers:** TASK-4A ✅  
+**Scope:** Harden and complete the metadata layer surrounding the AST/IR-aware `CodeChunk` implementation to support embedding vector storage, BM25 indexing, hybrid retrieval, source citations, filtering, revision tracking, and incremental indexing.
+
+**Acceptance criteria:**
+- [x] Extended `CodeChunk` and `CodeChunkCollection` models to include optional `commit_id` and `commit_sha` fields for version revision tracking
+- [x] Added convenience property aliases `symbol_name` (alias for `name`) and `symbol_id` (alias for `entity_id`) to support indexing consumers
+- [x] Implemented `to_index_dict()` method on `CodeChunk` providing complete, normalized metadata payloads for downstream vector embedding (4C) and BM25 indexing (4D) without duplicating Canonical IR
+- [x] Added robust field validators for core identity strings, forward-slash file path normalization, valid line ranges, sub-chunk index bounds, and sub-chunk parent linkages
+- [x] Updated `CodeChunkerContract` and `CodeChunker` builder methods to propagate revision metadata (`commit_id` and `commit_sha`)
+- [x] Maintained strict model immutability (`frozen=True`) and determinism without modifying Canonical IR models or coupling to indexing engines
+- [x] Built comprehensive test suite `tests/test_chunk_metadata.py` covering repository/commit tracking, path normalization, property aliases, parent hierarchy linkages, sub-chunk metadata, validation rules, immutability, determinism, and index consumer readiness
+- [x] All quality gates pass (`uv run ruff check .`, `uv run ruff format --check .`, `uv run mypy .`, `uv run pytest tests/` (287 passed))
+
 ## Notes for AI Agents
 
 - Each task above is independently implementable; do not merge tasks.
