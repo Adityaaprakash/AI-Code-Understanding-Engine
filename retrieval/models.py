@@ -26,10 +26,16 @@ class CodeChunk(BaseModel):
     @model_validator(mode="before")
     @classmethod
     def _populate_defaults(cls, data: Any) -> Any:
-        """Populate file_id from file_path if omitted or empty."""
-        if isinstance(data, dict) and not data.get("file_id") and data.get("file_path"):
-            data["file_id"] = data["file_path"]
+        """Populate file_id from file_path if omitted or empty and normalize backslashes."""
+        if isinstance(data, dict) and data.get("file_path"):
+            norm_path = data["file_path"].replace("\\", "/")
+            data["file_path"] = norm_path
+            if not data.get("file_id"):
+                data["file_id"] = norm_path
+            elif isinstance(data.get("file_id"), str):
+                data["file_id"] = data["file_id"].replace("\\", "/")
         return data
+
     entity_id: str | None = None
     parent_entity_id: str | None = None
     parent_chunk_id: str | None = None

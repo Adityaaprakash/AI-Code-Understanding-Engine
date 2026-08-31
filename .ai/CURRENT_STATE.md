@@ -2,13 +2,13 @@
 
 ## Active Phase
 
-**Phase 4 — Code Chunking & Indexing**
+**Phase 4 — Code Chunking & Indexing COMPLETE** (Preparing for Phase 5 — Retrieval & Search Orchestration)
 
 ---
 
 ## Current Task
 
-TASK-4D — Code-Aware Lexical Indexing (BM25) complete. Phase 4 Indexing and Chunking complete.
+TASK-4E — Phase 4 Indexing Testing & Hardening complete. Entire Phase 4 Retrieval Foundation verified and production-hardened.
 
 ---
 
@@ -46,6 +46,16 @@ TASK-4D — Code-Aware Lexical Indexing (BM25) complete. Phase 4 Indexing and Ch
 - [x] TASK-4B: Code Chunk Metadata Enrichment complete
 - [x] TASK-4C: Dense Vector Embedding Infrastructure complete
 - [x] TASK-4D: Code-Aware Lexical Indexing (BM25) complete
+- [x] TASK-4E: Phase 4 Index Testing & Hardening complete
+  - Implemented end-to-end integration test suite `tests/test_indexing_hardening.py` connecting Canonical IR -> `CodeChunker` -> `CodeChunkCollection` -> `EmbeddingPipeline` & `BM25LexicalIndex`.
+  - Verified chunk identity determinism (UUID v5), identity input sensitivity, metadata propagation, and forward-slash path normalization across all 3 languages (Java, Python, TypeScript).
+  - Verified sub-chunk parent-child indexing linkage and granularity hierarchy (`FILE_CONTEXT`, `CLASS_CONTEXT`, `INTERFACE_CONTEXT`, `FUNCTION`, `METHOD`, `SUB_CHUNK`).
+  - Amplified symbol name field weight to 10.0x in `LexicalTextBuilder` to guarantee exact symbol matches rank #1 over long body term repetition (adversarial test passed).
+  - Verified cross-layer immutability (Pydantic `frozen=True`) with deep-copy snapshot equality checks before and after indexing.
+  - Verified BM25 mathematical properties (rare vs common terms, TF saturation, doc length normalization, multiple query terms, zero-result handling).
+  - Verified strict repository isolation, insertion-order independent search results (rebuild equivalence), deterministic tie-breaking (score DESC, `chunk_id` ASC), and referential integrity.
+  - Verified performance scale on 1,000+ chunks, batch call reduction ($\lceil N / B \rceil$), and exception failure injection.
+  - All 344 tests (340 active, 4 skipped) pass cleanly with 100% ruff check, ruff format, and mypy compliance.
   - Defined `LexicalIndexContract` in `retrieval/contracts.py` for indexing and search contracts.
   - Implemented immutable Pydantic models `LexicalDocument`, `LexicalSearchResult`, and `LexicalSearchResultSet` in `retrieval/lexical_models.py`.
   - Created code-aware `CodeTokenizer` in `retrieval/tokenizer.py` handling camelCase, PascalCase, snake_case, SCREAMING_SNAKE_CASE, acronyms, qualified names, file paths, and code keywords.

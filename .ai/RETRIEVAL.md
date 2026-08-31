@@ -61,7 +61,7 @@ prunes to a token budget before passing to the LLM.
 
 ## Retrieval Components
 
-### BM25 Lexical Index (TASK-4D Implemented)
+### BM25 Lexical Index (TASK-4D/4E Implemented & Hardened)
 
 **Purpose:** Exact and near-exact keyword search — symbol names, qualified names, method signatures, file paths, and identifiers.
 
@@ -69,7 +69,7 @@ prunes to a token budget before passing to the LLM.
 
 **Key Architecture Features:**
 - **Code-Aware Tokenizer (`CodeTokenizer`):** Preserves original full identifiers (case-folded) while splitting camelCase, PascalCase, snake_case, SCREAMING_SNAKE_CASE, acronyms (`JWT`), qualified names (`com.example.Service`), and file paths (`src/auth/AuthService.java`).
-- **Field Weighting (`LexicalTextBuilder`):** Symbol name (3.0x), qualified name (3.0x), file path (2.0x), signature (2.0x), doc comments (1.5x), and content (1.0x).
+- **Field Weighting (`LexicalTextBuilder`):** Symbol name (10.0x), qualified name (5.0x), file path (3.0x), signature (3.0x), doc comments (1.5x), and content (1.0x).
 - **BM25 Formula:** Standard Robertson-Spärck Jones BM25 algorithm ($k_1=1.5, b=0.75$) with Inverse Document Frequency (IDF) +1 smoothing.
 - **Repository Isolation (`RepositoryBM25Index`):** Repository data structures are isolated per `repository_id`.
 - **Deterministic Tie-Breaking:** Candidate ranking sorts by `score` descending, breaking ties with `chunk_id` ascending.

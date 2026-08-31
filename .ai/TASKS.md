@@ -488,6 +488,23 @@ service needed for this task.
 - [x] Built comprehensive unit test suite `tests/test_lexical_index.py` covering tokenization, exact identifier matching, field weighting, repository isolation, index lifecycle (add/remove/clear/replacement), edge cases, BM25 math properties, cross-language parity (Java, Python, TypeScript), scale performance, and immutability
 - [x] All quality gates pass (`uv run ruff check .`, `uv run ruff format --check .`, `uv run mypy .`, `uv run pytest tests/` (331 passed))
 
+### TASK-4E: Index Testing & Hardening
+
+**Status:** ✅ Done  
+**Blockers:** TASK-4A ✅, TASK-4B ✅, TASK-4C ✅, TASK-4D ✅  
+**Scope:** Final integration testing, correctness validation, determinism verification, regression testing, and hardening of the entire Phase 4 retrieval and indexing foundation.
+
+**Acceptance criteria:**
+- [x] Implemented end-to-end integration test suite `tests/test_indexing_hardening.py` connecting Canonical IR -> `CodeChunker` -> `CodeChunkCollection` -> `EmbeddingPipeline` & `BM25LexicalIndex`
+- [x] Verified chunk identity determinism (UUID v5), identity input sensitivity, metadata propagation, and forward-slash path normalization across all 3 MVP languages (Java, Python, TypeScript)
+- [x] Verified sub-chunk parent-child indexing linkage and granularity hierarchy (`FILE_CONTEXT`, `CLASS_CONTEXT`, `INTERFACE_CONTEXT`, `FUNCTION`, `METHOD`, `SUB_CHUNK`)
+- [x] Amplified symbol name field weight to 10.0x in `LexicalTextBuilder` to guarantee exact symbol matches rank #1 over long body term repetition (adversarial test passed)
+- [x] Verified cross-layer immutability (Pydantic `frozen=True`) with deep-copy snapshot equality checks before and after indexing
+- [x] Verified BM25 mathematical properties (rare vs common terms, TF saturation, doc length normalization, multiple query terms, zero-result handling)
+- [x] Verified strict repository isolation, insertion-order independent search results (rebuild equivalence), deterministic tie-breaking (score DESC, `chunk_id` ASC), and referential integrity
+- [x] Verified performance scale on 1,000+ chunks, batch call reduction ($\lceil N / B \rceil$), and exception failure injection
+- [x] All quality gates pass (`uv run ruff check .`, `uv run ruff format --check .`, `uv run mypy .`, `uv run pytest tests/` (340 passed))
+
 ## Notes for AI Agents
 
 - Each task above is independently implementable; do not merge tasks.

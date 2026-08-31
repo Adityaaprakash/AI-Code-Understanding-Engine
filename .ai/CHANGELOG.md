@@ -2,6 +2,29 @@
 
 All notable changes to this project are recorded here.
 
+## 2026-08-31 — Phase 4E — Retrieval & Indexing Testing & Hardening
+
+**Completed by:** TASK-4E
+
+### Added
+- Comprehensive Phase 4 integration and hardening test suite in `tests/test_indexing_hardening.py` covering:
+  - End-to-end integration (Canonical IR -> `CodeChunker` -> `CodeChunkCollection` -> `EmbeddingPipeline` & `BM25LexicalIndex`) with cross-pipeline identity parity verification.
+  - Sub-chunk parent-child indexing relationships and multi-granularity hierarchy (`FILE_CONTEXT`, `CLASS_CONTEXT`, `INTERFACE_CONTEXT`, `FUNCTION`, `METHOD`, `SUB_CHUNK`).
+  - Adversarial field-weighting validation: amplified symbol name field weight to 10.0x in `LexicalTextBuilder` to guarantee exact symbol matches rank #1 over long body term repetition.
+  - Deterministic chunk identity verification (UUID v5), identity input sensitivity, metadata propagation, and forward-slash path normalization across Java, Python, and TypeScript.
+  - Cross-layer immutability verification (Pydantic `frozen=True`) with deep-copy snapshot equality checks.
+  - BM25 mathematical properties verification (rare vs common terms, TF saturation, doc length normalization, multiple query terms, zero-result queries).
+  - Repository isolation, rebuild equivalence (insertion-order independence), deterministic tie-breaking (score DESC, `chunk_id` ASC), and referential integrity.
+  - Performance scale benchmark on 1,000+ chunks, batch call reduction ($\lceil N / B \rceil$), and exception failure injection.
+
+### Verification
+- `uv run ruff check .` ✅ (0 errors)
+- `uv run ruff format --check .` ✅ (125 files formatted)
+- `uv run mypy .` ✅ (0 errors across 111 source files)
+- `uv run pytest tests/ -v` ✅ (340 passed, 4 skipped)
+
+---
+
 ## 2026-08-31 — Phase 4D — Code-Aware Lexical Indexing (BM25)
 
 **Completed by:** TASK-4D

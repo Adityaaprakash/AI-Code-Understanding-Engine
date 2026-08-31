@@ -97,7 +97,9 @@ class RepositoryBM25Index:
         if not query_tokens or self.total_documents == 0:
             return []
 
-        avg_dl = self.sum_doc_length / float(self.total_documents) if self.total_documents > 0 else 1.0
+        avg_dl = (
+            self.sum_doc_length / float(self.total_documents) if self.total_documents > 0 else 1.0
+        )
         if avg_dl <= 0:
             avg_dl = 1.0
 
@@ -180,11 +182,15 @@ class BM25LexicalIndex(LexicalIndexContract):
         self.b = b
         self.tokenizer = tokenizer if tokenizer is not None else CodeTokenizer()
         self.text_builder = (
-            text_builder if text_builder is not None else LexicalTextBuilder(tokenizer=self.tokenizer)
+            text_builder
+            if text_builder is not None
+            else LexicalTextBuilder(tokenizer=self.tokenizer)
         )
         self._repo_indexes: dict[str, RepositoryBM25Index] = {}
 
-    def _get_repo_index(self, repository_id: str, create: bool = True) -> RepositoryBM25Index | None:
+    def _get_repo_index(
+        self, repository_id: str, create: bool = True
+    ) -> RepositoryBM25Index | None:
         if repository_id not in self._repo_indexes:
             if not create:
                 return None

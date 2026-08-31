@@ -23,30 +23,30 @@ class LexicalTextBuilder:
         field_tokens: dict[str, list[str]] = {}
         all_tokens: list[str] = []
 
-        # 1. Symbol Name (Weight: 3.0)
+        # 1. Symbol Name (Weight: 10.0)
         symbol_name = chunk.name
         if symbol_name:
             t_symbol = self.tokenizer.tokenize(symbol_name)
             field_tokens["symbol_name"] = t_symbol
-            all_tokens.extend(t_symbol * 3)
+            all_tokens.extend(t_symbol * 10)
 
-        # 2. Qualified Name (Weight: 3.0)
+        # 2. Qualified Name (Weight: 5.0)
         if chunk.qualified_name and chunk.qualified_name != symbol_name:
             t_qual = self.tokenizer.tokenize(chunk.qualified_name)
             field_tokens["qualified_name"] = t_qual
-            all_tokens.extend(t_qual * 3)
+            all_tokens.extend(t_qual * 5)
 
-        # 3. File Path (Weight: 2.0)
+        # 3. File Path (Weight: 3.0)
         if chunk.file_path:
             t_path = self.tokenizer.tokenize(chunk.file_path)
             field_tokens["file_path"] = t_path
-            all_tokens.extend(t_path * 2)
+            all_tokens.extend(t_path * 3)
 
-        # 4. Signature (Weight: 2.0)
+        # 4. Signature (Weight: 3.0)
         if chunk.signature:
             t_sig = self.tokenizer.tokenize(chunk.signature)
             field_tokens["signature"] = t_sig
-            all_tokens.extend(t_sig * 2)
+            all_tokens.extend(t_sig * 3)
 
         # 5. Doc Comment (Weight: 1.5)
         if chunk.doc_comment:

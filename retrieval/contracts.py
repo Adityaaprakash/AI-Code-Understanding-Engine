@@ -16,7 +16,6 @@ if TYPE_CHECKING:
     from retrieval.models import CodeChunk
 
 
-
 class CodeChunkerContract(ABC):
     """Abstract contract interface for AST/IR-aware code chunking engines."""
 
@@ -116,9 +115,7 @@ class LexicalIndexContract(ABC):
         raise NotImplementedError
 
     @abstractmethod
-    def add_many(
-        self, chunks: "CodeChunkCollection | Iterable[CodeChunk]"
-    ) -> None:
+    def add_many(self, chunks: "CodeChunkCollection | Iterable[CodeChunk]") -> None:
         """Batch add a collection or iterable of CodeChunks to the index."""
         raise NotImplementedError
 
@@ -159,4 +156,3 @@ class LexicalIndexContract(ABC):
     def document_count(self, repository_id: str | None = None) -> int:
         """Return total indexed document count for a repository or across all repositories."""
         raise NotImplementedError
-

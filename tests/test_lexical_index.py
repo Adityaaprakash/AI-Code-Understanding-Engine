@@ -460,9 +460,7 @@ def test_empty_index_and_empty_query() -> None:
             file_path="test.py",
             content="def test(): pass",
             language=Language.PYTHON,
-            source_location=SourceLocation(
-                start_line=1, start_column=0, end_line=2, end_column=0
-            ),
+            source_location=SourceLocation(start_line=1, start_column=0, end_line=2, end_column=0),
         )
     )
 
@@ -499,9 +497,7 @@ def test_top_k_truncation() -> None:
             name="common_function",
             content=f"def common_function(): # iteration {i}\n pass",
             language=Language.PYTHON,
-            source_location=SourceLocation(
-                start_line=1, start_column=0, end_line=3, end_column=0
-            ),
+            source_location=SourceLocation(start_line=1, start_column=0, end_line=3, end_column=0),
         )
         for i in range(20)
     ]
@@ -528,9 +524,7 @@ def test_deterministic_tie_breaking() -> None:
         name="do_work",
         content="def do_work(): pass",
         language=Language.PYTHON,
-        source_location=SourceLocation(
-            start_line=1, start_column=0, end_line=2, end_column=0
-        ),
+        source_location=SourceLocation(start_line=1, start_column=0, end_line=2, end_column=0),
     )
 
     c_a = CodeChunk(
@@ -541,9 +535,7 @@ def test_deterministic_tie_breaking() -> None:
         name="do_work",
         content="def do_work(): pass",
         language=Language.PYTHON,
-        source_location=SourceLocation(
-            start_line=1, start_column=0, end_line=2, end_column=0
-        ),
+        source_location=SourceLocation(start_line=1, start_column=0, end_line=2, end_column=0),
     )
 
     index.add_many([c_b, c_a])
@@ -604,9 +596,7 @@ def test_synthetic_scale_performance() -> None:
             doc_comment=f"Execute automated batch task number {i} with error handling.",
             content=f"def execute_task_{i}():\n    return TaskRunner.process({i})\n",
             language=Language.PYTHON,
-            source_location=SourceLocation(
-                start_line=1, start_column=0, end_line=10, end_column=0
-            ),
+            source_location=SourceLocation(start_line=1, start_column=0, end_line=10, end_column=0),
         )
         for i in range(1000)
     ]
