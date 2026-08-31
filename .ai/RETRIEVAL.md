@@ -61,29 +61,24 @@ prunes to a token budget before passing to the LLM.
 
 ## Retrieval Components
 
-### BM25 Retriever
+### BM25 Lexical Index (TASK-4D Implemented)
 
-**Purpose:** Exact and near-exact keyword matching — symbol names, error strings,
-method names, identifiers.
+**Purpose:** Exact and near-exact keyword search — symbol names, qualified names, method signatures, file paths, and identifiers.
 
-**Implementation:** PostgreSQL `tsvector` full-text search using `to_tsquery`.
-Optionally upgraded to `pg_bm25` (ParadeDB) for true BM25 scoring.
+**Implementation:** Pure, deterministic, code-aware `BM25LexicalIndex` operating on `LexicalDocument` abstractions derived from `CodeChunk` contracts.
 
-**Inputs:** Raw query text  
-**Outputs:** List of `(chunk_id, bm25_score)`  
-**PostgreSQL query pattern:**
-```sql
-SELECT id, ts_rank(search_vector, query) AS score
-FROM chunks
-WHERE search_vector @@ plainto_tsquery('english', :query_text)
-  AND repository_id = :repo_id
-ORDER BY score DESC
-LIMIT :k;
-```
+**Key Architecture Features:**
+- **Code-Aware Tokenizer (`CodeTokenizer`):** Preserves original full identifiers (case-folded) while splitting camelCase, PascalCase, snake_case, SCREAMING_SNAKE_CASE, acronyms (`JWT`), qualified names (`com.example.Service`), and file paths (`src/auth/AuthService.java`).
+- **Field Weighting (`LexicalTextBuilder`):** Symbol name (3.0x), qualified name (3.0x), file path (2.0x), signature (2.0x), doc comments (1.5x), and content (1.0x).
+- **BM25 Formula:** Standard Robertson-Spärck Jones BM25 algorithm ($k_1=1.5, b=0.75$) with Inverse Document Frequency (IDF) +1 smoothing.
+- **Repository Isolation (`RepositoryBM25Index`):** Repository data structures are isolated per `repository_id`.
+- **Deterministic Tie-Breaking:** Candidate ranking sorts by `score` descending, breaking ties with `chunk_id` ascending.
+- **Contract Boundary:** Exposes `LexicalIndexContract` with `add`, `add_many`, `remove`, `clear`, `search`, and `document_count`.
 
-**Why it matters:** Vector embeddings of code chunks often do poorly on
-exact identifier names. BM25 reliably retrieves chunks containing the
-exact symbol name the user typed.
+**Inputs:** Raw query string, `repository_id`, optional `top_k`, `language`, `chunk_type` filters  
+**Outputs:** List of `LexicalSearchResult` models  
+
+**Why it matters:** Dense vector embeddings often struggle with exact identifier matches. The BM25 lexical index guarantees reliable, deterministic precision for symbol, API, and file path searches.
 
 ---
 

@@ -7,7 +7,14 @@ from code_analyzer.normalization import NormalizationResult
 from retrieval.models import CodeChunkCollection
 
 if TYPE_CHECKING:
+    from collections.abc import Iterable
+
+    from code_analyzer.parsers.models import Language
     from retrieval.embedding_models import EmbeddingInput, EmbeddingResult
+    from retrieval.enums import ChunkType
+    from retrieval.lexical_models import LexicalSearchResult
+    from retrieval.models import CodeChunk
+
 
 
 class CodeChunkerContract(ABC):
@@ -98,3 +105,58 @@ class EmbeddingProviderContract(ABC):
             List of EmbeddingResults matching the input order and identity.
         """
         raise NotImplementedError
+
+
+class LexicalIndexContract(ABC):
+    """Abstract contract interface for BM25 lexical code indexes."""
+
+    @abstractmethod
+    def add(self, chunk: "CodeChunk") -> None:
+        """Add or replace a single CodeChunk in the index."""
+        raise NotImplementedError
+
+    @abstractmethod
+    def add_many(
+        self, chunks: "CodeChunkCollection | Iterable[CodeChunk]"
+    ) -> None:
+        """Batch add a collection or iterable of CodeChunks to the index."""
+        raise NotImplementedError
+
+    @abstractmethod
+    def remove(self, chunk_id: str, repository_id: str) -> bool:
+        """Remove a single chunk by chunk_id from a target repository index."""
+        raise NotImplementedError
+
+    @abstractmethod
+    def clear(self, repository_id: str | None = None) -> None:
+        """Clear a specific repository index, or all repository indexes if repository_id is None."""
+        raise NotImplementedError
+
+    @abstractmethod
+    def search(
+        self,
+        query: str,
+        repository_id: str,
+        top_k: int = 10,
+        language: "Language | None" = None,
+        chunk_type: "ChunkType | None" = None,
+    ) -> list["LexicalSearchResult"]:
+        """Execute BM25 lexical code search for a target repository.
+
+        Args:
+            query: Natural language or code search query string.
+            repository_id: Target repository identity for search boundary.
+            top_k: Maximum number of ranked results to return (must be > 0).
+            language: Optional language filter.
+            chunk_type: Optional chunk type filter.
+
+        Returns:
+            List of ranked LexicalSearchResults sorted by score descending and chunk_id ascending.
+        """
+        raise NotImplementedError
+
+    @abstractmethod
+    def document_count(self, repository_id: str | None = None) -> int:
+        """Return total indexed document count for a repository or across all repositories."""
+        raise NotImplementedError
+

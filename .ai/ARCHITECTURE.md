@@ -78,7 +78,7 @@ AST parsing using tree-sitter. Produces the Canonical Code IR (see
 `CODE_IR.md`). Supports Java, Python, TypeScript in MVP.
 
 ### `retrieval/`
-AST/IR-aware code chunking foundation, dense vector embedding pipeline, and hybrid retrieval engine:
+AST/IR-aware code chunking foundation, dense vector embedding pipeline, and lexical BM25 code indexing engine:
 - `CodeChunker`: Language-independent AST/IR-aware chunker that transforms Canonical Code IR (`NormalizationResult`) into deterministic, semantically structured `CodeChunk` models without reparsing source code.
 - `ChunkType`: Defines hierarchical chunk types (`FILE_CONTEXT`, `CLASS_CONTEXT`, `INTERFACE_CONTEXT`, `FUNCTION`, `METHOD`, `SUB_CHUNK`).
 - `generate_chunk_id`: Deterministic UUID v5 chunk identity generator based on semantic context and location.
@@ -87,7 +87,11 @@ AST/IR-aware code chunking foundation, dense vector embedding pipeline, and hybr
 - `DeterministicTestEmbeddingProvider`: Zero-dependency, SHA-256 digest hash-based provider producing deterministic, normalized unit-length vector embeddings for test suites and offline development.
 - `HostedAPIEmbeddingProvider`: Pluggable `httpx` HTTP adapter for external/remote API embedding services.
 - `EmbeddingPipeline`: Provider-agnostic embedding pipeline service supporting batch boundary slicing, duplicate chunk ID detection, retry policies for transient errors, and vector dimension verification.
-- Future components: BM25 (PostgreSQL tsvector/pg_bm25), vector similarity (pgvector cosine), graph traversal, fusion scoring, and context pruning.
+- `CodeTokenizer`: Code-aware tokenizer preserving exact case-folded identifiers alongside camelCase, PascalCase, snake_case, acronyms, qualified names, and file path sub-words.
+- `LexicalTextBuilder`: Field-weighted document builder emphasizing symbol names (3.0x), qualified names (3.0x), file paths (2.0x), signatures (2.0x), doc comments (1.5x), and content (1.0x).
+- `BM25LexicalIndex`: Production-quality Robertson-Spärck Jones BM25 lexical retrieval engine with strict repository isolation, deterministic tie-breaking, and metadata filtering (`language`, `chunk_type`).
+- `LexicalIndexContract`: Abstract interface for lexical code search engines.
+- Future components: Vector similarity (pgvector cosine), graph retrieval, fusion scoring (RRF), and context pruning.
 
 ### `graph/`
 Builds and maintains the symbol relationship graph. Reads the Canonical

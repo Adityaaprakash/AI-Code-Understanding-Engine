@@ -472,6 +472,22 @@ service needed for this task.
 - [x] Built comprehensive unit test suite `tests/test_embedding_pipeline.py` covering text builder formatting, deterministic provider output, batch processing, duplicate ID rejection, fault injection retries, cross-language parity (Java, Python, TypeScript), performance batch ratio verification, and IR/chunk immutability
 - [x] All quality gates pass (`uv run ruff check .`, `uv run ruff format --check .`, `uv run mypy .`, `uv run pytest tests/` (304 passed))
 
+### TASK-4D: Code-Aware Lexical Indexing (BM25)
+
+**Status:** ✅ Done  
+**Blockers:** TASK-4B ✅  
+**Scope:** Implement production-quality, code-aware lexical retrieval index based on BM25 algorithm independent of vector and graph retrieval pipelines.
+
+**Acceptance criteria:**
+- [x] Defined `LexicalIndexContract` in `retrieval/contracts.py` specifying `add`, `add_many`, `remove`, `clear`, `search`, and `document_count`
+- [x] Implemented immutable Pydantic models `LexicalDocument`, `LexicalSearchResult`, and `LexicalSearchResultSet` in `retrieval/lexical_models.py`
+- [x] Implemented `CodeTokenizer` in `retrieval/tokenizer.py` supporting code-aware decomposition (camelCase, PascalCase, snake_case, SCREAMING_SNAKE_CASE, acronyms, qualified names, file paths) while preserving exact case-folded original identifiers and code keywords
+- [x] Implemented `LexicalTextBuilder` in `retrieval/lexical_text_builder.py` with explicit field weighting (symbol name 3.0x, qualified name 3.0x, file path 2.0x, signature 2.0x, doc comments 1.5x, content 1.0x)
+- [x] Implemented `BM25LexicalIndex` and `RepositoryBM25Index` in `retrieval/lexical_index.py` with Robertson-Spärck Jones BM25 algorithm ($k_1=1.5, b=0.75$), IDF smoothing, strict repository isolation, and deterministic tie-breaking (score DESC, chunk_id ASC)
+- [x] Implemented custom exception hierarchy in `retrieval/exceptions.py` (`RetrievalError`, `LexicalIndexError`, `LexicalConfigurationError`, `LexicalDocumentError`, `LexicalQueryError`)
+- [x] Built comprehensive unit test suite `tests/test_lexical_index.py` covering tokenization, exact identifier matching, field weighting, repository isolation, index lifecycle (add/remove/clear/replacement), edge cases, BM25 math properties, cross-language parity (Java, Python, TypeScript), scale performance, and immutability
+- [x] All quality gates pass (`uv run ruff check .`, `uv run ruff format --check .`, `uv run mypy .`, `uv run pytest tests/` (331 passed))
+
 ## Notes for AI Agents
 
 - Each task above is independently implementable; do not merge tasks.

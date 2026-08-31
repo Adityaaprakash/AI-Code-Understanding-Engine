@@ -19,9 +19,17 @@ class CodeChunk(BaseModel):
     repository_id: str
     commit_id: str | None = None
     commit_sha: str | None = None
-    file_id: str
+    file_id: str = ""
     file_path: str
     language: Language
+
+    @model_validator(mode="before")
+    @classmethod
+    def _populate_defaults(cls, data: Any) -> Any:
+        """Populate file_id from file_path if omitted or empty."""
+        if isinstance(data, dict) and not data.get("file_id") and data.get("file_path"):
+            data["file_id"] = data["file_path"]
+        return data
     entity_id: str | None = None
     parent_entity_id: str | None = None
     parent_chunk_id: str | None = None

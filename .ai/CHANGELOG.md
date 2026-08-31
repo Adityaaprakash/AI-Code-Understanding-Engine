@@ -2,6 +2,36 @@
 
 All notable changes to this project are recorded here.
 
+## 2026-08-31 — Phase 4D — Code-Aware Lexical Indexing (BM25)
+
+**Completed by:** TASK-4D
+
+### Added
+- Abstract contract interface `LexicalIndexContract` in `retrieval/contracts.py`.
+- Immutable data models in `retrieval/lexical_models.py`:
+  - `LexicalDocument`: Code chunk representation with field token mapping, doc length, identity, and language metadata.
+  - `LexicalSearchResult`: Ranked search candidate result with BM25 score, rank index, and symbol context.
+  - `LexicalSearchResultSet`: Search query container.
+- Code-aware tokenizer `CodeTokenizer` in `retrieval/tokenizer.py`:
+  - Handles camelCase, PascalCase, snake_case, SCREAMING_SNAKE_CASE, acronyms (`JWT`), qualified names, and file paths.
+  - Preserves exact case-folded original identifiers alongside sub-words and retains code keywords (`def`, `class`, `get`, `from`).
+- Field-weighted document builder `LexicalTextBuilder` in `retrieval/lexical_text_builder.py`:
+  - Explicit field weighting: symbol name (3.0x), qualified name (3.0x), file path (2.0x), signature (2.0x), doc comment (1.5x), content (1.0x).
+- Production BM25 index `BM25LexicalIndex` and `RepositoryBM25Index` in `retrieval/lexical_index.py`:
+  - Implements Robertson-Spärck Jones BM25 formula ($k_1=1.5, b=0.75$) with IDF +1 smoothing.
+  - Guarantees strict repository isolation per `repository_id`.
+  - Enforces deterministic tie-breaking (score DESC, chunk_id ASC) and optional `language`/`chunk_type` metadata filtering.
+- Exception hierarchy in `retrieval/exceptions.py` (`RetrievalError`, `LexicalIndexError`, `LexicalConfigurationError`, `LexicalDocumentError`, `LexicalQueryError`).
+- Comprehensive test suite `tests/test_lexical_index.py` (23 unit and integration tests covering tokenization, exact identifier matching, field weighting, repository isolation, index lifecycle management, BM25 mathematical properties, cross-language parity, performance scaling, and immutability).
+
+### Verification
+- `uv run ruff check .` ✅ (0 errors)
+- `uv run ruff format --check .` ✅ (124 files formatted)
+- `uv run mypy .` ✅ (0 errors across 110 source files)
+- `uv run pytest tests/ -v` ✅ (327 passed, 4 skipped)
+
+---
+
 ## 2026-08-31 — Phase 4C — Dense Vector Embedding Infrastructure
 
 **Completed by:** TASK-4C

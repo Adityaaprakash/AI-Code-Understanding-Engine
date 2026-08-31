@@ -8,7 +8,7 @@
 
 ## Current Task
 
-TASK-4C — Dense Vector Embedding Infrastructure complete. Next Task: TASK-4D — BM25 & Hybrid Indexing Foundation.
+TASK-4D — Code-Aware Lexical Indexing (BM25) complete. Phase 4 Indexing and Chunking complete.
 
 ---
 
@@ -45,6 +45,15 @@ TASK-4C — Dense Vector Embedding Infrastructure complete. Next Task: TASK-4D �
 - [x] TASK-4A: AST/IR-Aware Code Chunking complete
 - [x] TASK-4B: Code Chunk Metadata Enrichment complete
 - [x] TASK-4C: Dense Vector Embedding Infrastructure complete
+- [x] TASK-4D: Code-Aware Lexical Indexing (BM25) complete
+  - Defined `LexicalIndexContract` in `retrieval/contracts.py` for indexing and search contracts.
+  - Implemented immutable Pydantic models `LexicalDocument`, `LexicalSearchResult`, and `LexicalSearchResultSet` in `retrieval/lexical_models.py`.
+  - Created code-aware `CodeTokenizer` in `retrieval/tokenizer.py` handling camelCase, PascalCase, snake_case, SCREAMING_SNAKE_CASE, acronyms, qualified names, file paths, and code keywords.
+  - Implemented `LexicalTextBuilder` in `retrieval/lexical_text_builder.py` with field weighting (symbol names 3x, qualified names 3x, file paths 2x, signatures 2x, doc comments 1.5x, content 1x).
+  - Implemented `BM25LexicalIndex` and `RepositoryBM25Index` in `retrieval/lexical_index.py` featuring Robertson-Spärck Jones BM25 algorithm ($k_1=1.5, b=0.75$), IDF smoothing, strict repository isolation, metadata filtering, and deterministic tie-breaking.
+  - Added exception hierarchy `LexicalIndexError`, `LexicalConfigurationError`, `LexicalDocumentError`, `LexicalQueryError` in `retrieval/exceptions.py`.
+  - Built comprehensive unit test suite `tests/test_lexical_index.py` covering tokenization, exact matching, field weighting, repository isolation, lifecycle management, BM25 math properties, cross-language parity (Java, Python, TypeScript), scale performance, and immutability.
+  - All 331/331 tests pass cleanly with 100% ruff check, ruff format, and mypy compliance.
   - Defined provider abstraction `EmbeddingProviderContract` in `retrieval/contracts.py`.
   - Implemented immutable input and result models (`EmbeddingInput`, `EmbeddingResult`, `EmbeddingFailure`, `EmbeddingBatchResult`) in `retrieval/embedding_models.py` with vector dimension and numeric sanity validation (no NaN/Inf).
   - Created `EmbeddingTextBuilder` in `retrieval/text_builder.py` prioritizing source code while enriching with language, symbol name, qualified name, signature, parent entity, and doc comment headers, with fallback for empty source bodies.
