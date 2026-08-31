@@ -418,6 +418,27 @@ service needed for this task.
 - [x] Built comprehensive test suite `tests/test_impact_analysis.py` covering all 32 required categories: depth limits (0, 1, 2, None), minimum depth shortest-path calculation, path step directionality, structural edge exclusion, missing root KeyError handling, multi-language E2E pipelines (Java, Python, TypeScript), large fan-in (500 callers), 5,000 synthetic node performance, and adversarial topology correctness
 - [x] All quality gates pass (`uv run ruff check .`, `uv run mypy .`, `uv run pytest` (251 passed))
 
+### TASK-4A: AST/IR-Aware Code Chunking
+
+**Status:** ✅ Done  
+**Blockers:** Phase 3 ✅  
+**Scope:** Implement language-independent AST/IR-aware code chunking engine transforming Canonical Code IR (`NormalizationResult`) into deterministic, semantically structured `CodeChunk` models.
+
+**Acceptance criteria:**
+- [x] Package structure `retrieval/` created with `enums.py`, `models.py`, `identity.py`, `contracts.py`, `chunker.py`, `__init__.py`, `py.typed`
+- [x] Created `CodeChunker` in `retrieval/chunker.py` implementing `CodeChunkerContract` in `retrieval/contracts.py`
+- [x] Defined structured immutable models `CodeChunk` and `CodeChunkCollection` with field validation and lookup indices
+- [x] Created `generate_chunk_id` in `retrieval/identity.py` generating deterministic UUID v5 chunk IDs based on stable semantic seed keys (`repo|file|type|entity|loc|sub_index`)
+- [x] Semantic chunk hierarchy implemented: `FILE_CONTEXT`, `CLASS_CONTEXT`, `INTERFACE_CONTEXT`, `FUNCTION`, `METHOD`, `SUB_CHUNK`
+- [x] Preserved semantic context (`parent_entity_id`, `parent_chunk_id`, doc comments, signatures, metadata) without duplicating full file content in child chunks
+- [x] Oversized entity fallback policy: entities exceeding `max_lines_per_chunk` split into primary header chunk (`sub_chunk_index=0`) and line-range sub-chunks (`ChunkType.SUB_CHUNK`, `sub_chunk_index=1..N`) preserving parent entity identity and source order
+- [x] Preserved exact source ranges (`start_line`, `start_column`, `end_line`, `end_column`) from Canonical IR `SourceLocation`
+- [x] Implemented deterministic source ordering (`FILE_CONTEXT` priority -> `start_line` -> `start_column` -> `chunk_type` -> `entity_id` -> `sub_chunk_index`)
+- [x] Duplicate prevention via `(entity_id, chunk_type, sub_chunk_index)` deduplication tracking
+- [x] Canonical IR immutability and graph separation maintained (no IR mutation, no graph edges added)
+- [x] Added comprehensive test suite `tests/test_chunking.py` covering all 28 required test categories and validation scenarios across Java, Python, and TypeScript fixtures, empty files, nested symbols, duplicate prevention, synthetic scale (1,000 entities in <1s), IR immutability, and graph separation
+- [x] All quality gates pass (`uv run ruff check .`, `uv run ruff format --check .`, `uv run mypy .`, `uv run pytest tests/` (276 passed))
+
 ## Notes for AI Agents
 
 - Each task above is independently implementable; do not merge tasks.

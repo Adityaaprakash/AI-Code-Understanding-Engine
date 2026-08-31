@@ -6,7 +6,6 @@ cycle safety, depth limits, cross-language equivalence, large graph scalability,
 adversarial topologies, and end-to-end pipeline integrity.
 """
 
-
 import pytest
 from pydantic import ValidationError
 
@@ -95,10 +94,14 @@ def test_node_and_edge_schema_invariants() -> None:
 
     # Invalid confidence range
     with pytest.raises((ValueError, ValidationError)):
-        GraphEdge(id="edge-1", source_id="src", target_id="tgt", kind=EdgeKind.CALLS, confidence=1.5)
+        GraphEdge(
+            id="edge-1", source_id="src", target_id="tgt", kind=EdgeKind.CALLS, confidence=1.5
+        )
 
     with pytest.raises((ValueError, ValidationError)):
-        GraphEdge(id="edge-1", source_id="src", target_id="tgt", kind=EdgeKind.CALLS, confidence=-0.1)
+        GraphEdge(
+            id="edge-1", source_id="src", target_id="tgt", kind=EdgeKind.CALLS, confidence=-0.1
+        )
 
     # Immutability verification
     node = GraphNode(id="node-1", kind=NodeKind.CLASS, name="TestClass")
@@ -462,14 +465,18 @@ class ServiceB:
     # Run 1
     norm1 = normalize_parse_result(parse_res, REPO_ID)
     st1 = SymbolTable()
-    st1.register(_make_entry("b-run", "services.ServiceB.run", "services.py", kind=EntityKind.METHOD))
+    st1.register(
+        _make_entry("b-run", "services.ServiceB.run", "services.py", kind=EntityKind.METHOD)
+    )
     ext1 = RelationshipExtractor()
     nodes1, edges1 = ext1.extract_from_normalization_result(norm1, st1)
 
     # Run 2
     norm2 = normalize_parse_result(parse_res, REPO_ID)
     st2 = SymbolTable()
-    st2.register(_make_entry("b-run", "services.ServiceB.run", "services.py", kind=EntityKind.METHOD))
+    st2.register(
+        _make_entry("b-run", "services.ServiceB.run", "services.py", kind=EntityKind.METHOD)
+    )
     ext2 = RelationshipExtractor()
     nodes2, edges2 = ext2.extract_from_normalization_result(norm2, st2)
 
@@ -522,27 +529,59 @@ def test_cross_language_unified_edge_kind_matrix() -> None:
     p_code = "class Child(Parent): pass"
     t_code = "class Child extends Parent implements Interface {}"
 
-    j_norm = normalize_parse_result(
-        JavaParser().parse(j_code, source_path="Child.java"), REPO_ID
-    )
-    p_norm = normalize_parse_result(
-        PythonParser().parse(p_code, source_path="child.py"), REPO_ID
-    )
+    j_norm = normalize_parse_result(JavaParser().parse(j_code, source_path="Child.java"), REPO_ID)
+    p_norm = normalize_parse_result(PythonParser().parse(p_code, source_path="child.py"), REPO_ID)
     t_norm = normalize_parse_result(
         TypeScriptParser().parse(t_code, source_path="Child.ts"), REPO_ID
     )
 
     ext = RelationshipExtractor()
     j_st = SymbolTable()
-    j_st.register(_make_entry("sym-parent-cls", "app.Parent", "Parent.java", kind=EntityKind.CLASS, language=Language.JAVA))
-    j_st.register(_make_entry("sym-iface", "app.Interface", "Interface.java", kind=EntityKind.INTERFACE, language=Language.JAVA))
+    j_st.register(
+        _make_entry(
+            "sym-parent-cls",
+            "app.Parent",
+            "Parent.java",
+            kind=EntityKind.CLASS,
+            language=Language.JAVA,
+        )
+    )
+    j_st.register(
+        _make_entry(
+            "sym-iface",
+            "app.Interface",
+            "Interface.java",
+            kind=EntityKind.INTERFACE,
+            language=Language.JAVA,
+        )
+    )
 
     p_st = SymbolTable()
-    p_st.register(_make_entry("sym-py-parent", "Parent", "parent.py", kind=EntityKind.CLASS, language=Language.PYTHON))
+    p_st.register(
+        _make_entry(
+            "sym-py-parent", "Parent", "parent.py", kind=EntityKind.CLASS, language=Language.PYTHON
+        )
+    )
 
     t_st = SymbolTable()
-    t_st.register(_make_entry("sym-ts-parent", "Parent", "Parent.ts", kind=EntityKind.CLASS, language=Language.TYPESCRIPT))
-    t_st.register(_make_entry("sym-ts-iface", "Interface", "Interface.ts", kind=EntityKind.INTERFACE, language=Language.TYPESCRIPT))
+    t_st.register(
+        _make_entry(
+            "sym-ts-parent",
+            "Parent",
+            "Parent.ts",
+            kind=EntityKind.CLASS,
+            language=Language.TYPESCRIPT,
+        )
+    )
+    t_st.register(
+        _make_entry(
+            "sym-ts-iface",
+            "Interface",
+            "Interface.ts",
+            kind=EntityKind.INTERFACE,
+            language=Language.TYPESCRIPT,
+        )
+    )
 
     _, j_edges = ext.extract_from_normalization_result(j_norm, j_st)
     _, p_edges = ext.extract_from_normalization_result(p_norm, p_st)
@@ -582,15 +621,19 @@ def test_adversarial_topologies_and_fan_in_fan_out() -> None:
 
     # 2. Large fan-in: 500 callers calling X
     callers = [
-        GraphNode(id=f"caller_{i:03d}", kind=NodeKind.METHOD, name=f"caller_{i:03d}") for i in range(500)
+        GraphNode(id=f"caller_{i:03d}", kind=NodeKind.METHOD, name=f"caller_{i:03d}")
+        for i in range(500)
     ]
     store.add_nodes(callers)
     for c in callers:
-        store.add_edge(GraphEdge(id=f"e_in_{c.id}", source_id=c.id, target_id="X", kind=EdgeKind.CALLS))
+        store.add_edge(
+            GraphEdge(id=f"e_in_{c.id}", source_id=c.id, target_id="X", kind=EdgeKind.CALLS)
+        )
 
     # 3. Large fan-out: X calling 500 callees
     callees = [
-        GraphNode(id=f"callee_{i:03d}", kind=NodeKind.METHOD, name=f"callee_{i:03d}") for i in range(500)
+        GraphNode(id=f"callee_{i:03d}", kind=NodeKind.METHOD, name=f"callee_{i:03d}")
+        for i in range(500)
     ]
     store.add_nodes(callees)
     for c in callees:
@@ -629,12 +672,19 @@ def test_large_synthetic_graph_performance_sanity() -> None:
     store = InMemoryGraphStore(repository_id=REPO_ID)
 
     # Generate 5,000 nodes
-    nodes = [GraphNode(id=f"node_{i:04d}", kind=NodeKind.METHOD, name=f"func_{i}") for i in range(5000)]
+    nodes = [
+        GraphNode(id=f"node_{i:04d}", kind=NodeKind.METHOD, name=f"func_{i}") for i in range(5000)
+    ]
     store.add_nodes(nodes)
 
     # Chain 4,999 edges: node_i -> node_{i+1}
     edges = [
-        GraphEdge(id=f"edge_{i:04d}", source_id=f"node_{i:04d}", target_id=f"node_{i+1:04d}", kind=EdgeKind.CALLS)
+        GraphEdge(
+            id=f"edge_{i:04d}",
+            source_id=f"node_{i:04d}",
+            target_id=f"node_{i + 1:04d}",
+            kind=EdgeKind.CALLS,
+        )
         for i in range(4999)
     ]
     store.add_edges(edges)
@@ -689,8 +739,12 @@ def test_end_to_end_chaos_pipeline_multi_file_multi_lang() -> None:
 
     # Symbol Table & Registration
     st = SymbolTable()
-    st.register(_make_entry("order-svc", "com.service.OrderService", norm1.file.id, language=Language.JAVA))
-    st.register(_make_entry("pay-svc", "com.service.PaymentService", norm2.file.id, language=Language.JAVA))
+    st.register(
+        _make_entry("order-svc", "com.service.OrderService", norm1.file.id, language=Language.JAVA)
+    )
+    st.register(
+        _make_entry("pay-svc", "com.service.PaymentService", norm2.file.id, language=Language.JAVA)
+    )
     st.register(
         _make_entry(
             "pay-proc",

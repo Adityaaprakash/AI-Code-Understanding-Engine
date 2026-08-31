@@ -78,9 +78,11 @@ AST parsing using tree-sitter. Produces the Canonical Code IR (see
 `CODE_IR.md`). Supports Java, Python, TypeScript in MVP.
 
 ### `retrieval/`
-Hybrid retrieval: BM25 (PostgreSQL tsvector/pg_bm25), vector similarity
-(pgvector cosine), graph traversal (PostgreSQL adjacency tables).
-Owns fusion scoring and reranking.
+AST/IR-aware code chunking foundation and hybrid retrieval engine:
+- `CodeChunker`: Language-independent AST/IR-aware chunker that transforms Canonical Code IR (`NormalizationResult`) into deterministic, semantically structured `CodeChunk` models without reparsing source code.
+- `ChunkType`: Defines hierarchical chunk types (`FILE_CONTEXT`, `CLASS_CONTEXT`, `INTERFACE_CONTEXT`, `FUNCTION`, `METHOD`, `SUB_CHUNK`).
+- `generate_chunk_id`: Deterministic UUID v5 chunk identity generator based on semantic context and location.
+- Future components: BM25 (PostgreSQL tsvector/pg_bm25), vector similarity (pgvector cosine), graph traversal, fusion scoring, and context pruning.
 
 ### `graph/`
 Builds and maintains the symbol relationship graph. Reads the Canonical

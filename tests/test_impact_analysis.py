@@ -7,7 +7,6 @@ Pydantic model immutability & serialization, multi-language E2E pipelines (Java,
 large fan-in, synthetic 5,000-node graph performance, and adversarial topology correctness.
 """
 
-
 import pytest
 from pydantic import ValidationError
 
@@ -387,7 +386,9 @@ def test_end_to_end_java_impact_pipeline() -> None:
         target_symbol_id=ps_id,
     )
     n_chk.references.append(ref)
-    res_map = {"ref-java-1": ResolutionResult.resolved("ref-java-1", "com.app.PaymentService", ps_id)}
+    res_map = {
+        "ref-java-1": ResolutionResult.resolved("ref-java-1", "com.app.PaymentService", ps_id)
+    }
 
     ext = RelationshipExtractor()
     nd1, ed1 = ext.extract_from_normalization_result(n_svc, st)
@@ -510,11 +511,14 @@ def test_large_fan_in_and_synthetic_graph_performance() -> None:
 
     # 500 callers
     callers = [
-        GraphNode(id=f"caller_{i:03d}", kind=NodeKind.CLASS, name=f"Caller_{i:03d}") for i in range(500)
+        GraphNode(id=f"caller_{i:03d}", kind=NodeKind.CLASS, name=f"Caller_{i:03d}")
+        for i in range(500)
     ]
     store.add_nodes(callers)
     for c in callers:
-        store.add_edge(GraphEdge(id=f"e_in_{c.id}", source_id=c.id, target_id="Root", kind=EdgeKind.CALLS))
+        store.add_edge(
+            GraphEdge(id=f"e_in_{c.id}", source_id=c.id, target_id="Root", kind=EdgeKind.CALLS)
+        )
 
     analyzer = ImpactAnalyzer()
     res = analyzer.analyze_impact("Root", store)
@@ -524,10 +528,17 @@ def test_large_fan_in_and_synthetic_graph_performance() -> None:
 
     # Synthetic 5,000-node graph
     store_5k = InMemoryGraphStore(repository_id=REPO_ID)
-    nodes_5k = [GraphNode(id=f"node_{i:04d}", kind=NodeKind.METHOD, name=f"m_{i}") for i in range(5000)]
+    nodes_5k = [
+        GraphNode(id=f"node_{i:04d}", kind=NodeKind.METHOD, name=f"m_{i}") for i in range(5000)
+    ]
     store_5k.add_nodes(nodes_5k)
     edges_5k = [
-        GraphEdge(id=f"e_{i:04d}", source_id=f"node_{i+1:04d}", target_id=f"node_{i:04d}", kind=EdgeKind.CALLS)
+        GraphEdge(
+            id=f"e_{i:04d}",
+            source_id=f"node_{i + 1:04d}",
+            target_id=f"node_{i:04d}",
+            kind=EdgeKind.CALLS,
+        )
         for i in range(4999)
     ]
     store_5k.add_edges(edges_5k)

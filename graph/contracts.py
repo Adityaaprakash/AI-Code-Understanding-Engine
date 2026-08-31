@@ -230,4 +230,3 @@ class ImpactAnalyzerContract(ABC):
             KeyError: If node_id is not found in graph.
         """
         raise NotImplementedError
-

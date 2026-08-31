@@ -51,7 +51,9 @@ class ImpactPath(BaseModel):
     target_id: str = Field(description="Final impacted symbol node ID at the end of this path")
     depth: int = Field(description="Number of graph hops from root symbol to target_id")
     node_ids: list[str] = Field(description="Ordered sequence of node IDs from root to target_id")
-    steps: list[ImpactPathStep] = Field(description="Ordered sequence of ImpactPathStep transitions along the path")
+    steps: list[ImpactPathStep] = Field(
+        description="Ordered sequence of ImpactPathStep transitions along the path"
+    )
 
 
 class ImpactedNode(BaseModel):
@@ -60,12 +62,20 @@ class ImpactedNode(BaseModel):
     model_config = ConfigDict(frozen=True, extra="forbid")
 
     symbol_id: str = Field(description="Unique graph node ID of the impacted symbol")
-    name: str | None = Field(default=None, description="Simple name of the impacted symbol if available")
-    qualified_name: str | None = Field(default=None, description="Fully qualified name if available")
+    name: str | None = Field(
+        default=None, description="Simple name of the impacted symbol if available"
+    )
+    qualified_name: str | None = Field(
+        default=None, description="Fully qualified name if available"
+    )
     node_kind: NodeKind = Field(description="NodeKind (e.g. CLASS, METHOD, FUNCTION, FILE)")
-    file_id: str | None = Field(default=None, description="File ID declaring this symbol if applicable")
+    file_id: str | None = Field(
+        default=None, description="File ID declaring this symbol if applicable"
+    )
     location: SourceLocation | None = Field(default=None, description="Source location metadata")
-    minimum_depth: int = Field(description="Shortest impact distance (minimum hops) from root symbol")
+    minimum_depth: int = Field(
+        description="Shortest impact distance (minimum hops) from root symbol"
+    )
     relationship_types: list[EdgeKind] = Field(
         description="Sorted list of unique EdgeKinds directly or transitively connecting root to this node"
     )
@@ -96,12 +106,20 @@ class ImpactAnalysisResult(BaseModel):
 
     model_config = ConfigDict(frozen=True, extra="forbid")
 
-    repository_id: str | None = Field(default=None, description="Repository ID of the analyzed graph")
+    repository_id: str | None = Field(
+        default=None, description="Repository ID of the analyzed graph"
+    )
     root_symbol_id: str = Field(description="Symbol ID of the modified root node")
-    root_name: str | None = Field(default=None, description="Simple name of the modified root node if available")
-    root_qualified_name: str | None = Field(default=None, description="Qualified name of the modified root node")
+    root_name: str | None = Field(
+        default=None, description="Simple name of the modified root node if available"
+    )
+    root_qualified_name: str | None = Field(
+        default=None, description="Qualified name of the modified root node"
+    )
     root_node_kind: NodeKind = Field(description="NodeKind of the modified root node")
-    max_depth: int | None = Field(default=None, description="Max depth limit used during analysis (None = unlimited)")
+    max_depth: int | None = Field(
+        default=None, description="Max depth limit used during analysis (None = unlimited)"
+    )
     total_impacted: int = Field(description="Total number of unique impacted dependent nodes")
     impacted_nodes: list[ImpactedNode] = Field(
         description="List of impacted dependent nodes, sorted deterministically by (minimum_depth, symbol_id)"

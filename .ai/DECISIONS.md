@@ -341,3 +341,32 @@ Implement `ImpactAnalyzer` using Breadth-First Search (BFS) reverse dependency t
 ### Consequences
 - Requires valid symbol resolution and relationship extraction.
 - Graph queries must use `InMemoryGraphStore` or PostgreSQL index lookup for reverse edges (`inbound_index`).
+
+---
+
+## ADR-015: AST/IR-Aware Code Chunking Strategy
+
+**Status:** Accepted  
+**Date:** 2026-08-31
+
+### Context
+Phase 4 (Chunking & Indexing) requires partitioning raw source code into retrievable, semantically meaningful units for vector embedding, BM25 indexing, and context construction. Arbitrary fixed-token or character window splitting destroys code semantics, breaks function boundaries, and degrades retrieval precision.
+
+### Decision
+Implement a single, language-independent `CodeChunker` in `retrieval/` that operates on the Canonical Code IR (`NormalizationResult`):
+1. **No Reparation**: Consumes existing `NormalizationResult` entities (`File`, `Class`, `Interface`, `Function`, `Method`) without re-parsing source code via tree-sitter.
+2. **Semantic Chunk Hierarchy**: Emits `FILE_CONTEXT`, `CLASS_CONTEXT`, `INTERFACE_CONTEXT`, `FUNCTION`, and `METHOD` chunks while preserving parent-child relationships (`parent_entity_id`, `parent_chunk_id`).
+3. **Deterministic Chunk Identity**: Uses UUID v5 generated from a stable seed key (`repo|file|type|entity|loc|sub_index`) under a fixed `CODELENS_CHUNK_NAMESPACE`.
+4. **Minimum Sufficient Context**: Classes emit structural outlines (`CLASS_CONTEXT`) rather than duplicating all method bodies; child methods link to their parent class without repeating the file header.
+5. **Oversized Entity Fallback Policy**: When a method or class exceeds `max_lines_per_chunk` (default 150 lines), the chunker emits a primary chunk (`sub_chunk_index=0`) for the header/overview, followed by contiguous line-range sub-chunks (`ChunkType.SUB_CHUNK`, `sub_chunk_index=1..N`) preserving parent identity and exact source order.
+6. **Deterministic Source Ordering**: Chunks are sorted by `FILE_CONTEXT` priority, followed by `start_line`, `start_column`, `chunk_type`, `entity_id`, and `sub_chunk_index`.
+7. **Canonical IR Immutability & Graph Separation**: The chunking process treats the Canonical IR as strictly immutable and does NOT modify the Code Knowledge Graph or add graph edges.
+
+### Rationale
+- Language independence: Normalizing parsing details into Canonical IR allows one chunker to support Java, Python, TypeScript, and future languages seamlessly.
+- Semantic preservation: Method and function boundaries are preserved intact, preventing fragmented code snippets.
+- Determinism: Identical IR inputs produce identical chunk IDs and collections across runs and environments.
+
+### Consequences
+- Requires valid `NormalizationResult` and `SourceLocation` bounds from Phase 2 normalizers.
+- Phase 4B (Metadata Enrichment) will augment `CodeChunk.metadata` without modifying `CodeChunk` core structure or identity.

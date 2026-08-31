@@ -2,13 +2,13 @@
 
 ## Active Phase
 
-**Phase 3 — Code Graph Construction**
+**Phase 4 — Code Chunking & Indexing**
 
 ---
 
 ## Current Task
 
-TASK-3H — Initial Impact Analysis complete. Phase 3 complete. Next Task: Phase 4 — Hybrid Retrieval Engine.
+TASK-4A — AST/IR-Aware Code Chunking complete. Next Task: TASK-4B — Code Chunk Metadata Enrichment.
 
 ---
 
@@ -42,19 +42,20 @@ TASK-3H — Initial Impact Analysis complete. Phase 3 complete. Next Task: Phase
 - [x] TASK-3E/3F: Graph Storage Engine & Traversal Query Engine complete
 - [x] TASK-3G: Code Knowledge Graph Testing & Hardening complete
 - [x] TASK-3H: Initial Impact Analysis complete
-  - Implemented `ImpactAnalyzer` in `graph/impact_analyzer.py` adhering to `ImpactAnalyzerContract` in `graph/contracts.py`.
-  - Created structured Pydantic models: `ImpactAnalysisResult`, `ImpactedNode`, `ImpactPath`, and `ImpactPathStep` with immutability (`frozen=True`) and lossless JSON serialization.
-  - Implemented reverse dependency BFS traversal ensuring minimum-depth computation, multi-path tracking, cycle safety, self-loop exclusion, and edge-kind filtering (`DEPENDENCY_EDGE_KINDS`).
-  - Added comprehensive test suite `tests/test_impact_analysis.py` covering all 32 required categories: direct vs transitive impact, depth limits (0, 1, 2, None), minimum depth shortest-path calculation, path step directionality, structural edge exclusion, missing root error handling, multi-language E2E pipelines (Java, Python, TypeScript), large fan-in (500 callers), 5,000 synthetic node performance, and adversarial topology correctness.
-  - All 251/251 tests pass cleanly with 100% ruff and mypy compliance.
+- [x] TASK-4A: AST/IR-Aware Code Chunking complete
+  - Implemented `CodeChunker` in `retrieval/chunker.py` adhering to `CodeChunkerContract` in `retrieval/contracts.py`.
+  - Created structured immutable Pydantic models: `CodeChunk` and `CodeChunkCollection` with field validation and lookup indices.
+  - Implemented deterministic UUID v5 chunk identity generator `generate_chunk_id` in `retrieval/identity.py` based on stable semantic seed keys (`repo|file|type|entity|loc|sub_index`).
+  - Established semantic chunk hierarchy (`FILE_CONTEXT`, `CLASS_CONTEXT`, `INTERFACE_CONTEXT`, `FUNCTION`, `METHOD`, `SUB_CHUNK`) with structural context preservation and source range tracking.
+  - Implemented deterministic fallback policy for oversized entities exceeding `max_lines_per_chunk` (default 150 lines), producing primary header chunks and line-range sub-chunks while maintaining parent entity identity and source order.
+  - Added comprehensive test suite `tests/test_chunking.py` covering all 28 required test categories and validation scenarios across Java, Python, and TypeScript fixtures, empty files, nested symbols, duplicate prevention, synthetic scale (1,000 entities in <1s), IR immutability, and graph separation.
+  - All 276/276 tests pass cleanly with 100% ruff check, ruff format, and mypy type checking compliance.
 
 ---
 
 ## In Progress
 
-- None (Phase 3 complete)
-
-- None (Phase 3 complete)
+- TASK-4B — Code Chunk Metadata Enrichment (Next)
 
 ---
 

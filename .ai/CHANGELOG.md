@@ -1,6 +1,38 @@
 # Changelog — AI Code Understanding Engine
 
 All notable changes to this project are recorded here.
+
+## 2026-08-31 — Phase 4A — AST/IR-Aware Code Chunking
+
+**Completed by:** TASK-4A
+
+### Added
+- Package `retrieval` providing language-independent AST/IR-aware code chunking foundation and contracts.
+- Enumerations in `retrieval/enums.py`: `ChunkType` (`FILE_CONTEXT`, `CLASS_CONTEXT`, `INTERFACE_CONTEXT`, `FUNCTION`, `METHOD`, `SUB_CHUNK`).
+- Core Pydantic models in `retrieval/models.py`:
+  - `CodeChunk`: Immutable representation of a semantic code chunk with deterministic `id`, `chunk_type`, repository/file identity, parent linkages (`parent_entity_id`, `parent_chunk_id`), source ranges (`source_location`), chunk content, doc comments, signatures, sub-chunk indexing (`sub_chunk_index`, `total_sub_chunks`), and metadata dictionary.
+  - `CodeChunkCollection`: Structured chunk container maintaining sorted chunks and lookup indices (`file_chunk_map`, `entity_chunk_map`).
+- Identity generator in `retrieval/identity.py`: `generate_chunk_id` using UUID v5 based on seed key (`repo|file|type|entity|loc|sub_index`) under `CODELENS_CHUNK_NAMESPACE`.
+- Abstract contract in `retrieval/contracts.py`: `CodeChunkerContract`.
+- Production chunker engine in `retrieval/chunker.py`: `CodeChunker`:
+  - Language-independent AST/IR-aware chunker operating directly on Canonical Code IR (`NormalizationResult`) without re-parsing source code via tree-sitter.
+  - Extracts code snippets safely via `extract_source_text` using `SourceLocation` bounds.
+  - Structural context preservation: Classes emit structural headers (`CLASS_CONTEXT`) while child methods link to their parent class without repeating the top-level header.
+  - Deterministic fallback strategy for oversized entities: Entities exceeding `max_lines_per_chunk` (default 150 lines) emit a primary header chunk (`sub_chunk_index=0`) and contiguous line-range sub-chunks (`ChunkType.SUB_CHUNK`, `sub_chunk_index=1..N`).
+  - Deterministic source ordering (`FILE_CONTEXT` priority -> `start_line` -> `start_column` -> `chunk_type` -> `entity_id` -> `sub_chunk_index`).
+  - Duplicate chunk prevention tracking via `(entity_id, chunk_type, sub_chunk_index)`.
+- Public exports in `retrieval/__init__.py` and PEP 561 typed package marker `retrieval/py.typed`.
+- Package configuration updated in `pyproject.toml` to include `retrieval` in Hatchling wheel targets.
+- Comprehensive test suite `tests/test_chunking.py` (29 passing tests covering all 28 required test categories across Java, Python, TypeScript, empty files, nested declarations, duplicate prevention, synthetic scale performance, IR immutability, and graph separation).
+
+### Verification
+- `uv run ruff check .` ✅ (0 errors)
+- `uv run ruff format --check .` ✅ (112 files formatted)
+- `uv run mypy .` ✅ (0 errors across 98 source files)
+- `uv run pytest tests/ -v` ✅ (276 passed, 4 skipped)
+
+---
+
 ## 2026-08-30 — Phase 3H — Initial Impact Analysis
 
 **Completed by:** TASK-3H
