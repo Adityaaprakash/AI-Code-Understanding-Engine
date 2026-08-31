@@ -1,9 +1,13 @@
 """Abstract contracts for AST/IR-aware code chunking."""
 
 from abc import ABC, abstractmethod
+from typing import TYPE_CHECKING
 
 from code_analyzer.normalization import NormalizationResult
 from retrieval.models import CodeChunkCollection
+
+if TYPE_CHECKING:
+    from retrieval.embedding_models import EmbeddingInput, EmbeddingResult
 
 
 class CodeChunkerContract(ABC):
@@ -52,5 +56,45 @@ class CodeChunkerContract(ABC):
 
         Returns:
             Aggregated CodeChunkCollection for the entire repository.
+        """
+        raise NotImplementedError
+
+
+class EmbeddingProviderContract(ABC):
+    """Abstract contract interface for embedding providers."""
+
+    @property
+    @abstractmethod
+    def provider_name(self) -> str:
+        """Name of the embedding provider (e.g. 'test', 'openai', 'local')."""
+        raise NotImplementedError
+
+    @property
+    @abstractmethod
+    def model_name(self) -> str:
+        """Name of the embedding model (e.g. 'test-embed-v1', 'text-embedding-3-small')."""
+        raise NotImplementedError
+
+    @property
+    @abstractmethod
+    def dimension(self) -> int:
+        """Vector dimension produced by this provider."""
+        raise NotImplementedError
+
+    @property
+    @abstractmethod
+    def embedding_version(self) -> str:
+        """Stable version tag for the embedding text configuration and model."""
+        raise NotImplementedError
+
+    @abstractmethod
+    def embed(self, inputs: list["EmbeddingInput"]) -> list["EmbeddingResult"]:
+        """Generate dense vector embeddings for a list of EmbeddingInputs.
+
+        Args:
+            inputs: List of validated EmbeddingInputs.
+
+        Returns:
+            List of EmbeddingResults matching the input order and identity.
         """
         raise NotImplementedError

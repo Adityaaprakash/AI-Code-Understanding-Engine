@@ -455,6 +455,23 @@ service needed for this task.
 - [x] Built comprehensive test suite `tests/test_chunk_metadata.py` covering repository/commit tracking, path normalization, property aliases, parent hierarchy linkages, sub-chunk metadata, validation rules, immutability, determinism, and index consumer readiness
 - [x] All quality gates pass (`uv run ruff check .`, `uv run ruff format --check .`, `uv run mypy .`, `uv run pytest tests/` (287 passed))
 
+### TASK-4C: Dense Vector Embedding Infrastructure
+
+**Status:** ✅ Done  
+**Blockers:** TASK-4B ✅  
+**Scope:** Implement provider-agnostic, batch-aware, deterministic embedding pipeline transforming `CodeChunk` representations into dense vector embeddings.
+
+**Acceptance criteria:**
+- [x] Defined provider contract `EmbeddingProviderContract` in `retrieval/contracts.py`
+- [x] Implemented immutable Pydantic models `EmbeddingInput`, `EmbeddingResult`, `EmbeddingFailure`, and `EmbeddingBatchResult` in `retrieval/embedding_models.py`
+- [x] Implemented `EmbeddingTextBuilder` in `retrieval/text_builder.py` prioritizing source code while incorporating language, symbol name, signature, parent context, and doc comment headers with empty source fallback
+- [x] Implemented `DeterministicTestEmbeddingProvider` in `retrieval/providers.py` using SHA-256 digest hashing to produce deterministic, normalized vectors without network or GPU dependencies
+- [x] Implemented `HostedAPIEmbeddingProvider` in `retrieval/providers.py` using `httpx` for optional external API embedding integration
+- [x] Implemented `EmbeddingPipeline` in `retrieval/embedding_pipeline.py` executing batch boundary slicing, duplicate chunk ID detection, retry policies for transient errors, and vector dimension verification
+- [x] Enforced vector dimension and numeric sanity validation (no NaN/Inf)
+- [x] Built comprehensive unit test suite `tests/test_embedding_pipeline.py` covering text builder formatting, deterministic provider output, batch processing, duplicate ID rejection, fault injection retries, cross-language parity (Java, Python, TypeScript), performance batch ratio verification, and IR/chunk immutability
+- [x] All quality gates pass (`uv run ruff check .`, `uv run ruff format --check .`, `uv run mypy .`, `uv run pytest tests/` (304 passed))
+
 ## Notes for AI Agents
 
 - Each task above is independently implementable; do not merge tasks.

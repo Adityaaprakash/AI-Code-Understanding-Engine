@@ -78,10 +78,15 @@ AST parsing using tree-sitter. Produces the Canonical Code IR (see
 `CODE_IR.md`). Supports Java, Python, TypeScript in MVP.
 
 ### `retrieval/`
-AST/IR-aware code chunking foundation and hybrid retrieval engine:
+AST/IR-aware code chunking foundation, dense vector embedding pipeline, and hybrid retrieval engine:
 - `CodeChunker`: Language-independent AST/IR-aware chunker that transforms Canonical Code IR (`NormalizationResult`) into deterministic, semantically structured `CodeChunk` models without reparsing source code.
 - `ChunkType`: Defines hierarchical chunk types (`FILE_CONTEXT`, `CLASS_CONTEXT`, `INTERFACE_CONTEXT`, `FUNCTION`, `METHOD`, `SUB_CHUNK`).
 - `generate_chunk_id`: Deterministic UUID v5 chunk identity generator based on semantic context and location.
+- `EmbeddingTextBuilder`: Constructs deterministic semantic text representations from `CodeChunk` instances, prioritizing source code while incorporating structural metadata headers and empty body fallback.
+- `EmbeddingProviderContract`: Abstract interface for embedding providers.
+- `DeterministicTestEmbeddingProvider`: Zero-dependency, SHA-256 digest hash-based provider producing deterministic, normalized unit-length vector embeddings for test suites and offline development.
+- `HostedAPIEmbeddingProvider`: Pluggable `httpx` HTTP adapter for external/remote API embedding services.
+- `EmbeddingPipeline`: Provider-agnostic embedding pipeline service supporting batch boundary slicing, duplicate chunk ID detection, retry policies for transient errors, and vector dimension verification.
 - Future components: BM25 (PostgreSQL tsvector/pg_bm25), vector similarity (pgvector cosine), graph traversal, fusion scoring, and context pruning.
 
 ### `graph/`

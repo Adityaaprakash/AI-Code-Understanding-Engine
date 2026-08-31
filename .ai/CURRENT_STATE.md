@@ -8,7 +8,7 @@
 
 ## Current Task
 
-TASK-4B — Code Chunk Metadata Enrichment complete. Next Task: TASK-4C — Dense Vector Embedding Infrastructure.
+TASK-4C — Dense Vector Embedding Infrastructure complete. Next Task: TASK-4D — BM25 & Hybrid Indexing Foundation.
 
 ---
 
@@ -44,19 +44,21 @@ TASK-4B — Code Chunk Metadata Enrichment complete. Next Task: TASK-4C — Dens
 - [x] TASK-3H: Initial Impact Analysis complete
 - [x] TASK-4A: AST/IR-Aware Code Chunking complete
 - [x] TASK-4B: Code Chunk Metadata Enrichment complete
-  - Extended `CodeChunk` and `CodeChunkCollection` models to include optional `commit_id` and `commit_sha` metadata for version revision tracking.
-  - Added property aliases `symbol_name` (`name`) and `symbol_id` (`entity_id`) for standardized symbol access across retrieval layers.
-  - Implemented `to_index_dict()` method on `CodeChunk` providing complete, normalized metadata payloads for downstream vector embedding (4C) and BM25 indexing (4D) without duplicating Canonical IR.
-  - Added comprehensive validation for core identity strings, forward-slash path normalization, source location bounds, sub-chunk indexing ranges, and sub-chunk parent linkages.
-  - Propagated revision metadata through `CodeChunkerContract` and builder methods in `CodeChunker`.
-  - Added test suite `tests/test_chunk_metadata.py` covering repository/commit tracking, path normalization, property aliases, parent hierarchy linkages, sub-chunk metadata, validation rules, immutability, determinism, and index readiness.
-  - All 287/287 tests pass cleanly with 100% ruff check, ruff format, and mypy compliance.
+- [x] TASK-4C: Dense Vector Embedding Infrastructure complete
+  - Defined provider abstraction `EmbeddingProviderContract` in `retrieval/contracts.py`.
+  - Implemented immutable input and result models (`EmbeddingInput`, `EmbeddingResult`, `EmbeddingFailure`, `EmbeddingBatchResult`) in `retrieval/embedding_models.py` with vector dimension and numeric sanity validation (no NaN/Inf).
+  - Created `EmbeddingTextBuilder` in `retrieval/text_builder.py` prioritizing source code while enriching with language, symbol name, qualified name, signature, parent entity, and doc comment headers, with fallback for empty source bodies.
+  - Implemented `DeterministicTestEmbeddingProvider` in `retrieval/providers.py` using SHA-256 digest hashing to produce deterministic, normalized vectors with zero external network or GPU dependencies.
+  - Implemented pluggable `HostedAPIEmbeddingProvider` in `retrieval/providers.py` using `httpx` for optional external/remote embedding services.
+  - Created `EmbeddingPipeline` in `retrieval/embedding_pipeline.py` providing batch execution, batch boundary processing, duplicate chunk ID detection, retry policies for transient errors, and vector dimension verification.
+  - Built comprehensive test suite `tests/test_embedding_pipeline.py` covering text builder formatting, deterministic provider output, pipeline batching, duplicate chunk ID rejection, fault injection retries, cross-language parity (Java, Python, TypeScript), performance batch ratio verification, and IR/chunk immutability.
+  - All 304/304 tests pass cleanly with 100% ruff check, ruff format, and mypy compliance.
 
 ---
 
 ## In Progress
 
-- TASK-4C — Dense Vector Embedding Infrastructure (Next)
+- TASK-4D — BM25 & Hybrid Indexing Foundation (Next)
 
 ---
 

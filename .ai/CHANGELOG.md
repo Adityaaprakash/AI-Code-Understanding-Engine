@@ -2,6 +2,46 @@
 
 All notable changes to this project are recorded here.
 
+## 2026-08-31 — Phase 4C — Dense Vector Embedding Infrastructure
+
+**Completed by:** TASK-4C
+
+### Added
+- Abstract contract interface `EmbeddingProviderContract` in `retrieval/contracts.py`.
+- Immutable data models in `retrieval/embedding_models.py`:
+  - `EmbeddingInput`: Preserves chunk identity, formatted embedding text, and metadata context.
+  - `EmbeddingResult`: Immutable vector embedding container with dimension and numeric sanity validation (no NaN/Inf).
+  - `EmbeddingFailure`: Partial batch failure record.
+  - `EmbeddingBatchResult`: Aggregate container for batch outputs and failure tracking.
+- Exception hierarchy in `retrieval/exceptions.py` (`EmbeddingError`, `EmbeddingConfigurationError`, `EmbeddingProviderError`, `EmbeddingDimensionError`, `EmbeddingInputError`, `EmbeddingBatchError`).
+- Embedding text builder in `retrieval/text_builder.py`: `EmbeddingTextBuilder` prioritizing source code while incorporating language, path, symbol name, signature, parent entity, and doc comment headers with empty source body fallback.
+- Embedding providers in `retrieval/providers.py`:
+  - `DeterministicTestEmbeddingProvider`: Uses SHA-256 digest hashing for deterministic, normalized pseudo-vector generation without external network or GPU dependencies.
+  - `HostedAPIEmbeddingProvider`: Pluggable `httpx` HTTP adapter for external/remote API embedding services.
+- Embedding pipeline service in `retrieval/embedding_pipeline.py`: `EmbeddingPipeline` providing batch processing, duplicate chunk ID detection, retry policies for transient errors, and vector dimension verification.
+- Comprehensive test suite `tests/test_embedding_pipeline.py` (17 tests covering text builder formatting, test provider determinism, pipeline batching, duplicate chunk ID rejection, fault injection retries, cross-language parity for Java, Python, TypeScript, performance batch ratio verification, and IR/chunk immutability).
+
+### Verification
+- `uv run ruff check .` ✅ (0 errors)
+- `uv run ruff format --check .` ✅ (119 files formatted)
+- `uv run mypy .` ✅ (0 errors across 105 source files)
+- `uv run pytest tests/ -v` ✅ (304 passed, 4 skipped)
+
+---
+
+## 2026-08-31 — Phase 4B — Code Chunk Metadata Enrichment
+
+**Completed by:** TASK-4B
+
+### Added
+- Extended `CodeChunk` and `CodeChunkCollection` models in `retrieval/models.py` to include optional `commit_id` and `commit_sha` for revision tracking.
+- Added convenience property aliases `symbol_name` (`name`) and `symbol_id` (`entity_id`) to `CodeChunk`.
+- Implemented `to_index_dict()` on `CodeChunk` for normalized metadata payload export without duplicating Canonical IR.
+- Propagated revision metadata through `CodeChunkerContract` and builder methods in `retrieval/chunker.py`.
+- Added test suite `tests/test_chunk_metadata.py` (11 passing tests).
+
+---
+
 ## 2026-08-31 — Phase 4A — AST/IR-Aware Code Chunking
 
 **Completed by:** TASK-4A
