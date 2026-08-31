@@ -1,4 +1,4 @@
-"""Pydantic data models for lexical BM25 indexing and search results."""
+"""Pydantic data models for Phase 5 retrieval contracts and search result candidates."""
 
 import math
 from typing import Any, Self
@@ -7,52 +7,41 @@ from pydantic import BaseModel, ConfigDict, Field, field_validator, model_valida
 
 from code_analyzer.parsers.models import Language
 from retrieval.enums import ChunkType
+from retrieval.query_models import ProcessedQuery
 
 
-class LexicalDocument(BaseModel):
-    """Immutable representation of a code chunk prepared for lexical indexing.
-
-    Stores chunk identity, path, language, revision metadata, and code-aware field tokens.
-    Does NOT duplicate the full source code or Canonical IR objects.
-    """
+class LexicalRetrievalRequest(BaseModel):
+    """Immutable request specification for lexical retrieval execution."""
 
     model_config = ConfigDict(frozen=True)
 
-    chunk_id: str
+    query: str | ProcessedQuery
     repository_id: str
-    commit_id: str | None = None
+    top_k: int = 10
+    language: Language | None = None
+    chunk_type: ChunkType | None = None
+    file_path: str | None = None
     commit_sha: str | None = None
-    file_path: str
-    symbol_name: str | None = None
-    qualified_name: str | None = None
-    chunk_type: ChunkType
-    language: Language
-    field_tokens: dict[str, list[str]] = Field(default_factory=dict)
-    all_tokens: list[str] = Field(default_factory=list)
-    doc_len: int
-    start_line: int | None = None
-    end_line: int | None = None
-    metadata: dict[str, Any] = Field(default_factory=dict)
 
-    @field_validator("chunk_id", "repository_id", "file_path")
+    @field_validator("repository_id")
     @classmethod
-    def validate_non_empty_strings(cls, v: str) -> str:
-        """Ensure core identity strings are non-empty and stripped."""
+    def validate_repository_id(cls, v: str) -> str:
+        """Ensure repository_id is non-empty."""
         if not v or not v.strip():
-            raise ValueError("Identity string cannot be empty or whitespace")
+            raise ValueError("repository_id cannot be empty or whitespace")
         return v.strip()
 
-    @field_validator("doc_len")
+    @field_validator("top_k")
     @classmethod
-    def validate_doc_len_non_negative(cls, v: int) -> int:
-        """Ensure document length is non-negative."""
-        if v < 0:
-            raise ValueError(f"doc_len must be >= 0, got {v}")
+    def validate_top_k(cls, v: int) -> int:
+        """Ensure top_k is positive (> 0)."""
+        if v <= 0:
+            raise ValueError(f"top_k must be > 0, got {v}")
         return v
 
 
-class LexicalSearchResult(BaseModel):
-    """Immutable representation of a single BM25 search result candidate."""
+class RetrievalResult(BaseModel):
+    """Immutable representation of a single ranked retrieval candidate."""
 
     model_config = ConfigDict(frozen=True)
 
@@ -63,10 +52,10 @@ class LexicalSearchResult(BaseModel):
     commit_id: str | None = None
     commit_sha: str | None = None
     file_path: str
+    language: Language
+    chunk_type: ChunkType
     symbol_name: str | None = None
     qualified_name: str | None = None
-    chunk_type: ChunkType
-    language: Language
     start_line: int | None = None
     end_line: int | None = None
     metadata: dict[str, Any] = Field(default_factory=dict)
@@ -74,7 +63,7 @@ class LexicalSearchResult(BaseModel):
     @field_validator("chunk_id", "repository_id", "file_path")
     @classmethod
     def validate_non_empty_strings(cls, v: str) -> str:
-        """Ensure identity strings are non-empty."""
+        """Ensure core identity strings are non-empty."""
         if not v or not v.strip():
             raise ValueError("Identity string cannot be empty or whitespace")
         return v.strip()
@@ -82,9 +71,9 @@ class LexicalSearchResult(BaseModel):
     @field_validator("score")
     @classmethod
     def validate_finite_score(cls, v: float) -> float:
-        """Ensure BM25 score is finite (not NaN or Inf)."""
+        """Ensure score is a finite float number."""
         if math.isnan(v) or math.isinf(v):
-            raise ValueError("BM25 score must be a finite float number")
+            raise ValueError("Retrieval score must be a finite float number")
         return v
 
     @field_validator("rank")
@@ -96,15 +85,26 @@ class LexicalSearchResult(BaseModel):
         return v
 
 
-class LexicalSearchResultSet(BaseModel):
-    """Container for BM25 search results across a repository query."""
+class RetrievalResultSet(BaseModel):
+    """Immutable container for Phase 5 ranked retrieval results and latency observability."""
 
     model_config = ConfigDict(frozen=True)
 
-    query: str
-    repository_id: str | None = None
-    results: list[LexicalSearchResult] = Field(default_factory=list)
+    query: ProcessedQuery
+    repository_id: str
+    results: list[RetrievalResult] = Field(default_factory=list)
     total_matches: int = 0
+    preprocessing_latency_ms: float = 0.0
+    retrieval_latency_ms: float = 0.0
+    total_latency_ms: float = 0.0
+
+    @field_validator("repository_id")
+    @classmethod
+    def validate_repository_id(cls, v: str) -> str:
+        """Ensure repository_id is non-empty."""
+        if not v or not v.strip():
+            raise ValueError("repository_id cannot be empty or whitespace")
+        return v.strip()
 
     @model_validator(mode="after")
     def validate_total_matches(self) -> Self:

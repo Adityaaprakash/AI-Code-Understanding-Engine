@@ -505,6 +505,33 @@ service needed for this task.
 - [x] Verified performance scale on 1,000+ chunks, batch call reduction ($\lceil N / B \rceil$), and exception failure injection
 - [x] All quality gates pass (`uv run ruff check .`, `uv run ruff format --check .`, `uv run mypy .`, `uv run pytest tests/` (340 passed))
 
+### TASK-5A: Query Preprocessing
+
+**Status:** ✅ Done  
+**Blockers:** TASK-4E ✅  
+**Scope:** Implement query normalization, identifier extraction, qualified name detection, and language-neutral classification engine.
+
+**Acceptance criteria:**
+- [x] Defined `QueryKind` enum and immutable `ProcessedQuery` Pydantic model (`frozen=True`) in `retrieval/query_models.py`
+- [x] Implemented `QueryPreprocessor` in `retrieval/query_processor.py` supporting unicode NFC normalization, whitespace collapsing, casing preservation, identifier extraction (camelCase, PascalCase, snake_case, acronyms), qualified name candidates, path structure detection, and deterministic `QueryKind` classification (`IDENTIFIER`, `QUALIFIED_IDENTIFIER`, `PATH_OR_FILE`, `RELATIONSHIP`, `NATURAL_LANGUAGE`, `MIXED`, `UNKNOWN`)
+- [x] Added empty/whitespace query validation raising `LexicalQueryError`
+- [x] Built comprehensive unit test suite `tests/test_query_preprocessing.py` validating normalization, matrix query classification, immutability, and JSON serialization
+- [x] All quality gates pass (`uv run ruff check .`, `uv run ruff format --check .`, `uv run mypy .`, `uv run pytest tests/`)
+
+### TASK-5B: BM25 / Lexical Retrieval
+
+**Status:** ✅ Done  
+**Blockers:** TASK-5A ✅  
+**Scope:** Implement Phase 5 BM25 Lexical Retrieval Service (`LexicalRetriever`) orchestrating query preprocessing, repository isolation, metadata filtering, and candidate ranking.
+
+**Acceptance criteria:**
+- [x] Defined `LexicalRetrieverContract` interface in `retrieval/contracts.py`
+- [x] Implemented immutable `LexicalRetrievalRequest`, `RetrievalResult`, and `RetrievalResultSet` models in `retrieval/retrieval_models.py`
+- [x] Updated `BM25LexicalIndex` and `RepositoryBM25Index` in `retrieval/lexical_index.py` with support for optional `file_path` and `commit_sha` filtering and full metadata preservation (`qualified_name`, `start_line`, `end_line`, `metadata`)
+- [x] Implemented `LexicalRetriever` service in `retrieval/lexical_retriever.py` orchestrating query preprocessing, repository isolation boundary checks, BM25 index search, and candidate result ranking
+- [x] Built comprehensive unit & integration test suite `tests/test_lexical_retriever.py` verifying end-to-end flow, strict cross-repository isolation (Repo A vs Repo B), adversarial symbol field-weighting advantage (symbol name matches beat content term repetition), metadata preservation, zero-result handling, invalid input validation, scale performance (1,000+ chunks sub-second execution), index immutability, and JSON serialization
+- [x] All quality gates pass (`uv run ruff check .`, `uv run ruff format --check .`, `uv run mypy .`, `uv run pytest tests/` (376 passed))
+
 ## Notes for AI Agents
 
 - Each task above is independently implementable; do not merge tasks.

@@ -1,4 +1,4 @@
-"""Abstract contracts for AST/IR-aware code chunking."""
+"""Abstract contracts for AST/IR-aware code chunking, embeddings, and retrieval engines."""
 
 from abc import ABC, abstractmethod
 from typing import TYPE_CHECKING
@@ -14,6 +14,8 @@ if TYPE_CHECKING:
     from retrieval.enums import ChunkType
     from retrieval.lexical_models import LexicalSearchResult
     from retrieval.models import CodeChunk
+    from retrieval.query_models import ProcessedQuery
+    from retrieval.retrieval_models import RetrievalResultSet
 
 
 class CodeChunkerContract(ABC):
@@ -137,6 +139,8 @@ class LexicalIndexContract(ABC):
         top_k: int = 10,
         language: "Language | None" = None,
         chunk_type: "ChunkType | None" = None,
+        file_path: str | None = None,
+        commit_sha: str | None = None,
     ) -> list["LexicalSearchResult"]:
         """Execute BM25 lexical code search for a target repository.
 
@@ -146,6 +150,8 @@ class LexicalIndexContract(ABC):
             top_k: Maximum number of ranked results to return (must be > 0).
             language: Optional language filter.
             chunk_type: Optional chunk type filter.
+            file_path: Optional file path filter.
+            commit_sha: Optional commit SHA index version filter.
 
         Returns:
             List of ranked LexicalSearchResults sorted by score descending and chunk_id ascending.
@@ -155,4 +161,35 @@ class LexicalIndexContract(ABC):
     @abstractmethod
     def document_count(self, repository_id: str | None = None) -> int:
         """Return total indexed document count for a repository or across all repositories."""
+        raise NotImplementedError
+
+
+class LexicalRetrieverContract(ABC):
+    """Abstract contract interface for Phase 5 lexical retrieval services."""
+
+    @abstractmethod
+    def retrieve(
+        self,
+        query: "str | ProcessedQuery",
+        repository_id: str,
+        top_k: int = 10,
+        language: "Language | None" = None,
+        chunk_type: "ChunkType | None" = None,
+        file_path: str | None = None,
+        commit_sha: str | None = None,
+    ) -> "RetrievalResultSet":
+        """Execute Phase 5 lexical retrieval pipeline returning ranked candidates.
+
+        Args:
+            query: Raw query string or preprocessed ProcessedQuery.
+            repository_id: Target repository identity for search boundary.
+            top_k: Maximum number of ranked candidates to return (must be > 0).
+            language: Optional language metadata filter.
+            chunk_type: Optional chunk type filter.
+            file_path: Optional file path filter.
+            commit_sha: Optional index version / commit SHA filter.
+
+        Returns:
+            RetrievalResultSet containing ProcessedQuery and ordered RetrievalResults.
+        """
         raise NotImplementedError

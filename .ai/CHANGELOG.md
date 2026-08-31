@@ -2,6 +2,32 @@
 
 All notable changes to this project are recorded here.
 
+## 2026-08-31 — Phase 5A & 5B — Query Preprocessing & BM25 Lexical Retrieval
+
+**Completed by:** TASK-5A & TASK-5B
+
+### Added
+- **TASK-5A (Query Preprocessing):**
+  - Enumeration `QueryKind` and immutable Pydantic model `ProcessedQuery` (`frozen=True`) in `retrieval/query_models.py`.
+  - `QueryPreprocessor` in `retrieval/query_processor.py` providing deterministic unicode NFC normalization, whitespace collapsing, casing preservation, identifier token extraction (camelCase, PascalCase, snake_case, acronyms), qualified name detection, path detection, prose keyword filtering, and `QueryKind` classification (`IDENTIFIER`, `QUALIFIED_IDENTIFIER`, `PATH_OR_FILE`, `RELATIONSHIP`, `NATURAL_LANGUAGE`, `MIXED`, `UNKNOWN`).
+  - Validation enforcing non-empty/non-whitespace query strings, raising `LexicalQueryError`.
+  - Unit test suite `tests/test_query_preprocessing.py` (24 tests covering query matrix, normalization, immutability, and JSON serialization).
+- **TASK-5B (BM25 Lexical Retrieval Service):**
+  - Abstract contract interface `LexicalRetrieverContract` in `retrieval/contracts.py`.
+  - Immutable models `LexicalRetrievalRequest`, `RetrievalResult`, and `RetrievalResultSet` in `retrieval/retrieval_models.py` with score/rank validation and latency observability (`preprocessing_latency_ms`, `retrieval_latency_ms`, `total_latency_ms`).
+  - Updated `BM25LexicalIndex` and `RepositoryBM25Index` in `retrieval/lexical_index.py` with optional `file_path` and `commit_sha` filtering and full metadata propagation (`qualified_name`, `start_line`, `end_line`, `metadata`).
+  - `LexicalRetriever` service in `retrieval/lexical_retriever.py` orchestrating query preprocessing, repository isolation boundary checks, BM25 index search, and candidate result ranking.
+  - Comprehensive unit & integration test suite `tests/test_lexical_retriever.py` (12 tests verifying end-to-end retrieval flow, mandatory cross-repository isolation, adversarial symbol field weighting advantage, metadata preservation, zero-result queries, validation errors, scale performance on 1,000+ chunks, index immutability, and JSON serialization).
+- Package exports in `retrieval/__init__.py`.
+
+### Verification
+- `uv run ruff check .` ✅ (0 errors)
+- `uv run ruff format .` ✅ (5 files reformatted, 0 errors)
+- `uv run mypy .` ✅ (Success: no issues found in 117 source files)
+- `uv run pytest tests/ -v` ✅ (376 passed, 4 skipped in 16.9s)
+
+---
+
 ## 2026-08-31 — Phase 4E — Retrieval & Indexing Testing & Hardening
 
 **Completed by:** TASK-4E

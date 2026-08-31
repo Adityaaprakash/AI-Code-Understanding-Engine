@@ -75,9 +75,13 @@ class LexicalTextBuilder:
             commit_sha=chunk.commit_sha,
             file_path=chunk.file_path,
             symbol_name=symbol_label,
+            qualified_name=chunk.qualified_name,
             chunk_type=chunk.chunk_type,
             language=chunk.language,
             field_tokens=field_tokens,
             all_tokens=all_tokens,
             doc_len=len(all_tokens),
+            start_line=chunk.source_location.start_line if chunk.source_location else None,
+            end_line=chunk.source_location.end_line if chunk.source_location else None,
+            metadata=chunk.metadata,
         )

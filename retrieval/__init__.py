@@ -1,7 +1,12 @@
-"""Code retrieval and embedding module for CodeLens AI."""
+"""Code retrieval, preprocessing, and search orchestration module for CodeLens AI."""
 
 from retrieval.chunker import CodeChunker
-from retrieval.contracts import CodeChunkerContract, EmbeddingProviderContract, LexicalIndexContract
+from retrieval.contracts import (
+    CodeChunkerContract,
+    EmbeddingProviderContract,
+    LexicalIndexContract,
+    LexicalRetrieverContract,
+)
 from retrieval.embedding_models import (
     EmbeddingBatchResult,
     EmbeddingFailure,
@@ -25,10 +30,14 @@ from retrieval.exceptions import (
 )
 from retrieval.identity import generate_chunk_id
 from retrieval.lexical_index import BM25LexicalIndex
-from retrieval.lexical_models import LexicalDocument, LexicalSearchResult, LexicalSearchResultSet
+from retrieval.lexical_models import LexicalDocument, LexicalSearchResult
+from retrieval.lexical_retriever import LexicalRetriever
 from retrieval.lexical_text_builder import LexicalTextBuilder
 from retrieval.models import CodeChunk, CodeChunkCollection
 from retrieval.providers import DeterministicTestEmbeddingProvider, HostedAPIEmbeddingProvider
+from retrieval.query_models import ProcessedQuery, QueryKind
+from retrieval.query_processor import QueryPreprocessor
+from retrieval.retrieval_models import LexicalRetrievalRequest, RetrievalResult, RetrievalResultSet
 from retrieval.text_builder import EmbeddingTextBuilder
 from retrieval.tokenizer import CodeTokenizer, tokenize_code, tokenize_query
 
@@ -61,10 +70,17 @@ __all__ = [
     "LexicalIndexContract",
     "LexicalIndexError",
     "LexicalQueryError",
+    "LexicalRetrievalRequest",
+    "LexicalRetriever",
+    "LexicalRetrieverContract",
     "LexicalSearchResult",
-    "LexicalSearchResultSet",
     "LexicalTextBuilder",
+    "ProcessedQuery",
+    "QueryKind",
+    "QueryPreprocessor",
     "RetrievalError",
+    "RetrievalResult",
+    "RetrievalResultSet",
     "generate_chunk_id",
     "tokenize_code",
     "tokenize_query",

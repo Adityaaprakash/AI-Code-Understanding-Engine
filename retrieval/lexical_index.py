@@ -92,8 +92,10 @@ class RepositoryBM25Index:
         top_k: int = 10,
         language: Language | None = None,
         chunk_type: ChunkType | None = None,
+        file_path: str | None = None,
+        commit_sha: str | None = None,
     ) -> list[LexicalSearchResult]:
-        """Execute BM25 search over the repository index."""
+        """Execute BM25 search over the repository index with optional filters."""
         if not query_tokens or self.total_documents == 0:
             return []
 
@@ -125,6 +127,14 @@ class RepositoryBM25Index:
                     continue
                 if chunk_type is not None and doc.chunk_type != chunk_type:
                     continue
+                if (
+                    file_path is not None
+                    and doc.file_path != file_path
+                    and not doc.file_path.endswith(file_path)
+                ):
+                    continue
+                if commit_sha is not None and doc.commit_sha != commit_sha:
+                    continue
 
                 doc_len = float(doc.doc_len)
                 num = float(tf) * (self.k1 + 1.0)
@@ -155,8 +165,12 @@ class RepositoryBM25Index:
                     commit_sha=doc.commit_sha,
                     file_path=doc.file_path,
                     symbol_name=doc.symbol_name,
+                    qualified_name=doc.qualified_name,
                     chunk_type=doc.chunk_type,
                     language=doc.language,
+                    start_line=doc.start_line,
+                    end_line=doc.end_line,
+                    metadata=doc.metadata,
                 )
             )
 
@@ -231,8 +245,10 @@ class BM25LexicalIndex(LexicalIndexContract):
         top_k: int = 10,
         language: Language | None = None,
         chunk_type: ChunkType | None = None,
+        file_path: str | None = None,
+        commit_sha: str | None = None,
     ) -> list[LexicalSearchResult]:
-        """Execute BM25 lexical search for a repository."""
+        """Execute BM25 lexical search for a repository with optional filters."""
         if top_k <= 0:
             raise LexicalQueryError(f"top_k must be > 0, got {top_k}")
         if not query or not query.strip():
@@ -248,6 +264,8 @@ class BM25LexicalIndex(LexicalIndexContract):
             top_k=top_k,
             language=language,
             chunk_type=chunk_type,
+            file_path=file_path,
+            commit_sha=commit_sha,
         )
 
     def document_count(self, repository_id: str | None = None) -> int:
