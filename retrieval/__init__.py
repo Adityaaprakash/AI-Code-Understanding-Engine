@@ -4,6 +4,7 @@ from retrieval.chunker import CodeChunker
 from retrieval.contracts import (
     CodeChunkerContract,
     EmbeddingProviderContract,
+    GraphRetrieverContract,
     LexicalIndexContract,
     LexicalRetrieverContract,
     VectorIndexContract,
@@ -24,6 +25,9 @@ from retrieval.exceptions import (
     EmbeddingError,
     EmbeddingInputError,
     EmbeddingProviderError,
+    GraphQueryError,
+    GraphRetrievalError,
+    GraphStoreNotFoundError,
     LexicalConfigurationError,
     LexicalDocumentError,
     LexicalIndexError,
@@ -34,6 +38,7 @@ from retrieval.exceptions import (
     VectorIndexError,
     VectorQueryError,
 )
+from retrieval.graph_retriever import GraphRetriever
 from retrieval.identity import generate_chunk_id
 from retrieval.lexical_index import BM25LexicalIndex
 from retrieval.lexical_models import LexicalDocument, LexicalSearchResult
@@ -72,6 +77,11 @@ __all__ = [
     "EmbeddingProviderError",
     "EmbeddingResult",
     "EmbeddingTextBuilder",
+    "GraphQueryError",
+    "GraphRetrievalError",
+    "GraphRetriever",
+    "GraphRetrieverContract",
+    "GraphStoreNotFoundError",
     "HostedAPIEmbeddingProvider",
     "LexicalConfigurationError",
     "LexicalDocument",

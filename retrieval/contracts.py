@@ -285,3 +285,34 @@ class VectorRetrieverContract(ABC):
             RetrievalResultSet containing ProcessedQuery and ordered RetrievalResults.
         """
         raise NotImplementedError
+
+
+class GraphRetrieverContract(ABC):
+    """Abstract contract interface for Phase 5 graph retrieval services."""
+
+    @abstractmethod
+    def retrieve(
+        self,
+        query: "str | ProcessedQuery",
+        repository_id: str,
+        top_k: int = 10,
+        language: "Language | None" = None,
+        chunk_type: "ChunkType | None" = None,
+        file_path: str | None = None,
+        commit_sha: str | None = None,
+    ) -> "RetrievalResultSet":
+        """Execute Phase 5 graph retrieval pipeline returning ranked structural candidates.
+
+        Args:
+            query: Raw query string or preprocessed ProcessedQuery.
+            repository_id: Target repository identity for search boundary.
+            top_k: Maximum number of ranked candidates to return (must be > 0).
+            language: Optional language metadata filter.
+            chunk_type: Optional chunk type filter.
+            file_path: Optional file path filter.
+            commit_sha: Optional index version / commit SHA filter.
+
+        Returns:
+            RetrievalResultSet containing ProcessedQuery and ordered RetrievalResults.
+        """
+        raise NotImplementedError

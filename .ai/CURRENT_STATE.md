@@ -57,8 +57,18 @@ TASK-5C (Vector Retrieval) complete. Next task is TASK-5D (Graph Retrieval).
   - Added `VectorIndexError`, `VectorConfigurationError`, `VectorDocumentError`, `VectorQueryError` in `retrieval/exceptions.py`.
   - Implemented `VectorRetriever` service in `retrieval/vector_retriever.py` orchestrating `ProcessedQuery` input, query vector generation via `EmbeddingProviderContract` (`DeterministicTestEmbeddingProvider` by default), vector search execution, latency tracking, and candidate result mapping into standard `RetrievalResultSet`.
   - Built comprehensive unit & integration test suite `tests/test_vector_retriever.py` containing 18 tests covering basic retrieval, semantic queries, identifier/mixed queries, filter behavior, mandatory cross-repository isolation, referential integrity (`RetrievalResult.chunk_id` == `CodeChunk.id`), input validation, zero-result handling, top-k limiting, deterministic ordering & repeated query stability, index immutability, query vector dimension validation, no chunk re-embedding during search, scale performance (1,000+ chunks sub-second), JSON serialization roundtripping, and duplicate ID prevention.
+- [x] TASK-5D: Graph Retrieval complete
+  - Defined `GraphRetrieverContract` interface in `retrieval/contracts.py`.
+  - Added `GraphRetrievalError`, `GraphQueryError`, `GraphStoreNotFoundError` in `retrieval/exceptions.py`.
+  - Implemented `GraphRetriever` service in `retrieval/graph_retriever.py` orchestrating structural relationship query interpretation (CALLS, CALLEES, IMPLEMENTS, EXTENDS, DEPENDENT, DEPENDENCY, IMPORTS, USES, IMPACT, IDENTIFIER) using `QueryPreprocessor` output and regex pattern matching.
+  - Integrated `GraphRetriever` with Phase 3 `GraphQueryEngine` and `ImpactAnalyzer` for cycle-safe, depth-bounded graph traversals.
+  - Mapped Phase 3 graph nodes into standard Phase 5 `RetrievalResult` candidates, enriching metadata with `graph_relationship`, `graph_direction`, and `graph_depth` while preserving canonical `CodeChunk` identities.
+  - Enforced strict repository-level isolation, deterministic candidate ranking (score DESC, depth ASC, symbol_name ASC, chunk_id ASC), metadata filtering (`language`, `chunk_type`, `file_path`, `commit_sha`), latency metrics tracking, and immutability of the underlying Phase 3 graph.
+  - Built comprehensive unit & integration test suite in `tests/test_graph_retriever.py` with 19 test cases validating direct/reverse call queries, inheritance/implementation queries, dependency queries, qualified/ambiguous identifiers, natural language & mixed queries, non-graph prose queries, zero-result handling, cross-repo isolation, version isolation, cycle safety, deterministic ordering repeatability, graph immutability, Pydantic JSON serialization, latency tracking, top-k limiting, and input validation.
 
-  - All 394 tests pass cleanly with 100% ruff check, ruff format, and mypy compliance.
+
+  - All 413 tests pass cleanly with 100% ruff check, ruff format, and mypy compliance.
+
 
 
 ---

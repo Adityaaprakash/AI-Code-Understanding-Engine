@@ -101,3 +101,26 @@ class VectorQueryError(VectorIndexError):
     """Raised when vector search query parameters are invalid."""
 
     pass
+
+
+# ------------------------------------------------------------------------------
+# Graph Retrieval Exceptions
+# ------------------------------------------------------------------------------
+
+
+class GraphRetrievalError(RetrievalError):
+    """Base exception for all graph retrieval errors."""
+
+    pass
+
+
+class GraphQueryError(GraphRetrievalError):
+    """Raised when graph search query parameters (e.g. invalid repository_id or top_k <= 0) are invalid."""
+
+    pass
+
+
+class GraphStoreNotFoundError(GraphRetrievalError):
+    """Raised when specified graph or repository store is not available."""
+
+    pass

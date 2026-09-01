@@ -2,7 +2,31 @@
 
 All notable changes to this project are recorded here.
 
+## 2026-09-01 — Phase 5D — Graph Retrieval
+
+**Completed by:** TASK-5D
+
+### Added
+- **TASK-5D (Graph Retrieval Service):**
+  - Contract interface `GraphRetrieverContract` in `retrieval/contracts.py`.
+  - Exception classes `GraphRetrievalError`, `GraphQueryError`, `GraphStoreNotFoundError` in `retrieval/exceptions.py`.
+  - `GraphRetriever` service in `retrieval/graph_retriever.py` orchestrating natural language structural relationship intent interpretation (`CALLS`, `CALLEES`, `IMPLEMENTS`, `EXTENDS`, `DEPENDENT`, `DEPENDENCY`, `IMPORTS`, `USES`, `IMPACT`, `IDENTIFIER`) using regex pattern matching and `ProcessedQuery` classification.
+  - Integration with Phase 3 `GraphQueryEngine` and `ImpactAnalyzer` for cycle-safe, depth-bounded graph traversals.
+  - Candidate mapping translating Phase 3 graph nodes into standard `RetrievalResult` objects, preserving `CodeChunk.id` referential integrity and enriching metadata (`graph_relationship`, `graph_direction`, `graph_depth`).
+  - Repository-level isolation enforcement, metadata filtering (`language`, `chunk_type`, `file_path`, `commit_sha`), latency metrics tracking (`preprocessing_latency_ms`, `retrieval_latency_ms`, `total_latency_ms`), deterministic ordering (`score DESC, graph_depth ASC, symbol_name ASC, chunk_id ASC`), and graph immutability during queries.
+  - Comprehensive unit & integration test suite `tests/test_graph_retriever.py` (19 tests validating direct/reverse calls, inheritance/implementation queries, dependency queries, qualified/ambiguous identifiers, natural language & mixed queries, non-graph prose queries, zero-result handling, cross-repo isolation, version isolation, cycle safety, deterministic ordering repeatability, graph immutability, Pydantic JSON serialization, latency tracking, top-k limiting, and input validation).
+- Package exports in `retrieval/__init__.py`.
+
+### Verification
+- `ruff check .` ✅ (0 errors)
+- `ruff format --check .` ✅ (0 files reformatted)
+- `mypy retrieval/ tests/test_graph_retriever.py` ✅ (Success: no issues found in 24 source files)
+- `pytest tests/ -v` ✅ (413 passed, 4 skipped in 16.94s)
+
+---
+
 ## 2026-09-01 — Phase 5C — Vector Retrieval
+
 
 **Completed by:** TASK-5C
 

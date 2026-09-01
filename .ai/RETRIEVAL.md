@@ -121,10 +121,33 @@ prunes to a token budget before passing to the LLM.
 
 ---
 
-### Graph Retriever (TASK-5D Planned)
+### Graph Retrieval Service (`GraphRetriever`) (TASK-5D Implemented & Hardened)
 
-**Purpose:** Structural relevance — given an initially matched symbol, retrieve
-its callers, callees, implementations, and overriders.
+**Purpose:** Structural retrieval layer — retrieves code candidates based on explicit code relationships (callers, callees, dependents, dependencies, implementations, inheritance, imports, references, and impact radius). Consumes `ProcessedQuery` and integrates with Phase 3 `GraphQueryEngine`, `ImpactAnalyzer`, and `CodeGraph`.
+
+**Implementation:** Pure, deterministic `GraphRetriever` implementing `GraphRetrieverContract`.
+
+**Key Architecture Features:**
+- **Natural Language Intent Interpretation:** Interprets relationship intents from `ProcessedQuery` metadata and regex patterns:
+  - `CALLS` (Inbound callers vs outbound callees)
+  - `IMPLEMENTS` (Inbound implementations vs outbound interfaces)
+  - `EXTENDS` (Inbound subclasses vs outbound base class)
+  - `DEPENDENT` / `DEPENDENCY` (Inbound dependents vs outbound dependencies)
+  - `IMPORTS` (Inbound importing modules vs outbound imported modules)
+  - `USES` (Inbound usages / references)
+  - `IMPACT` (Transitive impact radius via Phase 3 `ImpactAnalyzer` BFS)
+  - `IDENTIFIER` (Target symbol node + 1-hop structural neighbors)
+- **Single Source of Identity:** Maps graph node identities strictly to canonical `CodeChunk.id` from Phase 4/5 (`RetrievalResult.chunk_id` == `CodeChunk.id`). If a registered `CodeChunk` is not in lookup, direct node property extraction builds a compatible `RetrievalResult`.
+- **Cycle-Safe & Depth-Bounded Traversals:** Leverages cycle-safe graph algorithms from Phase 3, avoiding infinite recursion on cyclic code graphs (e.g. `A -> B -> C -> A`).
+- **Repository Isolation Boundary:** Graph search calls must specify a target `repository_id`. Graph traversal strictly operates within the target repository's code graph container.
+- **Metadata Preservation:** Enriches result metadata with `graph_relationship`, `graph_direction`, and `graph_depth`, preserving line locations and symbol names for explainability.
+- **Deterministic Candidate Sorting:** Ranks candidates deterministically using `(score DESC, graph_depth ASC, symbol_name ASC, chunk_id ASC)`.
+- **Latency Observability:** Measures and reports `preprocessing_latency_ms`, `retrieval_latency_ms`, and `total_latency_ms`.
+- **Graph Immutability:** Search execution never mutates node or edge structures in the Phase 3 Code Knowledge Graph.
+
+**Inputs:** Raw query string or `ProcessedQuery`, `repository_id`, optional `top_k`, `language`, `chunk_type`, `file_path`, `commit_sha` filters.  
+**Outputs:** `RetrievalResultSet` model containing `ProcessedQuery`, ordered `RetrievalResult` candidates, and latency metrics.
+
 
 ---
 
