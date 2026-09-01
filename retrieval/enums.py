@@ -13,3 +13,11 @@ class ChunkType(StrEnum):
     FUNCTION = "function"
     METHOD = "method"
     SUB_CHUNK = "sub_chunk"
+
+
+class RetrievalSource(StrEnum):
+    """Supported retrieval branch sources in candidate fusion."""
+
+    BM25 = "bm25"
+    VECTOR = "vector"
+    GRAPH = "graph"

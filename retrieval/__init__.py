@@ -1,7 +1,7 @@
-"""Code retrieval, preprocessing, and search orchestration module for CodeLens AI."""
-
+from retrieval.candidate_fusion import CandidateFusionEngine
 from retrieval.chunker import CodeChunker
 from retrieval.contracts import (
+    CandidateFusionContract,
     CodeChunkerContract,
     EmbeddingProviderContract,
     GraphRetrieverContract,
@@ -17,14 +17,18 @@ from retrieval.embedding_models import (
     EmbeddingResult,
 )
 from retrieval.embedding_pipeline import EmbeddingPipeline
-from retrieval.enums import ChunkType
+from retrieval.enums import ChunkType, RetrievalSource
 from retrieval.exceptions import (
+    CandidateFusionError,
     EmbeddingBatchError,
     EmbeddingConfigurationError,
     EmbeddingDimensionError,
     EmbeddingError,
     EmbeddingInputError,
     EmbeddingProviderError,
+    FusionQueryError,
+    FusionRepositoryError,
+    FusionVersionError,
     GraphQueryError,
     GraphRetrievalError,
     GraphStoreNotFoundError,
@@ -57,6 +61,9 @@ from retrieval.vector_retriever import VectorRetriever
 
 __all__ = [
     "BM25LexicalIndex",
+    "CandidateFusionContract",
+    "CandidateFusionEngine",
+    "CandidateFusionError",
     "ChunkType",
     "CodeChunk",
     "CodeChunkCollection",
@@ -77,6 +84,9 @@ __all__ = [
     "EmbeddingProviderError",
     "EmbeddingResult",
     "EmbeddingTextBuilder",
+    "FusionQueryError",
+    "FusionRepositoryError",
+    "FusionVersionError",
     "GraphQueryError",
     "GraphRetrievalError",
     "GraphRetriever",
@@ -100,6 +110,7 @@ __all__ = [
     "RetrievalError",
     "RetrievalResult",
     "RetrievalResultSet",
+    "RetrievalSource",
     "VectorConfigurationError",
     "VectorDocument",
     "VectorDocumentError",

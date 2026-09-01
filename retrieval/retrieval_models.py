@@ -6,7 +6,7 @@ from typing import Any, Self
 from pydantic import BaseModel, ConfigDict, Field, field_validator, model_validator
 
 from code_analyzer.parsers.models import Language
-from retrieval.enums import ChunkType
+from retrieval.enums import ChunkType, RetrievalSource
 from retrieval.query_models import ProcessedQuery
 
 
@@ -59,6 +59,14 @@ class RetrievalResult(BaseModel):
     start_line: int | None = None
     end_line: int | None = None
     metadata: dict[str, Any] = Field(default_factory=dict)
+    sources: list[RetrievalSource] = Field(default_factory=list)
+    bm25_rank: int | None = None
+    vector_rank: int | None = None
+    graph_rank: int | None = None
+    bm25_score: float | None = None
+    vector_score: float | None = None
+    graph_score: float | None = None
+    fused_score: float | None = None
 
     @field_validator("chunk_id", "repository_id", "file_path")
     @classmethod
@@ -68,19 +76,19 @@ class RetrievalResult(BaseModel):
             raise ValueError("Identity string cannot be empty or whitespace")
         return v.strip()
 
-    @field_validator("score")
+    @field_validator("score", "bm25_score", "vector_score", "graph_score", "fused_score")
     @classmethod
-    def validate_finite_score(cls, v: float) -> float:
-        """Ensure score is a finite float number."""
-        if math.isnan(v) or math.isinf(v):
+    def validate_finite_scores(cls, v: float | None) -> float | None:
+        """Ensure scores are finite float numbers if present."""
+        if v is not None and (math.isnan(v) or math.isinf(v)):
             raise ValueError("Retrieval score must be a finite float number")
         return v
 
-    @field_validator("rank")
+    @field_validator("rank", "bm25_rank", "vector_rank", "graph_rank")
     @classmethod
-    def validate_rank_positive(cls, v: int) -> int:
-        """Ensure rank is 1-indexed and positive."""
-        if v <= 0:
+    def validate_rank_positive(cls, v: int | None) -> int | None:
+        """Ensure ranks are 1-indexed and positive if present."""
+        if v is not None and v <= 0:
             raise ValueError(f"Rank must be >= 1, got {v}")
         return v
 
@@ -96,6 +104,7 @@ class RetrievalResultSet(BaseModel):
     total_matches: int = 0
     preprocessing_latency_ms: float = 0.0
     retrieval_latency_ms: float = 0.0
+    fusion_latency_ms: float = 0.0
     total_latency_ms: float = 0.0
 
     @field_validator("repository_id")

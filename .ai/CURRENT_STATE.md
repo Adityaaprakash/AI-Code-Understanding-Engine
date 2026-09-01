@@ -64,18 +64,23 @@ TASK-5C (Vector Retrieval) complete. Next task is TASK-5D (Graph Retrieval).
   - Integrated `GraphRetriever` with Phase 3 `GraphQueryEngine` and `ImpactAnalyzer` for cycle-safe, depth-bounded graph traversals.
   - Mapped Phase 3 graph nodes into standard Phase 5 `RetrievalResult` candidates, enriching metadata with `graph_relationship`, `graph_direction`, and `graph_depth` while preserving canonical `CodeChunk` identities.
   - Enforced strict repository-level isolation, deterministic candidate ranking (score DESC, depth ASC, symbol_name ASC, chunk_id ASC), metadata filtering (`language`, `chunk_type`, `file_path`, `commit_sha`), latency metrics tracking, and immutability of the underlying Phase 3 graph.
-  - Built comprehensive unit & integration test suite in `tests/test_graph_retriever.py` with 19 test cases validating direct/reverse call queries, inheritance/implementation queries, dependency queries, qualified/ambiguous identifiers, natural language & mixed queries, non-graph prose queries, zero-result handling, cross-repo isolation, version isolation, cycle safety, deterministic ordering repeatability, graph immutability, Pydantic JSON serialization, latency tracking, top-k limiting, and input validation.
+  - Built comprehensive unit & integration test suite in `tests/test_graph_retriever.py` with 19 test cases.
+- [x] TASK-5E: Candidate Fusion complete
+  - Defined `CandidateFusionContract` interface in `retrieval/contracts.py`.
+  - Created `RetrievalSource` StrEnum in `retrieval/enums.py` (`BM25`, `VECTOR`, `GRAPH`).
+  - Added `CandidateFusionError`, `FusionQueryError`, `FusionRepositoryError`, `FusionVersionError` in `retrieval/exceptions.py`.
+  - Enhanced `RetrievalResult` and `RetrievalResultSet` in `retrieval/retrieval_models.py` with optional source evidence attributes (`sources`, `bm25_rank`, `vector_rank`, `graph_rank`, `bm25_score`, `vector_score`, `graph_score`, `fused_score`, `fusion_latency_ms`) while maintaining 100% backwards compatibility with Phase 5B/5C/5D retrievers.
+  - Implemented `CandidateFusionEngine` service in `retrieval/candidate_fusion.py` implementing Reciprocal Rank Fusion ($RRF(c) = \sum 1 / (k + rank)$ with $k=60$ default).
+  - Enforced canonical candidate identity merging strictly by `chunk_id`, cross-retriever deduplication, single-source candidate survival, multi-source contribution accumulation, 100% deterministic tie-breaking (`fused_score DESC`, `chunk_id ASC`), repository boundary isolation validation, version/commit_sha consistency validation, query text consistency validation, and latency tracking (`fusion_latency_ms`).
+  - Built comprehensive unit & integration test suite in `tests/test_candidate_fusion.py` containing 16 test cases validating exact RRF math, deduplication, evidence preservation, single/multi-source handling, empty branches, top-k limiting, determinism (100 repetitions), tie-breaking, repository isolation, commit SHA version isolation, query consistency, Pydantic JSON roundtripping, and sub-second performance scaling on 1,000+ candidates per branch.
 
-
-  - All 413 tests pass cleanly with 100% ruff check, ruff format, and mypy compliance.
-
-
+  - All 429 tests pass cleanly with 100% ruff check, ruff format, and mypy compliance.
 
 ---
 
 ## In Progress
 
-- TASK-5C — Vector Retrieval (Next)
+- TASK-5F — Reranking (Next)
 
 ---
 
@@ -83,12 +88,13 @@ TASK-5C (Vector Retrieval) complete. Next task is TASK-5D (Graph Retrieval).
 
 ### Phase 5 (Hybrid Retrieval Engine)
 - [x] 5A: Query Preprocessing — ✅ Done
-- [x] 5B: BM25 / Lexical Retrieval — ✅ Done
-- [ ] 5C: Vector Retrieval
-- [ ] 5D: Graph Retrieval
-- [ ] 5E: Candidate Fusion (RRF / Hybrid)
-- [ ] 5F: Cross-Encoder Reranking
+- [x] 5B: Lexical / BM25 Retrieval — ✅ Done
+- [x] 5C: Vector Retrieval — ✅ Done
+- [x] 5D: Graph Retrieval — ✅ Done
+- [x] 5E: Candidate Fusion — ✅ Done
+- [ ] 5F: Reranking
 - [ ] 5G: Retrieval Evaluation & Benchmarking
+
 
 ---
 

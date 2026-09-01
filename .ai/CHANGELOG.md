@@ -2,7 +2,31 @@
 
 All notable changes to this project are recorded here.
 
+## 2026-09-01 — Phase 5E — Candidate Fusion
+
+**Completed by:** TASK-5E
+
+### Added
+- **TASK-5E (Candidate Fusion Service):**
+  - Abstract contract interface `CandidateFusionContract` in `retrieval/contracts.py`.
+  - Enum `RetrievalSource` (`BM25`, `VECTOR`, `GRAPH`) in `retrieval/enums.py`.
+  - Exception classes `CandidateFusionError`, `FusionQueryError`, `FusionRepositoryError`, `FusionVersionError` in `retrieval/exceptions.py`.
+  - Source evidence metadata support in `RetrievalResult` and `RetrievalResultSet` (`sources`, `bm25_rank`, `vector_rank`, `graph_rank`, `bm25_score`, `vector_score`, `graph_score`, `fused_score`, `fusion_latency_ms`).
+  - `CandidateFusionEngine` service in `retrieval/candidate_fusion.py` executing Reciprocal Rank Fusion ($RRF(c) = \sum 1 / (k + rank)$ with $k=60$ default) to combine Lexical, Vector, and Graph candidate lists.
+  - Cross-retriever deduplication strictly by `chunk_id`, single-source candidate survival, multi-source score accumulation, 100% deterministic tie-breaking (`fused_score DESC`, `chunk_id ASC`), repository boundary isolation, commit SHA version isolation, query text consistency validation, input parameter safety (`top_k > 0`, `rrf_k > 0`), input immutability, and latency tracking (`fusion_latency_ms`).
+  - Comprehensive unit & integration test suite `tests/test_candidate_fusion.py` (16 test cases covering exact RRF math, deduplication, evidence preservation, single/multi-source handling, empty branches, top-k limiting, determinism (100 repetitions), tie-breaking, repository isolation, commit SHA version isolation, query consistency, Pydantic JSON roundtripping, and sub-second performance scaling on 1,000+ candidates per branch).
+- Package exports in `retrieval/__init__.py`.
+
+### Verification
+- `ruff check .` ✅ (0 errors)
+- `ruff format --check .` ✅ (0 files reformatted)
+- `mypy .` ✅ (Success: no issues found in 125 source files)
+- `pytest tests/ -v` ✅ (429 passed, 4 skipped in 17.54s)
+
+---
+
 ## 2026-09-01 — Phase 5D — Graph Retrieval
+
 
 **Completed by:** TASK-5D
 

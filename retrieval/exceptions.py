@@ -124,3 +124,32 @@ class GraphStoreNotFoundError(GraphRetrievalError):
     """Raised when specified graph or repository store is not available."""
 
     pass
+
+
+# ------------------------------------------------------------------------------
+# Candidate Fusion Exceptions
+# ------------------------------------------------------------------------------
+
+
+class CandidateFusionError(RetrievalError):
+    """Base exception for all candidate fusion errors."""
+
+    pass
+
+
+class FusionQueryError(CandidateFusionError):
+    """Raised when fusion parameters, top_k <= 0, or query inputs are invalid or conflicting."""
+
+    pass
+
+
+class FusionRepositoryError(CandidateFusionError):
+    """Raised when input retrieval result sets belong to conflicting repository IDs."""
+
+    pass
+
+
+class FusionVersionError(CandidateFusionError):
+    """Raised when input retrieval result sets belong to conflicting commit SHAs / versions."""
+
+    pass

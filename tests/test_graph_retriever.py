@@ -164,7 +164,6 @@ def graph_fixture() -> tuple[CodeGraph, dict[str, CodeChunk]]:
             source_location=node.location
             or SourceLocation(start_line=1, end_line=1, start_column=0, end_column=0),
             content=f"// Content for {node.name}",
-
         )
         chunk_lookup[node.id] = chunk
 

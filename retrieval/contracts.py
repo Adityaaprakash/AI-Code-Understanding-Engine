@@ -316,3 +316,28 @@ class GraphRetrieverContract(ABC):
             RetrievalResultSet containing ProcessedQuery and ordered RetrievalResults.
         """
         raise NotImplementedError
+
+
+class CandidateFusionContract(ABC):
+    """Abstract contract interface for Phase 5 candidate fusion engines."""
+
+    @abstractmethod
+    def fuse(
+        self,
+        lexical_results: "RetrievalResultSet | None" = None,
+        vector_results: "RetrievalResultSet | None" = None,
+        graph_results: "RetrievalResultSet | None" = None,
+        top_k: int = 10,
+    ) -> "RetrievalResultSet":
+        """Fuse candidate result sets from independent retrieval branches into a unified RetrievalResultSet.
+
+        Args:
+            lexical_results: RetrievalResultSet from Lexical (BM25) retriever.
+            vector_results: RetrievalResultSet from Vector retriever.
+            graph_results: RetrievalResultSet from Graph retriever.
+            top_k: Maximum number of ranked candidates to return (must be > 0).
+
+        Returns:
+            RetrievalResultSet containing ProcessedQuery and fused RetrievalResults.
+        """
+        raise NotImplementedError

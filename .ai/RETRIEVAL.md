@@ -151,11 +151,33 @@ prunes to a token budget before passing to the LLM.
 
 ---
 
-### Candidate Fusion (TASK-5E Planned)
+### Candidate Fusion Service (`CandidateFusionEngine`) (TASK-5E Implemented & Hardened)
 
-**Purpose:** Combine candidate lists from BM25, Vector, and Graph retrievers into a single ranked list using Reciprocal Rank Fusion (RRF).
+**Purpose:** Hybrid retrieval fusion layer — merges independent candidate lists from Lexical (BM25), Vector (Semantic), and Graph (Structural) retrievers into a single, deterministic, deduplicated candidate set using Reciprocal Rank Fusion (RRF).
 
----
+**Implementation:** Pure, deterministic `CandidateFusionEngine` implementing `CandidateFusionContract`.
+
+**Key Architecture Features:**
+- **Reciprocal Rank Fusion (RRF):** Calculates rank-based fusion score using $RRF(c) = \sum_{s \in S} \frac{1}{k + rank_s(c)}$ with configurable smoothing constant $k$ (default $k=60$). Raw scores from retrievers are never directly added or normalized.
+- **Canonical Candidate Identity & Deduplication:** Merges candidates strictly by canonical `chunk_id`. Multiple occurrences of a chunk across branches accumulate RRF contributions into a single fused candidate.
+- **Source Evidence Preservation:** Each fused candidate retains complete provenance evidence:
+  - `sources`: List of branch sources that retrieved it (`[RetrievalSource.BM25, RetrievalSource.VECTOR, RetrievalSource.GRAPH]`).
+  - `bm25_rank`, `vector_rank`, `graph_rank`: 1-indexed ranks from respective retrievers.
+  - `bm25_score`, `vector_score`, `graph_score`: Raw scores from respective retrievers.
+  - `fused_score`: Total accumulated RRF score (also mirrored in `score`).
+- **Single & Multi-Source Eligibility:** Candidates retrieved by only 1 branch remain fully eligible and survive fusion alongside multi-source candidates.
+- **100% Deterministic Tie-Breaking:** Candidate ranking strictly sorts by `(fused_score DESC, chunk_id ASC)`. Results are 100% repeatable regardless of dict/set iteration or branch execution order.
+- **Strict Boundary Isolation & Validation:**
+  - **Repository Isolation:** Input result sets MUST belong to the same repository. Conflicting `repository_id` values raise `FusionRepositoryError`.
+  - **Version Isolation:** Conflicting `commit_sha` values across result sets raise `FusionVersionError`.
+  - **Query Consistency:** Result sets MUST correspond to the same query text. Conflicting queries raise `FusionQueryError`.
+  - **Parameter Safety:** `top_k <= 0` or `rrf_k <= 0` raise `FusionQueryError`.
+- **Latency & Observability:** Measures `fusion_latency_ms` and computes `total_latency_ms = max(upstream_total_latencies) + fusion_latency_ms`.
+- **Immutability & Safety:** Inputs and candidate objects are never mutated. No external network or LLM calls are executed during fusion.
+
+**Inputs:** `lexical_results`, `vector_results`, `graph_results` (`RetrievalResultSet | None`), `top_k: int = 10`.  
+**Outputs:** Fused `RetrievalResultSet` model containing unified `ProcessedQuery`, ordered fused `RetrievalResult` candidates with source evidence, total match counts, and latency metrics.
+
 
 ## Configuration
 
