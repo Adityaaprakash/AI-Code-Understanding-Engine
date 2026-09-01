@@ -100,10 +100,24 @@ prunes to a token budget before passing to the LLM.
 
 ---
 
-### Vector Retriever (TASK-5C Planned)
+### Vector Retrieval Service (`VectorRetriever`) (TASK-5C Implemented & Hardened)
 
-**Purpose:** Semantic similarity — retrieves code that is conceptually related
-to the query even when the exact term is not present.
+**Purpose:** Service layer for semantic vector search — natural language query understanding, concept matching, and cross-language semantic similarity. Consumes Phase 4 `EmbeddingProviderContract` and in-memory `VectorIndex`.
+
+**Implementation:** Pure, deterministic `VectorRetriever` implementing `VectorRetrieverContract`.
+
+**Key Architecture Features:**
+- **Single Source of Identity:** `RetrievalResult.chunk_id` strictly maps to canonical `CodeChunk.id` from Phase 4 (`VectorHit.chunk_id` == `RetrievalResult.chunk_id` == `CodeChunk.id`).
+- **No Document Re-embedding:** Search query execution ONLY embeds the single query string (1 call to `EmbeddingProviderContract`), reusing pre-indexed chunk vectors.
+- **Repository Isolation Boundary:** Search calls must provide a non-empty `repository_id`. Search results are strictly isolated per repository.
+- **Metadata Filtering:** Supports optional filtering by `language`, `chunk_type`, `file_path`, and `commit_sha`.
+- **Raw Cosine Similarity Scores:** Calculates exact cosine similarity score $u \cdot v / (\|u\|_2 \|v\|_2)$ in the range $[-1.0, 1.0]$. Preserves raw native score for downstream fusion (5E).
+- **Latency Observability:** Measures and reports `preprocessing_latency_ms`, `retrieval_latency_ms`, and `total_latency_ms`.
+- **Immutability & Determinism:** Search calls do not mutate index document counts or vectors. Results sort deterministically by `score` DESC, `chunk_id` ASC.
+
+**Inputs:** Raw query string or `ProcessedQuery`, `repository_id`, optional `top_k`, `language`, `chunk_type`, `file_path`, `commit_sha` filters.  
+**Outputs:** `RetrievalResultSet` model containing `ProcessedQuery`, ordered `RetrievalResult` candidates, and latency metrics.
+
 
 ---
 

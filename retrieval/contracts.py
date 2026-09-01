@@ -16,6 +16,7 @@ if TYPE_CHECKING:
     from retrieval.models import CodeChunk
     from retrieval.query_models import ProcessedQuery
     from retrieval.retrieval_models import RetrievalResultSet
+    from retrieval.vector_models import VectorSearchResult
 
 
 class CodeChunkerContract(ABC):
@@ -179,6 +180,97 @@ class LexicalRetrieverContract(ABC):
         commit_sha: str | None = None,
     ) -> "RetrievalResultSet":
         """Execute Phase 5 lexical retrieval pipeline returning ranked candidates.
+
+        Args:
+            query: Raw query string or preprocessed ProcessedQuery.
+            repository_id: Target repository identity for search boundary.
+            top_k: Maximum number of ranked candidates to return (must be > 0).
+            language: Optional language metadata filter.
+            chunk_type: Optional chunk type filter.
+            file_path: Optional file path filter.
+            commit_sha: Optional index version / commit SHA filter.
+
+        Returns:
+            RetrievalResultSet containing ProcessedQuery and ordered RetrievalResults.
+        """
+        raise NotImplementedError
+
+
+class VectorIndexContract(ABC):
+    """Abstract contract interface for vector search indexes."""
+
+    @abstractmethod
+    def add(self, embedding: "EmbeddingResult", chunk: "CodeChunk | None" = None) -> None:
+        """Add or replace a single vector embedding in the index."""
+        raise NotImplementedError
+
+    @abstractmethod
+    def add_many(
+        self,
+        embeddings: "Iterable[EmbeddingResult]",
+        chunks: "dict[str, CodeChunk] | None" = None,
+    ) -> None:
+        """Batch add a collection or iterable of vector embeddings to the index."""
+        raise NotImplementedError
+
+    @abstractmethod
+    def remove(self, chunk_id: str, repository_id: str) -> bool:
+        """Remove a single vector embedding by chunk_id from a target repository index."""
+        raise NotImplementedError
+
+    @abstractmethod
+    def clear(self, repository_id: str | None = None) -> None:
+        """Clear a specific repository index, or all repository indexes if repository_id is None."""
+        raise NotImplementedError
+
+    @abstractmethod
+    def search(
+        self,
+        query_vector: list[float],
+        repository_id: str,
+        top_k: int = 10,
+        language: "Language | None" = None,
+        chunk_type: "ChunkType | None" = None,
+        file_path: str | None = None,
+        commit_sha: str | None = None,
+    ) -> list["VectorSearchResult"]:
+        """Execute vector similarity search for a target repository.
+
+        Args:
+            query_vector: Dense query vector float list.
+            repository_id: Target repository identity for search boundary.
+            top_k: Maximum number of ranked results to return (must be > 0).
+            language: Optional language filter.
+            chunk_type: Optional chunk type filter.
+            file_path: Optional file path filter.
+            commit_sha: Optional commit SHA index version filter.
+
+        Returns:
+            List of ranked VectorSearchResults sorted by score descending and chunk_id ascending.
+        """
+        raise NotImplementedError
+
+    @abstractmethod
+    def document_count(self, repository_id: str | None = None) -> int:
+        """Return total indexed vector count for a repository or across all repositories."""
+        raise NotImplementedError
+
+
+class VectorRetrieverContract(ABC):
+    """Abstract contract interface for Phase 5 vector retrieval services."""
+
+    @abstractmethod
+    def retrieve(
+        self,
+        query: "str | ProcessedQuery",
+        repository_id: str,
+        top_k: int = 10,
+        language: "Language | None" = None,
+        chunk_type: "ChunkType | None" = None,
+        file_path: str | None = None,
+        commit_sha: str | None = None,
+    ) -> "RetrievalResultSet":
+        """Execute Phase 5 vector retrieval pipeline returning ranked candidates.
 
         Args:
             query: Raw query string or preprocessed ProcessedQuery.

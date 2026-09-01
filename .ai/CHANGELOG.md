@@ -2,7 +2,30 @@
 
 All notable changes to this project are recorded here.
 
+## 2026-09-01 — Phase 5C — Vector Retrieval
+
+**Completed by:** TASK-5C
+
+### Added
+- **TASK-5C (Vector Retrieval Service):**
+  - Abstract contract interfaces `VectorIndexContract` and `VectorRetrieverContract` in `retrieval/contracts.py`.
+  - Immutable models `VectorDocument` and `VectorSearchResult` in `retrieval/vector_models.py`.
+  - In-memory `VectorIndex` and `RepositoryVectorIndex` in `retrieval/vector_index.py` supporting exact cosine similarity vector search, repository boundary isolation, and metadata filtering (`language`, `chunk_type`, `file_path`, `commit_sha`).
+  - Exception classes `VectorIndexError`, `VectorConfigurationError`, `VectorDocumentError`, `VectorQueryError` in `retrieval/exceptions.py`.
+  - `VectorRetriever` service in `retrieval/vector_retriever.py` orchestrating `ProcessedQuery` input, query vector generation via `EmbeddingProviderContract` (`DeterministicTestEmbeddingProvider` by default), vector index search, latency metrics (`preprocessing_latency_ms`, `retrieval_latency_ms`, `total_latency_ms`), and candidate result mapping into canonical `RetrievalResultSet`.
+  - Comprehensive unit & integration test suite `tests/test_vector_retriever.py` (18 tests covering basic flow, semantic queries, identifier/mixed queries, filter behavior, mandatory cross-repository isolation, referential integrity `RetrievalResult.chunk_id` == `CodeChunk.id`, input validation, zero-result handling, top-k limiting, deterministic ordering & repeated query stability, index immutability, query vector dimension validation, no chunk re-embedding during search, scale performance on 1,000+ chunks, JSON roundtrip serialization, and duplicate ID prevention).
+- Package exports in `retrieval/__init__.py`.
+
+### Verification
+- `uv run ruff check .` ✅ (0 errors)
+- `uv run ruff format --check .` ✅ (135 files formatted)
+- `uv run mypy .` ✅ (Success: no issues found in 121 source files)
+- `uv run pytest tests/ -v` ✅ (394 passed, 4 skipped in 18.05s)
+
+---
+
 ## 2026-08-31 — Phase 5A & 5B — Query Preprocessing & BM25 Lexical Retrieval
+
 
 **Completed by:** TASK-5A & TASK-5B
 

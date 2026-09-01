@@ -2,13 +2,14 @@
 
 ## Active Phase
 
-**Phase 5 — Hybrid Retrieval Engine IN PROGRESS** (TASK-5A Query Preprocessing + TASK-5B Lexical Retrieval COMPLETE)
+**Phase 5 — Hybrid Retrieval Engine IN PROGRESS** (TASK-5A + TASK-5B + TASK-5C COMPLETE)
 
 ---
 
 ## Current Task
 
-TASK-5A (Query Preprocessing) & TASK-5B (BM25 / Lexical Retrieval) complete. Next task is TASK-5C (Vector Retrieval).
+TASK-5C (Vector Retrieval) complete. Next task is TASK-5D (Graph Retrieval).
+
 
 ---
 
@@ -48,17 +49,17 @@ TASK-5A (Query Preprocessing) & TASK-5B (BM25 / Lexical Retrieval) complete. Nex
 - [x] TASK-4D: Code-Aware Lexical Indexing (BM25) complete
 - [x] TASK-4E: Phase 4 Index Testing & Hardening complete
 - [x] TASK-5A: Query Preprocessing complete
-  - Implemented `QueryKind` enum and `ProcessedQuery` immutable Pydantic model (`frozen=True`) in `retrieval/query_models.py`.
-  - Implemented `QueryPreprocessor` in `retrieval/query_processor.py` featuring unicode NFC normalization, whitespace collapsing, casing preservation, camelCase/PascalCase/snake_case/acronym detection, qualified identifier extraction, path detection, prose indicator filtering, and deterministic `QueryKind` classification (`IDENTIFIER`, `QUALIFIED_IDENTIFIER`, `PATH_OR_FILE`, `RELATIONSHIP`, `NATURAL_LANGUAGE`, `MIXED`, `UNKNOWN`).
-  - Added empty query validation raising `LexicalQueryError`.
-  - Built unit test suite `tests/test_query_preprocessing.py` validating 24 test cases covering query matrix, normalization, immutability, and JSON roundtrip serialization.
 - [x] TASK-5B: BM25 / Lexical Retrieval complete
-  - Defined `LexicalRetrieverContract` interface in `retrieval/contracts.py`.
-  - Implemented immutable `LexicalRetrievalRequest`, `RetrievalResult`, and `RetrievalResultSet` models in `retrieval/retrieval_models.py` with score/rank validation, single-source identity (`RetrievalResult.chunk_id` == `CodeChunk.id`), and latency metrics (`preprocessing_latency_ms`, `retrieval_latency_ms`, `total_latency_ms`).
-  - Updated `BM25LexicalIndex` and `RepositoryBM25Index` in `retrieval/lexical_index.py` with support for optional `file_path` and `commit_sha` filtering and full metadata preservation (`qualified_name`, `start_line`, `end_line`, `metadata`).
-  - Implemented `LexicalRetriever` service in `retrieval/lexical_retriever.py` orchestrating query preprocessing, repository isolation boundary checks, BM25 index search, and candidate result ranking.
-  - Built comprehensive unit & integration test suite `tests/test_lexical_retriever.py` verifying end-to-end flow, strict cross-repository isolation (Repo A vs Repo B), adversarial symbol field-weighting advantage (symbol name matches beat content term repetition), metadata preservation, zero-result handling, invalid input validation, scale performance (1,000+ chunks sub-second execution), index immutability, and JSON serialization.
-  - All 376 tests (376 active, 4 skipped) pass cleanly with 100% ruff check, ruff format, and mypy compliance.
+- [x] TASK-5C: Vector Retrieval complete
+  - Defined `VectorIndexContract` and `VectorRetrieverContract` interfaces in `retrieval/contracts.py`.
+  - Created `VectorDocument` and `VectorSearchResult` models in `retrieval/vector_models.py`.
+  - Created `VectorIndex` and `RepositoryVectorIndex` in `retrieval/vector_index.py` performing exact cosine similarity vector search with repository isolation and metadata filtering (`language`, `chunk_type`, `file_path`, `commit_sha`).
+  - Added `VectorIndexError`, `VectorConfigurationError`, `VectorDocumentError`, `VectorQueryError` in `retrieval/exceptions.py`.
+  - Implemented `VectorRetriever` service in `retrieval/vector_retriever.py` orchestrating `ProcessedQuery` input, query vector generation via `EmbeddingProviderContract` (`DeterministicTestEmbeddingProvider` by default), vector search execution, latency tracking, and candidate result mapping into standard `RetrievalResultSet`.
+  - Built comprehensive unit & integration test suite `tests/test_vector_retriever.py` containing 18 tests covering basic retrieval, semantic queries, identifier/mixed queries, filter behavior, mandatory cross-repository isolation, referential integrity (`RetrievalResult.chunk_id` == `CodeChunk.id`), input validation, zero-result handling, top-k limiting, deterministic ordering & repeated query stability, index immutability, query vector dimension validation, no chunk re-embedding during search, scale performance (1,000+ chunks sub-second), JSON serialization roundtripping, and duplicate ID prevention.
+
+  - All 394 tests pass cleanly with 100% ruff check, ruff format, and mypy compliance.
+
 
 ---
 

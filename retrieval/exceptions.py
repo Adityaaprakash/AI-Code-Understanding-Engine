@@ -72,3 +72,32 @@ class LexicalQueryError(LexicalIndexError):
     """Raised when a lexical search query parameters (e.g. top_k <= 0) are invalid."""
 
     pass
+
+
+# ------------------------------------------------------------------------------
+# Vector Index Exceptions
+# ------------------------------------------------------------------------------
+
+
+class VectorIndexError(RetrievalError):
+    """Base exception for all vector search index errors."""
+
+    pass
+
+
+class VectorConfigurationError(VectorIndexError):
+    """Raised when vector index configuration or parameters are invalid."""
+
+    pass
+
+
+class VectorDocumentError(VectorIndexError):
+    """Raised when a vector document or embedding input is invalid."""
+
+    pass
+
+
+class VectorQueryError(VectorIndexError):
+    """Raised when vector search query parameters are invalid."""
+
+    pass

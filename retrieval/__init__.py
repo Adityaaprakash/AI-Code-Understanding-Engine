@@ -6,6 +6,8 @@ from retrieval.contracts import (
     EmbeddingProviderContract,
     LexicalIndexContract,
     LexicalRetrieverContract,
+    VectorIndexContract,
+    VectorRetrieverContract,
 )
 from retrieval.embedding_models import (
     EmbeddingBatchResult,
@@ -27,6 +29,10 @@ from retrieval.exceptions import (
     LexicalIndexError,
     LexicalQueryError,
     RetrievalError,
+    VectorConfigurationError,
+    VectorDocumentError,
+    VectorIndexError,
+    VectorQueryError,
 )
 from retrieval.identity import generate_chunk_id
 from retrieval.lexical_index import BM25LexicalIndex
@@ -40,6 +46,9 @@ from retrieval.query_processor import QueryPreprocessor
 from retrieval.retrieval_models import LexicalRetrievalRequest, RetrievalResult, RetrievalResultSet
 from retrieval.text_builder import EmbeddingTextBuilder
 from retrieval.tokenizer import CodeTokenizer, tokenize_code, tokenize_query
+from retrieval.vector_index import VectorIndex
+from retrieval.vector_models import VectorDocument, VectorSearchResult
+from retrieval.vector_retriever import VectorRetriever
 
 __all__ = [
     "BM25LexicalIndex",
@@ -81,6 +90,16 @@ __all__ = [
     "RetrievalError",
     "RetrievalResult",
     "RetrievalResultSet",
+    "VectorConfigurationError",
+    "VectorDocument",
+    "VectorDocumentError",
+    "VectorIndex",
+    "VectorIndexContract",
+    "VectorIndexError",
+    "VectorQueryError",
+    "VectorRetriever",
+    "VectorRetrieverContract",
+    "VectorSearchResult",
     "generate_chunk_id",
     "tokenize_code",
     "tokenize_query",

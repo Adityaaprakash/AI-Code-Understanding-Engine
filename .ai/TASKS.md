@@ -518,19 +518,22 @@ service needed for this task.
 - [x] Built comprehensive unit test suite `tests/test_query_preprocessing.py` validating normalization, matrix query classification, immutability, and JSON serialization
 - [x] All quality gates pass (`uv run ruff check .`, `uv run ruff format --check .`, `uv run mypy .`, `uv run pytest tests/`)
 
-### TASK-5B: BM25 / Lexical Retrieval
+### TASK-5C: Vector Retrieval
 
 **Status:** ✅ Done  
-**Blockers:** TASK-5A ✅  
-**Scope:** Implement Phase 5 BM25 Lexical Retrieval Service (`LexicalRetriever`) orchestrating query preprocessing, repository isolation, metadata filtering, and candidate ranking.
+**Blockers:** TASK-5A ✅, TASK-5B ✅  
+**Scope:** Implement Phase 5 Semantic / Vector Retrieval Service (`VectorRetriever`) orchestrating query embedding generation, exact cosine similarity vector search, repository isolation, metadata filtering, and candidate ranking.
 
 **Acceptance criteria:**
-- [x] Defined `LexicalRetrieverContract` interface in `retrieval/contracts.py`
-- [x] Implemented immutable `LexicalRetrievalRequest`, `RetrievalResult`, and `RetrievalResultSet` models in `retrieval/retrieval_models.py`
-- [x] Updated `BM25LexicalIndex` and `RepositoryBM25Index` in `retrieval/lexical_index.py` with support for optional `file_path` and `commit_sha` filtering and full metadata preservation (`qualified_name`, `start_line`, `end_line`, `metadata`)
-- [x] Implemented `LexicalRetriever` service in `retrieval/lexical_retriever.py` orchestrating query preprocessing, repository isolation boundary checks, BM25 index search, and candidate result ranking
-- [x] Built comprehensive unit & integration test suite `tests/test_lexical_retriever.py` verifying end-to-end flow, strict cross-repository isolation (Repo A vs Repo B), adversarial symbol field-weighting advantage (symbol name matches beat content term repetition), metadata preservation, zero-result handling, invalid input validation, scale performance (1,000+ chunks sub-second execution), index immutability, and JSON serialization
-- [x] All quality gates pass (`uv run ruff check .`, `uv run ruff format --check .`, `uv run mypy .`, `uv run pytest tests/` (376 passed))
+- [x] Defined `VectorIndexContract` and `VectorRetrieverContract` interfaces in `retrieval/contracts.py`
+- [x] Created `VectorDocument` and `VectorSearchResult` models in `retrieval/vector_models.py`
+- [x] Implemented `RepositoryVectorIndex` and `VectorIndex` in `retrieval/vector_index.py` performing exact cosine similarity vector search with repository boundary isolation and metadata filtering (`language`, `chunk_type`, `file_path`, `commit_sha`)
+- [x] Added `VectorIndexError`, `VectorConfigurationError`, `VectorDocumentError`, `VectorQueryError` in `retrieval/exceptions.py`
+- [x] Implemented `VectorRetriever` service in `retrieval/vector_retriever.py` orchestrating `ProcessedQuery` input, query vector embedding generation via `EmbeddingProviderContract` (`DeterministicTestEmbeddingProvider` by default), vector search execution, latency observability, and candidate result mapping into standard `RetrievalResultSet`
+- [x] Preserved single-source canonical identity (`RetrievalResult.chunk_id` == `CodeChunk.id`) and raw cosine similarity score
+- [x] Built comprehensive unit & integration test suite `tests/test_vector_retriever.py` (18 tests covering basic flow, semantic queries, identifier/mixed queries, filter behavior, mandatory cross-repository isolation, referential integrity, input validation, zero-result handling, top-k limiting, deterministic ordering & repeated query stability, index immutability, vector dimension validation, no chunk re-embedding during search, scale performance on 1,000+ chunks, JSON roundtrip serialization, and duplicate chunk ID prevention)
+- [x] All quality gates pass (`uv run ruff check .`, `uv run ruff format --check .`, `uv run mypy .`, `uv run pytest tests/` (394 passed))
+
 
 ## Notes for AI Agents
 
