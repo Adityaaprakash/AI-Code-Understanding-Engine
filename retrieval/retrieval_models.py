@@ -67,6 +67,7 @@ class RetrievalResult(BaseModel):
     vector_score: float | None = None
     graph_score: float | None = None
     fused_score: float | None = None
+    rerank_score: float | None = None
 
     @field_validator("chunk_id", "repository_id", "file_path")
     @classmethod
@@ -76,7 +77,9 @@ class RetrievalResult(BaseModel):
             raise ValueError("Identity string cannot be empty or whitespace")
         return v.strip()
 
-    @field_validator("score", "bm25_score", "vector_score", "graph_score", "fused_score")
+    @field_validator(
+        "score", "bm25_score", "vector_score", "graph_score", "fused_score", "rerank_score"
+    )
     @classmethod
     def validate_finite_scores(cls, v: float | None) -> float | None:
         """Ensure scores are finite float numbers if present."""
@@ -105,7 +108,9 @@ class RetrievalResultSet(BaseModel):
     preprocessing_latency_ms: float = 0.0
     retrieval_latency_ms: float = 0.0
     fusion_latency_ms: float = 0.0
+    reranking_latency_ms: float = 0.0
     total_latency_ms: float = 0.0
+
 
     @field_validator("repository_id")
     @classmethod

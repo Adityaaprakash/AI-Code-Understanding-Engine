@@ -4,7 +4,7 @@ import time
 
 from code_analyzer.parsers.models import Language
 from retrieval.contracts import LexicalIndexContract, LexicalRetrieverContract
-from retrieval.enums import ChunkType
+from retrieval.enums import ChunkType, RetrievalSource
 from retrieval.exceptions import LexicalQueryError
 from retrieval.lexical_index import BM25LexicalIndex
 from retrieval.query_models import ProcessedQuery
@@ -111,8 +111,12 @@ class LexicalRetriever(LexicalRetrieverContract):
                     start_line=lex_res.start_line,
                     end_line=lex_res.end_line,
                     metadata=lex_res.metadata,
+                    sources=[RetrievalSource.BM25],
+                    bm25_rank=lex_res.rank,
+                    bm25_score=lex_res.score,
                 )
             )
+
 
         return RetrievalResultSet(
             query=processed_query,

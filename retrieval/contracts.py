@@ -341,3 +341,27 @@ class CandidateFusionContract(ABC):
             RetrievalResultSet containing ProcessedQuery and fused RetrievalResults.
         """
         raise NotImplementedError
+
+
+class RerankerContract(ABC):
+    """Abstract contract interface for Phase 5 candidate rerankers."""
+
+    @abstractmethod
+    def rerank(
+        self,
+        query: "str | ProcessedQuery",
+        results: "RetrievalResultSet",
+        top_k: int = 10,
+    ) -> "RetrievalResultSet":
+        """Rerank candidates from a RetrievalResultSet using feature-based relevance scoring.
+
+        Args:
+            query: Raw query string or preprocessed ProcessedQuery.
+            results: RetrievalResultSet produced by CandidateFusionEngine (5E).
+            top_k: Maximum number of reranked candidates to return (must be > 0).
+
+        Returns:
+            RetrievalResultSet containing ProcessedQuery and reranked RetrievalResults with rerank_score populated.
+        """
+        raise NotImplementedError
+

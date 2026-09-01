@@ -7,6 +7,7 @@ from retrieval.contracts import (
     GraphRetrieverContract,
     LexicalIndexContract,
     LexicalRetrieverContract,
+    RerankerContract,
     VectorIndexContract,
     VectorRetrieverContract,
 )
@@ -26,6 +27,9 @@ from retrieval.exceptions import (
     EmbeddingError,
     EmbeddingInputError,
     EmbeddingProviderError,
+    EvaluationDatasetError,
+    EvaluationError,
+    EvaluationMetricError,
     FusionQueryError,
     FusionRepositoryError,
     FusionVersionError,
@@ -36,6 +40,9 @@ from retrieval.exceptions import (
     LexicalDocumentError,
     LexicalIndexError,
     LexicalQueryError,
+    RerankerConfigurationError,
+    RerankerInputError,
+    RerankingError,
     RetrievalError,
     VectorConfigurationError,
     VectorDocumentError,
@@ -52,6 +59,7 @@ from retrieval.models import CodeChunk, CodeChunkCollection
 from retrieval.providers import DeterministicTestEmbeddingProvider, HostedAPIEmbeddingProvider
 from retrieval.query_models import ProcessedQuery, QueryKind
 from retrieval.query_processor import QueryPreprocessor
+from retrieval.reranker import DeterministicReranker
 from retrieval.retrieval_models import LexicalRetrievalRequest, RetrievalResult, RetrievalResultSet
 from retrieval.text_builder import EmbeddingTextBuilder
 from retrieval.tokenizer import CodeTokenizer, tokenize_code, tokenize_query
@@ -70,6 +78,7 @@ __all__ = [
     "CodeChunker",
     "CodeChunkerContract",
     "CodeTokenizer",
+    "DeterministicReranker",
     "DeterministicTestEmbeddingProvider",
     "EmbeddingBatchError",
     "EmbeddingBatchResult",
@@ -84,6 +93,9 @@ __all__ = [
     "EmbeddingProviderError",
     "EmbeddingResult",
     "EmbeddingTextBuilder",
+    "EvaluationDatasetError",
+    "EvaluationError",
+    "EvaluationMetricError",
     "FusionQueryError",
     "FusionRepositoryError",
     "FusionVersionError",
@@ -107,6 +119,10 @@ __all__ = [
     "ProcessedQuery",
     "QueryKind",
     "QueryPreprocessor",
+    "RerankerConfigurationError",
+    "RerankerContract",
+    "RerankerInputError",
+    "RerankingError",
     "RetrievalError",
     "RetrievalResult",
     "RetrievalResultSet",

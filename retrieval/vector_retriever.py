@@ -10,7 +10,7 @@ from retrieval.contracts import (
     VectorRetrieverContract,
 )
 from retrieval.embedding_models import EmbeddingInput
-from retrieval.enums import ChunkType
+from retrieval.enums import ChunkType, RetrievalSource
 from retrieval.exceptions import VectorQueryError
 from retrieval.providers import DeterministicTestEmbeddingProvider
 from retrieval.query_models import ProcessedQuery
@@ -140,8 +140,12 @@ class VectorRetriever(VectorRetrieverContract):
                     start_line=hit.start_line,
                     end_line=hit.end_line,
                     metadata=hit.metadata,
+                    sources=[RetrievalSource.VECTOR],
+                    vector_rank=idx + 1,
+                    vector_score=hit.score,
                 )
             )
+
 
         total_latency_ms = (time.perf_counter() - t0) * 1000.0
 

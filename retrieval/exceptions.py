@@ -153,3 +153,50 @@ class FusionVersionError(CandidateFusionError):
     """Raised when input retrieval result sets belong to conflicting commit SHAs / versions."""
 
     pass
+
+
+# ------------------------------------------------------------------------------
+# Reranking Exceptions
+# ------------------------------------------------------------------------------
+
+
+class RerankingError(RetrievalError):
+    """Base exception for all reranking errors."""
+
+    pass
+
+
+class RerankerConfigurationError(RerankingError):
+    """Raised when reranker parameters or configuration options are invalid."""
+
+    pass
+
+
+class RerankerInputError(RerankingError):
+    """Raised when reranker input query or result sets are invalid or incompatible."""
+
+    pass
+
+
+# ------------------------------------------------------------------------------
+# Retrieval Evaluation Exceptions
+# ------------------------------------------------------------------------------
+
+
+class EvaluationError(RetrievalError):
+    """Base exception for all retrieval evaluation errors."""
+
+    pass
+
+
+class EvaluationDatasetError(EvaluationError):
+    """Raised when evaluation benchmark dataset or ground truth items are invalid."""
+
+    pass
+
+
+class EvaluationMetricError(EvaluationError):
+    """Raised when evaluation metric calculations encounter invalid inputs."""
+
+    pass
+
