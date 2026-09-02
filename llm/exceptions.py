@@ -29,3 +29,15 @@ class InvalidExpansionConfigError(GraphExpansionError):
     """Exception raised when expansion limits or configuration settings are invalid."""
 
     pass
+
+
+class ContextRankingError(LLMError):
+    """Exception raised when context ranking fails or encounters an invalid state."""
+
+    pass
+
+
+class InvalidRankingConfigError(ContextRankingError):
+    """Exception raised when ranking weights or configuration settings are invalid."""
+
+    pass

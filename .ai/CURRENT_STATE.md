@@ -2,13 +2,13 @@
 
 ## Active Phase
 
-**Phase 6 — LLM Context & Answer Engine IN PROGRESS** (TASK-6A & TASK-6B COMPLETE)
+**Phase 6 — LLM Context & Answer Engine IN PROGRESS** (TASK-6A, TASK-6B & TASK-6C COMPLETE)
 
 ---
 
 ## Current Task
 
-TASK-6B (Graph-Aware Context Expansion) complete. Next task is TASK-6C (Context Ranking).
+TASK-6C (Context Ranking) complete. Next task is TASK-6D (Context Deduplication & Pruning).
 
 ---
 
@@ -29,19 +29,21 @@ TASK-6B (Graph-Aware Context Expansion) complete. Next task is TASK-6C (Context 
 - [x] TASK-5A through TASK-5G: Phase 5 Complete
 - [x] TASK-6A: Query Intent & Query Planning complete
 - [x] TASK-6B: Graph-Aware Context Expansion complete
-  - Defined `GraphExpansionConfig` Pydantic model (`frozen=True`) with strict validation for budget limits (`max_depth`, `max_expanded_nodes`, `max_candidates`, `max_neighbors_per_node`).
-  - Created `GraphExpansionAnchor`, `GraphExpansionCandidateStep`, `GraphExpansionCandidatePath`, `GraphExpansionCandidate`, and `GraphExpansionResult` Pydantic data models (`frozen=True`) in `llm/expansion_models.py`.
-  - Defined `GraphExpanderContract` interface in `llm/expansion_contracts.py`.
-  - Implemented `GraphContextExpander` service in `llm/graph_expander.py` bridging Phase 6A `QueryPlan` control signals and Phase 5 retrieval results with Phase 3 `CodeGraph`, `InMemoryGraphStore`, and `ImpactAnalyzer`.
-  - Enforced cycle-safe BFS traversal, deterministic edge sorting keys, per-node neighbor limits, scope constraints, and explicit provenance tracking (`source="RETRIEVAL+GRAPH_EXPANSION"` vs `"GRAPH_EXPANSION"`).
-  - Built comprehensive unit & integration test suite in `tests/test_graph_expander.py` covering all 25 required test scenarios (A-Y), including callers, callees, dependencies, dependents, implementations, inheritance, imports, usages, impact radius, multi-anchor expansion, cycle safety, depth/node/candidate/neighbor limits, 100% determinism (100 runs), scope constraints, provenance, truncation, invalid config validation, and lossless JSON serialization.
-  - All 523 repository tests pass cleanly with 100% ruff format, ruff check, and mypy compliance.
+- [x] TASK-6C: Context Ranking complete
+  - Defined `ContextRankingConfig` Pydantic model (`frozen=True`) with strict validation for weights (retrieval relevance, query entity match, intent alignment, relationship alignment, provenance strength, graph proximity, scope alignment, locality) and proximity decay.
+  - Created `ContextRankingScoreBreakdown`, `RankedContextCandidate`, and `ContextRankingResult` Pydantic data models (`frozen=True`) in `llm/ranking_models.py`.
+  - Added `RankingReasonCode` StrEnum in `llm/enums.py` and `ContextRankingError`, `InvalidRankingConfigError` in `llm/exceptions.py`.
+  - Defined `ContextRankerContract` interface in `llm/ranking_contracts.py`.
+  - Implemented `ContextRanker` service in `llm/context_ranker.py` providing deterministic, query-aware candidate ranking based on Phase 6A control signals and Phase 5 / Phase 6B candidate metadata.
+  - Enforced candidate count preservation (`len(output) == len(input)` - NO PRUNING), deterministic multi-dimensional tie-breaking, permutation invariance, explicit scoring dimension normalization, lossless JSON roundtripping, and provenance preservation.
+  - Built comprehensive unit & integration test suite in `tests/test_context_ranker.py` covering scenarios A through T, permutation invariance, and property invariants.
+  - All 544 repository tests pass cleanly with 100% ruff format, ruff check, and mypy compliance.
 
 ---
 
 ## In Progress
 
-- TASK-6C — Context Ranking (Next)
+- TASK-6D — Context Deduplication & Pruning (Next)
 
 ---
 
@@ -50,7 +52,7 @@ TASK-6B (Graph-Aware Context Expansion) complete. Next task is TASK-6C (Context 
 ### Phase 6 (LLM Context & Answer Engine)
 - [x] 6A: Query Intent & Query Planning — ✅ Done
 - [x] 6B: Graph-Aware Context Expansion — ✅ Done
-- [ ] 6C: Context Ranking
+- [x] 6C: Context Ranking — ✅ Done
 - [ ] 6D: Context Deduplication & Pruning
 - [ ] 6E: Token Budgeting & Context Packing
 - [ ] 6F: LLM Provider Abstraction
@@ -61,5 +63,6 @@ TASK-6B (Graph-Aware Context Expansion) complete. Next task is TASK-6C (Context 
 
 ## Last Updated
 
-2026-09-02 — TASK-6B Graph-Aware Context Expansion complete. All 523 tests passing, 100% ruff and mypy compliance. Next task is TASK-6C.
+2026-09-02 — TASK-6C Context Ranking complete. All 544 tests passing, 100% ruff and mypy compliance. Next task is TASK-6D.
+
 
