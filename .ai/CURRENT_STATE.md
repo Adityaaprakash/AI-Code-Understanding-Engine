@@ -2,13 +2,13 @@
 
 ## Active Phase
 
-**Phase 6 — LLM Context & Answer Engine IN PROGRESS** (TASK-6A, TASK-6B, TASK-6C & TASK-6D COMPLETE)
+**Phase 6 — LLM Context & Answer Engine IN PROGRESS** (TASK-6A through TASK-6E COMPLETE)
 
 ---
 
 ## Current Task
 
-TASK-6D (Context Deduplication & Pruning) complete. Next task is TASK-6E (Token Budgeting & Context Packing).
+TASK-6E (Token Budgeting & Context Packing) complete. Next task is TASK-6F (LLM Provider Abstraction).
 
 ---
 
@@ -31,20 +31,21 @@ TASK-6D (Context Deduplication & Pruning) complete. Next task is TASK-6E (Token 
 - [x] TASK-6B: Graph-Aware Context Expansion complete
 - [x] TASK-6C: Context Ranking complete
 - [x] TASK-6D: Context Deduplication & Pruning complete
-  - Defined `ContextPruningConfig` Pydantic model (`frozen=True`) with strict validation for exact, logical, and near-duplicate flags, score thresholds, top-K limits, per-symbol/file caps, and protection policies.
-  - Created `PrunedCandidateRecord` and `ContextPruningResult` Pydantic data models (`frozen=True`) in `llm/pruning_models.py`.
-  - Added `PruningReasonCode` StrEnum in `llm/enums.py` and `ContextPruningError`, `InvalidPruningConfigError` in `llm/exceptions.py`.
-  - Defined `ContextPrunerContract` interface in `llm/pruning_contracts.py`.
-  - Implemented `ContextPruner` service in `llm/context_pruner.py` providing deterministic, explainable, provenance-preserving candidate context deduplication, evidence merging, and policy-driven pruning.
-  - Enforced multi-source evidence merging (`RETRIEVAL+GRAPH_EXPANSION`), primary query target protection, structural coverage protection, stable multi-key tie-breaking, permutation invariance, and audit trails.
-  - Built comprehensive unit & integration test suite in `tests/test_context_pruner.py` covering scenarios A through X, permutation invariance (100 runs), and boundary negative constraints.
-  - All 569 repository tests pass cleanly with 100% ruff format, ruff check, and mypy compliance.
+- [x] TASK-6E: Token Budgeting & Context Packing complete
+  - Defined `TokenCounterContract` interface and implemented `DeterministicFallbackTokenCounter` (ESTIMATED mode) and `ExactTokenCounter` (EXACT mode) in `llm/token_counter.py`.
+  - Created `ContextBudgetConfig` Pydantic model (`frozen=True`) in `llm/budget_config.py` with validation for `max_context_tokens`, reserves (`system`, `query`, `output`), `safety_margin_tokens`, min/max candidate token limits, and `ContextOverflowPolicy`.
+  - Defined `PackedContextItem`, `ContextOmissionRecord`, `ContextPackingStats`, and `PackedContext` Pydantic data models (`frozen=True`) in `llm/budget_models.py`.
+  - Added `ContextOverflowPolicy`, `TokenCountMode`, `ContextPackingReasonCode` StrEnums in `llm/enums.py` and `ContextPackingError`, `InvalidBudgetConfigError`, `TokenCountingError` in `llm/exceptions.py`.
+  - Defined `ContextPackerContract` interface in `llm/budget_contracts.py`.
+  - Implemented `ContextPacker` service in `llm/context_packer.py` providing deterministic, provider-independent token budgeting, header + code formatting, budget tracking, overflow policy handling (`SKIP`, `TRUNCATE`), and detailed audit records (`TOKEN_BUDGET_EXCEEDED`, `CANDIDATE_TOO_LARGE`, `BUDGET_EXHAUSTED`).
+  - Built comprehensive unit & integration test suite in `tests/test_context_packer.py` covering scenarios A through Z, exact budget boundaries, 100-run determinism, permutation invariance, immutability, JSON roundtripping, and boundary negative constraints.
+  - All 592 repository tests pass cleanly with 100% ruff format, ruff check, and mypy compliance.
 
 ---
 
 ## In Progress
 
-- TASK-6E — Token Budgeting & Context Packing (Next)
+- TASK-6F — LLM Provider Abstraction (Next)
 
 ---
 
@@ -55,7 +56,7 @@ TASK-6D (Context Deduplication & Pruning) complete. Next task is TASK-6E (Token 
 - [x] 6B: Graph-Aware Context Expansion — ✅ Done
 - [x] 6C: Context Ranking — ✅ Done
 - [x] 6D: Context Deduplication & Pruning — ✅ Done
-- [ ] 6E: Token Budgeting & Context Packing
+- [x] 6E: Token Budgeting & Context Packing — ✅ Done
 - [ ] 6F: LLM Provider Abstraction
 - [ ] 6G: Grounded Answer Generation
 - [ ] 6H: Citation & Grounding Engine
@@ -64,7 +65,8 @@ TASK-6D (Context Deduplication & Pruning) complete. Next task is TASK-6E (Token 
 
 ## Last Updated
 
-2026-09-02 — TASK-6D Context Deduplication & Pruning complete. All 569 tests passing, 100% ruff and mypy compliance. Next task is TASK-6E.
+2026-09-02 — TASK-6E Token Budgeting & Context Packing complete. All 592 tests passing, 100% ruff and mypy compliance. Next task is TASK-6F.
+
 
 
 

@@ -110,3 +110,26 @@ class PruningReasonCode(StrEnum):
     REDUNDANT_FILE = "REDUNDANT_FILE"
     REDUNDANT_EVIDENCE = "REDUNDANT_EVIDENCE"
     STRUCTURAL_COVERAGE_POLICY = "STRUCTURAL_COVERAGE_POLICY"
+
+
+class ContextOverflowPolicy(StrEnum):
+    """Action policy when a context candidate exceeds remaining evidence budget."""
+
+    SKIP = "SKIP"
+    TRUNCATE = "TRUNCATE"
+
+
+class TokenCountMode(StrEnum):
+    """Indicates whether token counts are exact model tokenizer counts or fallback estimates."""
+
+    EXACT = "exact"
+    ESTIMATED = "estimated"
+
+
+class ContextPackingReasonCode(StrEnum):
+    """Structured explanation reason codes for candidate context omission during budgeting."""
+
+    TOKEN_BUDGET_EXCEEDED = "TOKEN_BUDGET_EXCEEDED"
+    CANDIDATE_TOO_LARGE = "CANDIDATE_TOO_LARGE"
+    BUDGET_EXHAUSTED = "BUDGET_EXHAUSTED"
+    TRUNCATION_DISABLED = "TRUNCATION_DISABLED"

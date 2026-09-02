@@ -53,3 +53,21 @@ class InvalidPruningConfigError(ContextPruningError):
     """Exception raised when pruning threshold or configuration settings are invalid."""
 
     pass
+
+
+class ContextPackingError(LLMError):
+    """Exception raised when context token budgeting or context packing fails."""
+
+    pass
+
+
+class InvalidBudgetConfigError(ContextPackingError):
+    """Exception raised when token budget configuration or reserve settings are invalid."""
+
+    pass
+
+
+class TokenCountingError(ContextPackingError):
+    """Exception raised when token calculation fails or encounters an invalid input state."""
+
+    pass
