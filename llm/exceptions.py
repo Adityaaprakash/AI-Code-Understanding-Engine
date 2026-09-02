@@ -17,3 +17,15 @@ class InvalidQueryError(QueryPlanningError):
     """Exception raised when query input is invalid, empty, or whitespace-only."""
 
     pass
+
+
+class GraphExpansionError(LLMError):
+    """Exception raised when graph expansion fails or encounters an invalid state."""
+
+    pass
+
+
+class InvalidExpansionConfigError(GraphExpansionError):
+    """Exception raised when expansion limits or configuration settings are invalid."""
+
+    pass

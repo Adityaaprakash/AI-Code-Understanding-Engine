@@ -2,13 +2,13 @@
 
 ## Active Phase
 
-**Phase 6 — LLM Context & Answer Engine IN PROGRESS** (TASK-6A Query Intent & Query Planning COMPLETE)
+**Phase 6 — LLM Context & Answer Engine IN PROGRESS** (TASK-6A & TASK-6B COMPLETE)
 
 ---
 
 ## Current Task
 
-TASK-6A (Query Intent & Query Planning) complete. Next task is TASK-6B (Graph-Aware Context Expansion).
+TASK-6B (Graph-Aware Context Expansion) complete. Next task is TASK-6C (Context Ranking).
 
 ---
 
@@ -28,19 +28,20 @@ TASK-6A (Query Intent & Query Planning) complete. Next task is TASK-6B (Graph-Aw
 - [x] TASK-4A through TASK-4E: Phase 4 Complete
 - [x] TASK-5A through TASK-5G: Phase 5 Complete
 - [x] TASK-6A: Query Intent & Query Planning complete
-  - Created Phase 6 top-level package `llm/`.
-  - Implemented `llm/enums.py` (`QueryIntent`, `RelationshipType`, `RetrievalStrategy`, `GraphStrategy`, `QueryScope`, `AnswerStyle`).
-  - Defined `LLMError`, `QueryPlanningError`, `InvalidQueryError` exception hierarchy in `llm/exceptions.py`.
-  - Created `QueryPlan` Pydantic model (`frozen=True`) in `llm/planner_models.py` maintaining lossless JSON roundtripping, complete explainability reason codes, bounded compound operations, scope determination, and target entity extraction.
-  - Implemented `QueryPlanner` service in `llm/query_planner.py` implementing `QueryPlannerContract`. Provides sub-millisecond, 100% deterministic, rule-based intent classification and query planning without external LLM or retrieval dependencies.
-  - Built unit & integration test suite in `tests/test_query_planner.py` covering all 12 core query scenarios (A-L), target entity extraction, scope determination, compound queries, negation handling, invalid query validation, immutability, JSON roundtripping, 100% determinism (100 runs), sub-millisecond latency (<1.0ms), and ProcessedQuery integration.
-  - All 498 tests pass cleanly with 100% ruff check, ruff format, and mypy compliance.
+- [x] TASK-6B: Graph-Aware Context Expansion complete
+  - Defined `GraphExpansionConfig` Pydantic model (`frozen=True`) with strict validation for budget limits (`max_depth`, `max_expanded_nodes`, `max_candidates`, `max_neighbors_per_node`).
+  - Created `GraphExpansionAnchor`, `GraphExpansionCandidateStep`, `GraphExpansionCandidatePath`, `GraphExpansionCandidate`, and `GraphExpansionResult` Pydantic data models (`frozen=True`) in `llm/expansion_models.py`.
+  - Defined `GraphExpanderContract` interface in `llm/expansion_contracts.py`.
+  - Implemented `GraphContextExpander` service in `llm/graph_expander.py` bridging Phase 6A `QueryPlan` control signals and Phase 5 retrieval results with Phase 3 `CodeGraph`, `InMemoryGraphStore`, and `ImpactAnalyzer`.
+  - Enforced cycle-safe BFS traversal, deterministic edge sorting keys, per-node neighbor limits, scope constraints, and explicit provenance tracking (`source="RETRIEVAL+GRAPH_EXPANSION"` vs `"GRAPH_EXPANSION"`).
+  - Built comprehensive unit & integration test suite in `tests/test_graph_expander.py` covering all 25 required test scenarios (A-Y), including callers, callees, dependencies, dependents, implementations, inheritance, imports, usages, impact radius, multi-anchor expansion, cycle safety, depth/node/candidate/neighbor limits, 100% determinism (100 runs), scope constraints, provenance, truncation, invalid config validation, and lossless JSON serialization.
+  - All 523 repository tests pass cleanly with 100% ruff format, ruff check, and mypy compliance.
 
 ---
 
 ## In Progress
 
-- TASK-6B — Graph-Aware Context Expansion (Next)
+- TASK-6C — Context Ranking (Next)
 
 ---
 
@@ -48,7 +49,7 @@ TASK-6A (Query Intent & Query Planning) complete. Next task is TASK-6B (Graph-Aw
 
 ### Phase 6 (LLM Context & Answer Engine)
 - [x] 6A: Query Intent & Query Planning — ✅ Done
-- [ ] 6B: Graph-Aware Context Expansion
+- [x] 6B: Graph-Aware Context Expansion — ✅ Done
 - [ ] 6C: Context Ranking
 - [ ] 6D: Context Deduplication & Pruning
 - [ ] 6E: Token Budgeting & Context Packing
@@ -60,4 +61,5 @@ TASK-6A (Query Intent & Query Planning) complete. Next task is TASK-6B (Graph-Aw
 
 ## Last Updated
 
-2026-09-02 — TASK-6A Query Intent & Query Planning complete. All 498 tests passing, 100% ruff and mypy compliance. Next task is TASK-6B.
+2026-09-02 — TASK-6B Graph-Aware Context Expansion complete. All 523 tests passing, 100% ruff and mypy compliance. Next task is TASK-6C.
+
