@@ -85,11 +85,12 @@ class DeterministicReranker(RerankerContract):
             processed_q = query
 
         # 2. Query consistency check
-        if results.query and results.query.normalized_query:
-            if results.query.normalized_query != processed_q.normalized_query:
-                raise RerankerInputError(
-                    "Query mismatch between provided query and result set query"
-                )
+        if (
+            results.query
+            and results.query.normalized_query
+            and results.query.normalized_query != processed_q.normalized_query
+        ):
+            raise RerankerInputError("Query mismatch between provided query and result set query")
 
         # 3. Empty results handling
         if not results.results:
@@ -111,7 +112,10 @@ class DeterministicReranker(RerankerContract):
         candidate_pool = results.results[: self.rerank_top_k]
 
         max_rrf = max(
-            (item.fused_score if item.fused_score is not None else item.score for item in candidate_pool),
+            (
+                item.fused_score if item.fused_score is not None else item.score
+                for item in candidate_pool
+            ),
             default=1.0,
         )
         if max_rrf <= 0.0:
@@ -122,23 +126,24 @@ class DeterministicReranker(RerankerContract):
             if processed_q.identifier_tokens
             else processed_q.normalized_query.lower()
         )
-        query_tokens = set(t.lower() for t in processed_q.tokens)
-
+        query_tokens = {t.lower() for t in processed_q.tokens}
 
         scored_candidates: list[tuple[float, RetrievalResult]] = []
 
         for item in candidate_pool:
             # Feature 1: Exact symbol match
             f_exact_symbol = 0.0
-            if target_symbol and item.symbol_name:
-                if item.symbol_name.lower() == target_symbol:
-                    f_exact_symbol = 1.0
+            if target_symbol and item.symbol_name and item.symbol_name.lower() == target_symbol:
+                f_exact_symbol = 1.0
 
             # Feature 2: Qualified symbol match
             f_qualified_symbol = 0.0
-            if target_symbol and item.qualified_name:
-                if target_symbol in item.qualified_name.lower():
-                    f_qualified_symbol = 1.0
+            if (
+                target_symbol
+                and item.qualified_name
+                and target_symbol in item.qualified_name.lower()
+            ):
+                f_qualified_symbol = 1.0
 
             # Feature 3: Token overlap ratio
             candidate_text_tokens: set[str] = set()

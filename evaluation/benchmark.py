@@ -130,14 +130,11 @@ class RetrievalBenchmarkRunner:
             )
             self.vector_index.add(emb, chunk=chunk_obj)
 
-
         self.vector_retriever = VectorRetriever(
             index=self.vector_index,
             provider=self.vector_provider,
             preprocessor=self.preprocessor,
         )
-
-
 
     def _simulate_graph_retrieval(self, query: EvaluationQuery) -> RetrievalResultSet:
         """Simulate deterministic graph retrieval candidates based on query intent category."""
@@ -285,9 +282,7 @@ class RetrievalBenchmarkRunner:
             )
 
             # 5. System F Reranking
-            sys_f_res = self.reranker.rerank(
-                query=q.question, results=sys_e_res, top_k=self.top_k
-            )
+            sys_f_res = self.reranker.rerank(query=q.question, results=sys_e_res, top_k=self.top_k)
 
             # Evaluate each system for query q
             systems_results_map = {
@@ -301,12 +296,13 @@ class RetrievalBenchmarkRunner:
 
             for sys_name, res_set in systems_results_map.items():
                 retrieved_ids = [r.chunk_id for r in res_set.results[: self.top_k]]
-                prec = calculate_precision_at_k(retrieved_ids, q.relevant_chunk_ids, self.top_k)
-                rec = calculate_recall_at_k(retrieved_ids, q.relevant_chunk_ids, self.top_k)
-                hit = calculate_hit_rate_at_k(retrieved_ids, q.relevant_chunk_ids, self.top_k)
-                mrr = calculate_reciprocal_rank(retrieved_ids, q.relevant_chunk_ids)
+                rel_set_eval = set(q.relevant_chunk_ids)
+                prec = calculate_precision_at_k(retrieved_ids, rel_set_eval, self.top_k)
+                rec = calculate_recall_at_k(retrieved_ids, rel_set_eval, self.top_k)
+                hit = calculate_hit_rate_at_k(retrieved_ids, rel_set_eval, self.top_k)
+                mrr = calculate_reciprocal_rank(retrieved_ids, rel_set_eval)
                 ndcg = calculate_ndcg_at_k(
-                    retrieved_ids, q.graded_relevance or q.relevant_chunk_ids, self.top_k
+                    retrieved_ids, q.graded_relevance or rel_set_eval, self.top_k
                 )
 
                 q_eval = QueryEvaluationResult(
@@ -332,12 +328,12 @@ class RetrievalBenchmarkRunner:
 
         for sys_name, logs in systems_query_logs.items():
             num_q = len(logs)
-            mean_prec = sum(l.precision for l in logs) / num_q if num_q else 0.0
-            mean_rec = sum(l.recall for l in logs) / num_q if num_q else 0.0
-            mean_hit = sum(l.hit_rate for l in logs) / num_q if num_q else 0.0
-            mrr_val = sum(l.mrr for l in logs) / num_q if num_q else 0.0
-            mean_ndcg = sum(l.ndcg for l in logs) / num_q if num_q else 0.0
-            latencies = [l.latency_ms for l in logs]
+            mean_prec = sum(q_log.precision for q_log in logs) / num_q if num_q else 0.0
+            mean_rec = sum(q_log.recall for q_log in logs) / num_q if num_q else 0.0
+            mean_hit = sum(q_log.hit_rate for q_log in logs) / num_q if num_q else 0.0
+            mrr_val = sum(q_log.mrr for q_log in logs) / num_q if num_q else 0.0
+            mean_ndcg = sum(q_log.ndcg for q_log in logs) / num_q if num_q else 0.0
+            latencies = [q_log.latency_ms for q_log in logs]
             p50, p95 = calculate_percentiles(latencies)
             mean_lat = sum(latencies) / num_q if num_q else 0.0
 
@@ -358,16 +354,16 @@ class RetrievalBenchmarkRunner:
 
             # Category breakdown for this system
             categories_map: dict[QueryCategory, list[QueryEvaluationResult]] = {}
-            for l in logs:
-                categories_map.setdefault(l.category, []).append(l)
+            for q_log in logs:
+                categories_map.setdefault(q_log.category, []).append(q_log)
 
             for cat, cat_logs in categories_map.items():
                 c_num = len(cat_logs)
-                c_prec = sum(l.precision for l in cat_logs) / c_num
-                c_rec = sum(l.recall for l in cat_logs) / c_num
-                c_hit = sum(l.hit_rate for l in cat_logs) / c_num
-                c_mrr = sum(l.mrr for l in cat_logs) / c_num
-                c_ndcg = sum(l.ndcg for l in cat_logs) / c_num
+                c_prec = sum(q_log.precision for q_log in cat_logs) / c_num
+                c_rec = sum(q_log.recall for q_log in cat_logs) / c_num
+                c_hit = sum(q_log.hit_rate for q_log in cat_logs) / c_num
+                c_mrr = sum(q_log.mrr for q_log in cat_logs) / c_num
+                c_ndcg = sum(q_log.ndcg for q_log in cat_logs) / c_num
 
                 category_breakdowns.append(
                     CategoryAggregateMetrics(

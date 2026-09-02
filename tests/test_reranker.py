@@ -85,7 +85,9 @@ def sample_fused_set(sample_query: ProcessedQuery) -> RetrievalResultSet:
 
 
 @pytest.mark.unit
-def test_basic_reranking(sample_query: ProcessedQuery, sample_fused_set: RetrievalResultSet) -> None:
+def test_basic_reranking(
+    sample_query: ProcessedQuery, sample_fused_set: RetrievalResultSet
+) -> None:
     """TC-1: Basic reranking execution flow."""
     reranker = DeterministicReranker(rerank_top_k=50)
     res = reranker.rerank(query=sample_query, results=sample_fused_set, top_k=10)
@@ -98,7 +100,9 @@ def test_basic_reranking(sample_query: ProcessedQuery, sample_fused_set: Retriev
 
 
 @pytest.mark.unit
-def test_exact_symbol_match(sample_query: ProcessedQuery, sample_fused_set: RetrievalResultSet) -> None:
+def test_exact_symbol_match(
+    sample_query: ProcessedQuery, sample_fused_set: RetrievalResultSet
+) -> None:
     """TC-2: Exact symbol match receives highest exact symbol feature weight."""
     reranker = DeterministicReranker()
     res = reranker.rerank(query=sample_query, results=sample_fused_set, top_k=10)
@@ -122,9 +126,7 @@ def test_qualified_symbol_match(sample_query: ProcessedQuery) -> None:
         symbol_name="unrelated",
         qualified_name="utils.common",
     )
-    fused = RetrievalResultSet(
-        query=q, repository_id=REPO_ID, results=[c2, c1], total_matches=2
-    )
+    fused = RetrievalResultSet(query=q, repository_id=REPO_ID, results=[c2, c1], total_matches=2)
 
     reranker = DeterministicReranker()
     res = reranker.rerank(query=q, results=fused, top_k=10)
@@ -138,9 +140,7 @@ def test_identifier_overlap(sample_query: ProcessedQuery) -> None:
     q = sample_query
     c1 = _make_candidate(chunk_id="chunk-token-match", symbol_name="process_payment")
     c2 = _make_candidate(chunk_id="chunk-no-match", symbol_name="unrelated")
-    fused = RetrievalResultSet(
-        query=q, repository_id=REPO_ID, results=[c2, c1], total_matches=2
-    )
+    fused = RetrievalResultSet(query=q, repository_id=REPO_ID, results=[c2, c1], total_matches=2)
 
     reranker = DeterministicReranker()
     res = reranker.rerank(query=q, results=fused, top_k=10)
@@ -162,9 +162,7 @@ def test_source_agreement(sample_query: ProcessedQuery) -> None:
         symbol_name="fn_b",
         sources=[RetrievalSource.BM25],
     )
-    fused = RetrievalResultSet(
-        query=q, repository_id=REPO_ID, results=[c2, c1], total_matches=2
-    )
+    fused = RetrievalResultSet(query=q, repository_id=REPO_ID, results=[c2, c1], total_matches=2)
 
     reranker = DeterministicReranker()
     res = reranker.rerank(query=q, results=fused, top_k=10)
@@ -173,7 +171,9 @@ def test_source_agreement(sample_query: ProcessedQuery) -> None:
 
 
 @pytest.mark.unit
-def test_rrf_evidence_preservation(sample_query: ProcessedQuery, sample_fused_set: RetrievalResultSet) -> None:
+def test_rrf_evidence_preservation(
+    sample_query: ProcessedQuery, sample_fused_set: RetrievalResultSet
+) -> None:
     """TC-6: All original RRF scores and source evidence are preserved intact."""
     reranker = DeterministicReranker()
     res = reranker.rerank(query=sample_query, results=sample_fused_set, top_k=10)
@@ -222,7 +222,9 @@ def test_single_candidate(sample_query: ProcessedQuery) -> None:
 
 
 @pytest.mark.unit
-def test_deterministic_ordering(sample_query: ProcessedQuery, sample_fused_set: RetrievalResultSet) -> None:
+def test_deterministic_ordering(
+    sample_query: ProcessedQuery, sample_fused_set: RetrievalResultSet
+) -> None:
     """TC-10: Reranker execution produces deterministic candidate scores and ordering."""
     reranker = DeterministicReranker()
     res1 = reranker.rerank(query=sample_query, results=sample_fused_set, top_k=10)
@@ -234,13 +236,21 @@ def test_deterministic_ordering(sample_query: ProcessedQuery, sample_fused_set: 
 
 
 @pytest.mark.unit
-def test_100_run_determinism(sample_query: ProcessedQuery, sample_fused_set: RetrievalResultSet) -> None:
+def test_100_run_determinism(
+    sample_query: ProcessedQuery, sample_fused_set: RetrievalResultSet
+) -> None:
     """TC-11: Executing reranking 100 times produces 100% identical outputs."""
     reranker = DeterministicReranker()
-    first_run = [r.chunk_id for r in reranker.rerank(query=sample_query, results=sample_fused_set, top_k=10).results]
+    first_run = [
+        r.chunk_id
+        for r in reranker.rerank(query=sample_query, results=sample_fused_set, top_k=10).results
+    ]
 
     for _ in range(100):
-        current_run = [r.chunk_id for r in reranker.rerank(query=sample_query, results=sample_fused_set, top_k=10).results]
+        current_run = [
+            r.chunk_id
+            for r in reranker.rerank(query=sample_query, results=sample_fused_set, top_k=10).results
+        ]
         assert current_run == first_run
 
 
@@ -250,11 +260,17 @@ def test_tie_breaking(sample_query: ProcessedQuery) -> None:
     q = sample_query
     c_b = _make_candidate(chunk_id="chunk-B", symbol_name="unrelated_a")
     c_a = _make_candidate(chunk_id="chunk-A", symbol_name="unrelated_b")
-    fused = RetrievalResultSet(
-        query=q, repository_id=REPO_ID, results=[c_b, c_a], total_matches=2
-    )
+    fused = RetrievalResultSet(query=q, repository_id=REPO_ID, results=[c_b, c_a], total_matches=2)
 
-    reranker = DeterministicReranker(weights={"exact_symbol": 0.0, "qualified_symbol": 0.0, "token_overlap": 0.0, "source_agreement": 0.0, "rrf_prior": 1.0})
+    reranker = DeterministicReranker(
+        weights={
+            "exact_symbol": 0.0,
+            "qualified_symbol": 0.0,
+            "token_overlap": 0.0,
+            "source_agreement": 0.0,
+            "rrf_prior": 1.0,
+        }
+    )
     res = reranker.rerank(query=q, results=fused, top_k=10)
 
     assert res.results[0].chunk_id == "chunk-A"
@@ -262,7 +278,9 @@ def test_tie_breaking(sample_query: ProcessedQuery) -> None:
 
 
 @pytest.mark.unit
-def test_input_immutability(sample_query: ProcessedQuery, sample_fused_set: RetrievalResultSet) -> None:
+def test_input_immutability(
+    sample_query: ProcessedQuery, sample_fused_set: RetrievalResultSet
+) -> None:
     """TC-13: Input RetrievalResultSet and RetrievalResult objects remain unmutated."""
     original_score = sample_fused_set.results[0].score
     reranker = DeterministicReranker()
@@ -272,7 +290,9 @@ def test_input_immutability(sample_query: ProcessedQuery, sample_fused_set: Retr
 
 
 @pytest.mark.unit
-def test_query_mismatch_raises_error(sample_query: ProcessedQuery, sample_fused_set: RetrievalResultSet) -> None:
+def test_query_mismatch_raises_error(
+    sample_query: ProcessedQuery, sample_fused_set: RetrievalResultSet
+) -> None:
     """TC-14: Query mismatch between provided query and result set query raises RerankerInputError."""
     qp = QueryPreprocessor()
     different_query = qp.process("completely_different_query")
@@ -283,7 +303,9 @@ def test_query_mismatch_raises_error(sample_query: ProcessedQuery, sample_fused_
 
 
 @pytest.mark.unit
-def test_latency_tracking(sample_query: ProcessedQuery, sample_fused_set: RetrievalResultSet) -> None:
+def test_latency_tracking(
+    sample_query: ProcessedQuery, sample_fused_set: RetrievalResultSet
+) -> None:
     """TC-15: Reranking measures reranking_latency_ms and updates total_latency_ms."""
     reranker = DeterministicReranker()
     res = reranker.rerank(query=sample_query, results=sample_fused_set, top_k=10)
@@ -293,7 +315,9 @@ def test_latency_tracking(sample_query: ProcessedQuery, sample_fused_set: Retrie
 
 
 @pytest.mark.unit
-def test_serialization_roundtrip(sample_query: ProcessedQuery, sample_fused_set: RetrievalResultSet) -> None:
+def test_serialization_roundtrip(
+    sample_query: ProcessedQuery, sample_fused_set: RetrievalResultSet
+) -> None:
     """TC-16: RetrievalResultSet containing reranked results serializes to JSON and back."""
     reranker = DeterministicReranker()
     res = reranker.rerank(query=sample_query, results=sample_fused_set, top_k=10)
@@ -333,7 +357,9 @@ def test_performance_scale(sample_query: ProcessedQuery) -> None:
 
 
 @pytest.mark.unit
-def test_invalid_parameters(sample_query: ProcessedQuery, sample_fused_set: RetrievalResultSet) -> None:
+def test_invalid_parameters(
+    sample_query: ProcessedQuery, sample_fused_set: RetrievalResultSet
+) -> None:
     """TC-18: Invalid top_k <= 0 or rerank_top_k <= 0 raise appropriate errors."""
     with pytest.raises(RerankerConfigurationError):
         DeterministicReranker(rerank_top_k=0)

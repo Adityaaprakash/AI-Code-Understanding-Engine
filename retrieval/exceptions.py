@@ -199,4 +199,3 @@ class EvaluationMetricError(EvaluationError):
     """Raised when evaluation metric calculations encounter invalid inputs."""
 
     pass
-

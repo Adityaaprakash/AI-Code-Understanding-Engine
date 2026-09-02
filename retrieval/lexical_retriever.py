@@ -117,7 +117,6 @@ class LexicalRetriever(LexicalRetrieverContract):
                 )
             )
 
-
         return RetrievalResultSet(
             query=processed_query,
             repository_id=repo_id,

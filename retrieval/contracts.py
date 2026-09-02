@@ -364,4 +364,3 @@ class RerankerContract(ABC):
             RetrievalResultSet containing ProcessedQuery and reranked RetrievalResults with rerank_score populated.
         """
         raise NotImplementedError
-

@@ -4,12 +4,9 @@ import pytest
 
 from evaluation.benchmark import RetrievalBenchmarkRunner
 from retrieval.candidate_fusion import CandidateFusionEngine
-from retrieval.lexical_retriever import LexicalRetriever
 from retrieval.query_processor import QueryPreprocessor
 from retrieval.reranker import DeterministicReranker
 from retrieval.retrieval_models import RetrievalResultSet
-from retrieval.vector_index import RepositoryVectorIndex
-from retrieval.vector_retriever import VectorRetriever
 
 REPO_ID = "phase5-integration-repo"
 
@@ -30,7 +27,9 @@ def test_end_to_end_phase5_pipeline() -> None:
     assert isinstance(bm25_res, RetrievalResultSet)
 
     # 4. Vector Retrieval (5C)
-    vector_res = runner.vector_retriever.retrieve(query=processed_q, repository_id=REPO_ID, top_k=10)
+    vector_res = runner.vector_retriever.retrieve(
+        query=processed_q, repository_id=REPO_ID, top_k=10
+    )
     assert isinstance(vector_res, RetrievalResultSet)
 
     # 5. Candidate Fusion (5E)

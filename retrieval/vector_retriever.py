@@ -146,7 +146,6 @@ class VectorRetriever(VectorRetrieverContract):
                 )
             )
 
-
         total_latency_ms = (time.perf_counter() - t0) * 1000.0
 
         return RetrievalResultSet(

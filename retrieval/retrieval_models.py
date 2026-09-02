@@ -111,7 +111,6 @@ class RetrievalResultSet(BaseModel):
     reranking_latency_ms: float = 0.0
     total_latency_ms: float = 0.0
 
-
     @field_validator("repository_id")
     @classmethod
     def validate_repository_id(cls, v: str) -> str:

@@ -1,7 +1,7 @@
 """Pure mathematical metrics module for Phase 5G Retrieval Evaluation."""
 
 import math
-from typing import Sequence
+from collections.abc import Sequence
 
 from retrieval.exceptions import EvaluationMetricError
 
@@ -153,7 +153,7 @@ def calculate_ndcg_at_k(
         return 0.0
 
     graded_map: dict[str, int] = (
-        relevant if isinstance(relevant, dict) else {cid: 1 for cid in relevant}
+        relevant if isinstance(relevant, dict) else dict.fromkeys(relevant, 1)
     )
 
     if not graded_map:
