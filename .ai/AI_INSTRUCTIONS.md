@@ -101,3 +101,105 @@ After completing a task:
 - Do not push directly to `main` if a branch workflow is established.
 - Do not generate Lorem Ipsum or placeholder data in production code paths.
 - Do not silently suppress errors; propagate or log them properly.
+
+---
+
+## 8. Python Environment
+
+The project requires **Python 3.12**. A project-local `.venv` is pre-created using `uv`.
+
+### Activating the environment
+
+```powershell
+# Windows PowerShell — one-time per terminal session
+.\.venv\Scripts\Activate.ps1
+```
+
+After activation, `python --version` should report `Python 3.12.x`.
+
+### Verifying without activation
+
+```powershell
+.venv\Scripts\python.exe --version   # → Python 3.12.x
+```
+
+### Installing/syncing dependencies
+
+Dependencies are declared in `pyproject.toml` and locked in `uv.lock`.
+To sync the environment:
+
+```powershell
+uv sync --dev
+```
+
+Do **not** use the MSYS2 Python at `C:\msys64\mingw64\bin\python.exe`.
+Do **not** install packages globally.
+
+---
+
+## 9. Running Tests and Quality Checks
+
+Always use the project `.venv` Python, not the system Python.
+
+```powershell
+# Run full test suite
+.venv\Scripts\python.exe -m pytest
+
+# Run linter
+.venv\Scripts\python.exe -m ruff check .
+
+# Run formatter check
+.venv\Scripts\python.exe -m ruff format --check .
+
+# Run type checker
+.venv\Scripts\python.exe -m mypy retrieval/ evaluation/ llm/ graph/ backend/
+```
+
+All four checks must pass before committing.
+
+---
+
+## 10. Git Workflow (Mandatory Before Every Push)
+
+Follow this exact sequence for every commit:
+
+```powershell
+# 1. Inspect what changed
+git status
+
+# 2. Review the full diff of unstaged changes
+git diff
+
+# 3. Stage only the files relevant to this commit
+git add <file1> <file2> ...
+
+# 4. Confirm exactly what will be committed
+git diff --cached
+
+# 5. Run tests and quality checks (see § 9 above)
+
+# 6. Commit with a conventional commit message
+git commit -m "<type>(<scope>): <description>"
+
+# 7. Verify clean state
+git status
+
+# 8. Push
+git push origin main
+
+# 9. Verify push succeeded
+git status
+```
+
+### Rules
+
+- **Never** use `git add .` without first inspecting `git status` and `git diff`.
+- **Never** use `git reset --hard`, `git clean -fd`, `git push --force`, or history rewriting.
+- **Never** push uncommitted changes.
+- **Never** mix Phase implementation, unrelated formatting, generated files, or
+  environment files in a single commit.
+- Commit messages must follow Conventional Commits:
+  `feat`, `fix`, `chore`, `docs`, `refactor`, `test`, `perf`.
+- Each phase should produce its own commit per completed task.
+- Maintenance/cleanup changes go into a separate `chore(...)` commit.
+

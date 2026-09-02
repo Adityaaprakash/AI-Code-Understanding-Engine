@@ -105,6 +105,7 @@ logs/
 tmp/
 temp/
 .tmp/
+pytest_output.txt
 
 # ──────────────────────────────────────────────────────────────────────────────
 # Experiment outputs
