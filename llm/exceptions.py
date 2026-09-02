@@ -41,3 +41,15 @@ class InvalidRankingConfigError(ContextRankingError):
     """Exception raised when ranking weights or configuration settings are invalid."""
 
     pass
+
+
+class ContextPruningError(LLMError):
+    """Exception raised when context deduplication/pruning fails or encounters an invalid state."""
+
+    pass
+
+
+class InvalidPruningConfigError(ContextPruningError):
+    """Exception raised when pruning threshold or configuration settings are invalid."""
+
+    pass

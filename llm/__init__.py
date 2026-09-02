@@ -1,10 +1,12 @@
 """Phase 6 — LLM Context & Answer Engine package."""
 
+from llm.context_pruner import ContextPruner
 from llm.context_ranker import ContextRanker
 from llm.contracts import QueryPlannerContract
 from llm.enums import (
     AnswerStyle,
     GraphStrategy,
+    PruningReasonCode,
     QueryIntent,
     QueryScope,
     RankingReasonCode,
@@ -12,9 +14,11 @@ from llm.enums import (
     RetrievalStrategy,
 )
 from llm.exceptions import (
+    ContextPruningError,
     ContextRankingError,
     GraphExpansionError,
     InvalidExpansionConfigError,
+    InvalidPruningConfigError,
     InvalidQueryError,
     InvalidRankingConfigError,
     LLMError,
@@ -31,6 +35,9 @@ from llm.expansion_models import (
 )
 from llm.graph_expander import GraphContextExpander
 from llm.planner_models import QueryPlan
+from llm.pruning_config import ContextPruningConfig
+from llm.pruning_contracts import ContextPrunerContract
+from llm.pruning_models import ContextPruningResult, PrunedCandidateRecord
 from llm.query_planner import QueryPlanner
 from llm.ranking_config import ContextRankingConfig
 from llm.ranking_contracts import ContextRankerContract
@@ -42,6 +49,11 @@ from llm.ranking_models import (
 
 __all__ = [
     "AnswerStyle",
+    "ContextPruner",
+    "ContextPrunerContract",
+    "ContextPruningConfig",
+    "ContextPruningError",
+    "ContextPruningResult",
     "ContextRanker",
     "ContextRankerContract",
     "ContextRankingConfig",
@@ -59,9 +71,12 @@ __all__ = [
     "GraphExpansionResult",
     "GraphStrategy",
     "InvalidExpansionConfigError",
+    "InvalidPruningConfigError",
     "InvalidQueryError",
     "InvalidRankingConfigError",
     "LLMError",
+    "PrunedCandidateRecord",
+    "PruningReasonCode",
     "QueryIntent",
     "QueryPlan",
     "QueryPlanner",

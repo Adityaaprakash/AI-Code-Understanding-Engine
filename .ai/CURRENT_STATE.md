@@ -2,13 +2,13 @@
 
 ## Active Phase
 
-**Phase 6 — LLM Context & Answer Engine IN PROGRESS** (TASK-6A, TASK-6B & TASK-6C COMPLETE)
+**Phase 6 — LLM Context & Answer Engine IN PROGRESS** (TASK-6A, TASK-6B, TASK-6C & TASK-6D COMPLETE)
 
 ---
 
 ## Current Task
 
-TASK-6C (Context Ranking) complete. Next task is TASK-6D (Context Deduplication & Pruning).
+TASK-6D (Context Deduplication & Pruning) complete. Next task is TASK-6E (Token Budgeting & Context Packing).
 
 ---
 
@@ -30,20 +30,21 @@ TASK-6C (Context Ranking) complete. Next task is TASK-6D (Context Deduplication 
 - [x] TASK-6A: Query Intent & Query Planning complete
 - [x] TASK-6B: Graph-Aware Context Expansion complete
 - [x] TASK-6C: Context Ranking complete
-  - Defined `ContextRankingConfig` Pydantic model (`frozen=True`) with strict validation for weights (retrieval relevance, query entity match, intent alignment, relationship alignment, provenance strength, graph proximity, scope alignment, locality) and proximity decay.
-  - Created `ContextRankingScoreBreakdown`, `RankedContextCandidate`, and `ContextRankingResult` Pydantic data models (`frozen=True`) in `llm/ranking_models.py`.
-  - Added `RankingReasonCode` StrEnum in `llm/enums.py` and `ContextRankingError`, `InvalidRankingConfigError` in `llm/exceptions.py`.
-  - Defined `ContextRankerContract` interface in `llm/ranking_contracts.py`.
-  - Implemented `ContextRanker` service in `llm/context_ranker.py` providing deterministic, query-aware candidate ranking based on Phase 6A control signals and Phase 5 / Phase 6B candidate metadata.
-  - Enforced candidate count preservation (`len(output) == len(input)` - NO PRUNING), deterministic multi-dimensional tie-breaking, permutation invariance, explicit scoring dimension normalization, lossless JSON roundtripping, and provenance preservation.
-  - Built comprehensive unit & integration test suite in `tests/test_context_ranker.py` covering scenarios A through T, permutation invariance, and property invariants.
-  - All 544 repository tests pass cleanly with 100% ruff format, ruff check, and mypy compliance.
+- [x] TASK-6D: Context Deduplication & Pruning complete
+  - Defined `ContextPruningConfig` Pydantic model (`frozen=True`) with strict validation for exact, logical, and near-duplicate flags, score thresholds, top-K limits, per-symbol/file caps, and protection policies.
+  - Created `PrunedCandidateRecord` and `ContextPruningResult` Pydantic data models (`frozen=True`) in `llm/pruning_models.py`.
+  - Added `PruningReasonCode` StrEnum in `llm/enums.py` and `ContextPruningError`, `InvalidPruningConfigError` in `llm/exceptions.py`.
+  - Defined `ContextPrunerContract` interface in `llm/pruning_contracts.py`.
+  - Implemented `ContextPruner` service in `llm/context_pruner.py` providing deterministic, explainable, provenance-preserving candidate context deduplication, evidence merging, and policy-driven pruning.
+  - Enforced multi-source evidence merging (`RETRIEVAL+GRAPH_EXPANSION`), primary query target protection, structural coverage protection, stable multi-key tie-breaking, permutation invariance, and audit trails.
+  - Built comprehensive unit & integration test suite in `tests/test_context_pruner.py` covering scenarios A through X, permutation invariance (100 runs), and boundary negative constraints.
+  - All 569 repository tests pass cleanly with 100% ruff format, ruff check, and mypy compliance.
 
 ---
 
 ## In Progress
 
-- TASK-6D — Context Deduplication & Pruning (Next)
+- TASK-6E — Token Budgeting & Context Packing (Next)
 
 ---
 
@@ -53,7 +54,7 @@ TASK-6C (Context Ranking) complete. Next task is TASK-6D (Context Deduplication 
 - [x] 6A: Query Intent & Query Planning — ✅ Done
 - [x] 6B: Graph-Aware Context Expansion — ✅ Done
 - [x] 6C: Context Ranking — ✅ Done
-- [ ] 6D: Context Deduplication & Pruning
+- [x] 6D: Context Deduplication & Pruning — ✅ Done
 - [ ] 6E: Token Budgeting & Context Packing
 - [ ] 6F: LLM Provider Abstraction
 - [ ] 6G: Grounded Answer Generation
@@ -63,6 +64,7 @@ TASK-6C (Context Ranking) complete. Next task is TASK-6D (Context Deduplication 
 
 ## Last Updated
 
-2026-09-02 — TASK-6C Context Ranking complete. All 544 tests passing, 100% ruff and mypy compliance. Next task is TASK-6D.
+2026-09-02 — TASK-6D Context Deduplication & Pruning complete. All 569 tests passing, 100% ruff and mypy compliance. Next task is TASK-6E.
+
 
 
