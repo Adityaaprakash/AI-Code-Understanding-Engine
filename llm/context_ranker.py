@@ -384,20 +384,23 @@ class ContextRanker(ContextRankerContract):
             if cand.rerank_score is not None:
                 return min(1.0, max(0.0, cand.rerank_score))
             if cand.fused_score is not None:
-                # Max RRF score for rank 1 is 1.0 / (60 + 1) ~= 0.016393
-                # Scale fused_score up deterministically
-                return min(1.0, cand.fused_score * 61.0)
+                # Max RRF score for rank 1 in 2 channels is 2.0 / (60 + 1) ~= 0.0327
+                # Scale fused_score up deterministically avoiding premature saturation
+                return min(1.0, cand.fused_score * 30.0)
             if cand.score is not None:
-                val = cand.score
-                if 0.0 <= val <= 1.0:
-                    return val
-                # Sigmoid bound for arbitrary scores
-                return val / (1.0 + abs(val))
+                import math
+                try:
+                    return 1.0 / (1.0 + math.exp(-cand.score))
+                except OverflowError:
+                    return 0.0 if cand.score < 0 else 1.0
             return 0.5
         elif isinstance(cand, GraphExpansionCandidate):
             if raw_score is not None:
-                val = raw_score
-                return val if 0.0 <= val <= 1.0 else val / (1.0 + abs(val))
+                import math
+                try:
+                    return 1.0 / (1.0 + math.exp(-raw_score))
+                except OverflowError:
+                    return 0.0 if raw_score < 0 else 1.0
             if "RETRIEVAL" in source:
                 return 0.5
             return 0.0
