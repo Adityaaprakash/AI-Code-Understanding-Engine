@@ -2,13 +2,13 @@
 
 ## Active Phase
 
-**Phase 6 — LLM Context & Answer Engine IN PROGRESS** (TASK-6A through TASK-6F COMPLETE)
+**Phase 7 — PRODUCT UI & SHOWCASE IN PROGRESS** (Phase 1-6 COMPLETE)
 
 ---
 
 ## Current Task
 
-TASK-6F (LLM Provider Abstraction) complete. Next task is TASK-6G (Grounded Answer Generation).
+TASK-7G (Design System + Application Shell) complete. The foundation for Phase 7 UI is established.
 
 ---
 
@@ -58,17 +58,14 @@ TASK-6F (LLM Provider Abstraction) complete. Next task is TASK-6G (Grounded Answ
 
 ## In Progress
 
-- [x] TASK-6I: Evaluation & Hardening complete
-  - Created `.ai/PHASE_6_EVALUATION.md` reporting deterministic execution metrics and ranking calibration results.
-  - Empirically validated fused-score RRF normalization, resolving premature score saturation by adjusting the constant from `61.0` to `30.0` securely maintaining relative rank differentiation.
-  - Hardened generic score normalization mapping variables effectively onto sigmoid logic `1 - math.exp(-val/10)`.
-  - Assessed bounds checking across 6E Pack/Truncate token boundaries reliably.
-  - Hardened 6H Grounding validations structurally preventing mapping loop defects.
+(None; transitioning to feature implementations)
 
 ---
 
-## Phase 6 Output Matrix Complete
-**(6A-6I)** ALL tasks completed correctly enforcing explicit boundary definitions securely tracking explicit configurations securely. 
+## Phase 7 Output Matrix
+**(7A0-7A1, 7G)**:
+- 7A0 + 7A1: Exposed code intelligence APIs via FastAPI.
+- 7G: Implemented application shell (header, sidebar, status bar), designed custom CSS variable token system, implemented reusable generic components (Button, Badge, etc.), integrated react-router and vitest.
 
 ---
 
@@ -80,4 +77,4 @@ TASK-6F (LLM Provider Abstraction) complete. Next task is TASK-6G (Grounded Answ
 
 ## Last Updated
 
-2026-09-03 — TASK-6I Evaluation & Hardening complete. All 636 tests passing, 100% ruff and mypy compliance. Phase 6 is finalized effectively.
+2026-09-03 — TASK-7G Design System & Application Shell complete. All 649 backend tests passing (100% ruff and mypy). 34 frontend vitest tests passing. UI shell ready for feature integration.

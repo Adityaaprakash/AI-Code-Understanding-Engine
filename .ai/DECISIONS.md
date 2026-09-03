@@ -370,3 +370,26 @@ Implement a single, language-independent `CodeChunker` in `retrieval/` that oper
 ### Consequences
 - Requires valid `NormalizationResult` and `SourceLocation` bounds from Phase 2 normalizers.
 - Phase 4B (Metadata Enrichment) will augment `CodeChunk.metadata` without modifying `CodeChunk` core structure or identity.
+
+---
+
+## ADR-016: Application Shell & CSS Design System
+
+**Status:** Accepted  
+**Date:** 2026-09-03
+
+### Context
+Phase 7 requires a modern, accessible, developer-focused web UI to showcase the codebase intelligence engine.
+
+### Decision
+Implement a pure Vanilla CSS layout and token system (`index.css`), utilizing native CSS variables for typography, spacing, surfaces, and semantic colors. Establish a persistent layout (`AppShell`) with React Router for routing without imposing external UI libraries like Tailwind or Material UI.
+
+### Rationale
+- Pure CSS minimizes dependencies and establishes an independent visual identity aligned with developer products (Linear / GitHub / Modern IDE).
+- CSS variables trivially support dynamic theming (Dark/Light/System) managed via a React Context.
+- Reusable React components (`Button`, `Badge`, `EmptyState`) encapsulate style and accessibility logic securely.
+
+### Consequences
+- Components must be built from the established design tokens.
+- No utility frameworks (like tailwind) will pollute the JSX, keeping logic separated from styling.
+
