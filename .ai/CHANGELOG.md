@@ -2,6 +2,30 @@
 
 All notable changes to this project are recorded here.
 
+## 2026-09-03 — Phase 6F — LLM Provider Abstraction
+
+**Completed by:** TASK-6F
+
+### Added
+- **TASK-6F (LLM Provider Abstraction Layer):**
+  - Contract interface `LLMProviderContract` in `llm/provider_contracts.py` with abstract properties (`provider_name`, `capabilities`) and methods (`invoke()`, `ainvoke()`).
+  - Immutable Pydantic data models in `llm/provider_models.py` (`LLMMessage`, `LLMProviderCapabilities`, `LLMRequest`, `LLMResponse`) with model validation (non-empty contents, temperature range $[0.0, 2.0]$, token bounds, timeout bounds) and factory method `from_packed_context()` to construct provider-independent requests from Phase 6E `PackedContext`.
+  - Immutable provider config model `LLMProviderConfig` in `llm/provider_config.py` with `SecretStr` field masking sensitive API keys from string/repr/logging outputs.
+  - Extends enumeration classes in `llm/enums.py` (`LLMFinishReason`, `LLMProviderErrorCategory`, `LLMMessageRole`).
+  - Extends exception normalization hierarchy in `llm/exceptions.py` (`LLMProviderError`, `InvalidLLMConfigError`, `LLMAuthenticationError`, `LLMProviderUnavailableError`, `LLMTimeoutError`, `LLMRateLimitError`, `InvalidLLMRequestError`, `LLMModelUnavailableError`, `LLMExecutionError`, `LLMProviderNotFoundError`).
+  - Thread-safe `LLMProviderRegistry` in `llm/provider_registry.py` with provider registration, case-insensitive resolution, duplicate handling (`overwrite`), unregistration, listing, and isolated instance support.
+  - Zero-dependency, offline deterministic `FakeLLMProvider` in `llm/fake_provider.py` supporting canned responses, keyword/request-id mappings, forced exception simulation, simulated latency, timeout validation, deterministic token accounting, and invocation call history recording.
+  - Comprehensive unit & integration test suite `tests/test_llm_provider.py` (22 test functions covering contract inheritance, request/response validation, frozen immutability, `SecretStr` key masking, provider registration and case-insensitive resolution, error normalization, capability reporting, timeout enforcement, JSON roundtripping, 100-run determinism, 6E PackedContext boundary crossing, and boundary negative invariants).
+- Package exports in `llm/__init__.py`.
+
+### Verification
+- `uv run ruff check .` ✅ (0 errors)
+- `uv run ruff format --check .` ✅ (183 files formatted)
+- `uv run mypy .` ✅ (Success: no issues found in 169 source files)
+- `uv run pytest tests/ -v` ✅ (614 passed in 23.4s)
+
+---
+
 ## 2026-09-01 — Phase 5E — Candidate Fusion
 
 **Completed by:** TASK-5E

@@ -2,13 +2,13 @@
 
 ## Active Phase
 
-**Phase 6 — LLM Context & Answer Engine IN PROGRESS** (TASK-6A through TASK-6E COMPLETE)
+**Phase 6 — LLM Context & Answer Engine IN PROGRESS** (TASK-6A through TASK-6F COMPLETE)
 
 ---
 
 ## Current Task
 
-TASK-6E (Token Budgeting & Context Packing) complete. Next task is TASK-6F (LLM Provider Abstraction).
+TASK-6F (LLM Provider Abstraction) complete. Next task is TASK-6G (Grounded Answer Generation).
 
 ---
 
@@ -32,20 +32,20 @@ TASK-6E (Token Budgeting & Context Packing) complete. Next task is TASK-6F (LLM 
 - [x] TASK-6C: Context Ranking complete
 - [x] TASK-6D: Context Deduplication & Pruning complete
 - [x] TASK-6E: Token Budgeting & Context Packing complete
-  - Defined `TokenCounterContract` interface and implemented `DeterministicFallbackTokenCounter` (ESTIMATED mode) and `ExactTokenCounter` (EXACT mode) in `llm/token_counter.py`.
-  - Created `ContextBudgetConfig` Pydantic model (`frozen=True`) in `llm/budget_config.py` with validation for `max_context_tokens`, reserves (`system`, `query`, `output`), `safety_margin_tokens`, min/max candidate token limits, and `ContextOverflowPolicy`.
-  - Defined `PackedContextItem`, `ContextOmissionRecord`, `ContextPackingStats`, and `PackedContext` Pydantic data models (`frozen=True`) in `llm/budget_models.py`.
-  - Added `ContextOverflowPolicy`, `TokenCountMode`, `ContextPackingReasonCode` StrEnums in `llm/enums.py` and `ContextPackingError`, `InvalidBudgetConfigError`, `TokenCountingError` in `llm/exceptions.py`.
-  - Defined `ContextPackerContract` interface in `llm/budget_contracts.py`.
-  - Implemented `ContextPacker` service in `llm/context_packer.py` providing deterministic, provider-independent token budgeting, header + code formatting, budget tracking, overflow policy handling (`SKIP`, `TRUNCATE`), and detailed audit records (`TOKEN_BUDGET_EXCEEDED`, `CANDIDATE_TOO_LARGE`, `BUDGET_EXHAUSTED`).
-  - Built comprehensive unit & integration test suite in `tests/test_context_packer.py` covering scenarios A through Z, exact budget boundaries, 100-run determinism, permutation invariance, immutability, JSON roundtripping, and boundary negative constraints.
-  - All 592 repository tests pass cleanly with 100% ruff format, ruff check, and mypy compliance.
+- [x] TASK-6F: LLM Provider Abstraction complete
+  - Defined provider-independent contracts (`LLMProviderContract`), models (`LLMMessage`, `LLMProviderCapabilities`, `LLMRequest`, `LLMResponse`, `LLMProviderConfig`), and enums (`LLMFinishReason`, `LLMProviderErrorCategory`, `LLMMessageRole`).
+  - Created thread-safe `LLMProviderRegistry` with resolution, duplicate handling, and isolated registry support.
+  - Implemented normalized exception hierarchy (`LLMProviderError`, `InvalidLLMConfigError`, `LLMAuthenticationError`, `LLMProviderUnavailableError`, `LLMTimeoutError`, `LLMRateLimitError`, `InvalidLLMRequestError`, `LLMModelUnavailableError`, `LLMExecutionError`, `LLMProviderNotFoundError`).
+  - Built zero-dependency, deterministic `FakeLLMProvider` for offline unit and integration testing without network calls.
+  - Added secret protection with `SecretStr` preventing API key leakage in logs, exceptions, or string outputs.
+  - Created comprehensive test suite in `tests/test_llm_provider.py` covering contract adherence, model validation, immutability, registry resolution, error normalization, capability reporting, timeout handling, JSON roundtripping, 100-run determinism, 6E PackedContext boundary crossing, and boundary negative invariants.
+  - All 614 repository tests pass cleanly with 100% ruff format, ruff check, and mypy compliance.
 
 ---
 
 ## In Progress
 
-- TASK-6F — LLM Provider Abstraction (Next)
+- TASK-6G — Grounded Answer Generation (Next)
 
 ---
 
@@ -57,7 +57,7 @@ TASK-6E (Token Budgeting & Context Packing) complete. Next task is TASK-6F (LLM 
 - [x] 6C: Context Ranking — ✅ Done
 - [x] 6D: Context Deduplication & Pruning — ✅ Done
 - [x] 6E: Token Budgeting & Context Packing — ✅ Done
-- [ ] 6F: LLM Provider Abstraction
+- [x] 6F: LLM Provider Abstraction — ✅ Done
 - [ ] 6G: Grounded Answer Generation
 - [ ] 6H: Citation & Grounding Engine
 
@@ -65,7 +65,7 @@ TASK-6E (Token Budgeting & Context Packing) complete. Next task is TASK-6F (LLM 
 
 ## Last Updated
 
-2026-09-02 — TASK-6E Token Budgeting & Context Packing complete. All 592 tests passing, 100% ruff and mypy compliance. Next task is TASK-6F.
+2026-09-03 — TASK-6F LLM Provider Abstraction complete. All 614 tests passing, 100% ruff and mypy compliance. Next task is TASK-6G.
 
 
 

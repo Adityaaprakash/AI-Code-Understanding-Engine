@@ -133,3 +133,35 @@ class ContextPackingReasonCode(StrEnum):
     CANDIDATE_TOO_LARGE = "CANDIDATE_TOO_LARGE"
     BUDGET_EXHAUSTED = "BUDGET_EXHAUSTED"
     TRUNCATION_DISABLED = "TRUNCATION_DISABLED"
+
+
+class LLMFinishReason(StrEnum):
+    """Normalized finish reason for LLM generation responses."""
+
+    STOP = "stop"
+    MAX_TOKENS = "max_tokens"
+    LENGTH = "length"
+    CONTENT_FILTER = "content_filter"
+    ERROR = "error"
+    UNKNOWN = "unknown"
+
+
+class LLMProviderErrorCategory(StrEnum):
+    """Categories of normalized provider execution errors."""
+
+    CONFIGURATION = "configuration"
+    AUTHENTICATION = "authentication"
+    UNAVAILABLE = "unavailable"
+    TIMEOUT = "timeout"
+    RATE_LIMIT = "rate_limit"
+    INVALID_REQUEST = "invalid_request"
+    MODEL_UNAVAILABLE = "model_unavailable"
+    EXECUTION_FAILURE = "execution_failure"
+
+
+class LLMMessageRole(StrEnum):
+    """Role of an LLM message participant."""
+
+    SYSTEM = "system"
+    USER = "user"
+    ASSISTANT = "assistant"
