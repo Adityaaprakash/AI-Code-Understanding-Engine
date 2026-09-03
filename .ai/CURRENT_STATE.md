@@ -40,12 +40,19 @@ TASK-6F (LLM Provider Abstraction) complete. Next task is TASK-6G (Grounded Answ
   - Added secret protection with `SecretStr` preventing API key leakage in logs, exceptions, or string outputs.
   - Created comprehensive test suite in `tests/test_llm_provider.py` covering contract adherence, model validation, immutability, registry resolution, error normalization, capability reporting, timeout handling, JSON roundtripping, 100-run determinism, 6E PackedContext boundary crossing, and boundary negative invariants.
   - All 614 repository tests pass cleanly with 100% ruff format, ruff check, and mypy compliance.
+- [x] TASK-6G: Grounded Answer Generation complete
+  - Defined `GeneratedAnswer` Pydantic model (`frozen=True`) for structured output, and `AnswerGenerationConfig` for immutable config.
+  - Defined `AnswerGeneratorContract` interface and implemented `AnswerGenerator` for deterministic orchestration of prompt construction and provider invocation.
+  - Implemented exact context ordering preservation and handled token metadata propagation.
+  - Explicit generation boundaries enforced: NO retrieval, NO graph traversal, NO reranking, NO direct provider SDK access inside 6G, NO citation verification (delegated to 6H).
+  - Ensured deterministic orchestration through `100-run` execution test and fake provider integration.
+  - Handled negative test paths like empty-context and provider errors safely without leaking internal states.
 
 ---
 
 ## In Progress
 
-- TASK-6G — Grounded Answer Generation (Next)
+- TASK-6H — Citation & Grounding Engine (Next)
 
 ---
 
@@ -58,15 +65,12 @@ TASK-6F (LLM Provider Abstraction) complete. Next task is TASK-6G (Grounded Answ
 - [x] 6D: Context Deduplication & Pruning — ✅ Done
 - [x] 6E: Token Budgeting & Context Packing — ✅ Done
 - [x] 6F: LLM Provider Abstraction — ✅ Done
-- [ ] 6G: Grounded Answer Generation
+- [x] 6G: Grounded Answer Generation — ✅ Done
 - [ ] 6H: Citation & Grounding Engine
+- [ ] 6I: Evaluation & Hardening
 
 ---
 
 ## Last Updated
 
-2026-09-03 — TASK-6F LLM Provider Abstraction complete. All 614 tests passing, 100% ruff and mypy compliance. Next task is TASK-6G.
-
-
-
-
+2026-09-03 — TASK-6G Grounded Answer Generation complete. All 624 tests passing, 100% ruff and mypy compliance. Next task is TASK-6H.

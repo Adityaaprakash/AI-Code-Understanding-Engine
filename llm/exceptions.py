@@ -212,3 +212,15 @@ class LLMProviderNotFoundError(LLMProviderError):
         super().__init__(
             message, category="configuration", provider_name=provider_name, details=details
         )
+
+
+class AnswerGenerationError(LLMError):
+    """Exception raised when grounded answer generation orchestration fails."""
+
+    pass
+
+
+class InvalidAnswerConfigError(AnswerGenerationError):
+    """Exception raised when answer generation configuration is invalid."""
+
+    pass

@@ -1,5 +1,9 @@
 """Phase 6 — LLM Context & Answer Engine package."""
 
+from llm.answer_config import AnswerGenerationConfig
+from llm.answer_contracts import AnswerGeneratorContract
+from llm.answer_generator import AnswerGenerator
+from llm.answer_models import GeneratedAnswer
 from llm.budget_config import ContextBudgetConfig
 from llm.budget_contracts import ContextPackerContract
 from llm.budget_models import (
@@ -17,6 +21,9 @@ from llm.enums import (
     ContextOverflowPolicy,
     ContextPackingReasonCode,
     GraphStrategy,
+    LLMFinishReason,
+    LLMMessageRole,
+    LLMProviderErrorCategory,
     PruningReasonCode,
     QueryIntent,
     QueryScope,
@@ -26,16 +33,28 @@ from llm.enums import (
     TokenCountMode,
 )
 from llm.exceptions import (
+    AnswerGenerationError,
     ContextPackingError,
     ContextPruningError,
     ContextRankingError,
     GraphExpansionError,
+    InvalidAnswerConfigError,
     InvalidBudgetConfigError,
     InvalidExpansionConfigError,
+    InvalidLLMConfigError,
+    InvalidLLMRequestError,
     InvalidPruningConfigError,
     InvalidQueryError,
     InvalidRankingConfigError,
+    LLMAuthenticationError,
     LLMError,
+    LLMExecutionError,
+    LLMModelUnavailableError,
+    LLMProviderError,
+    LLMProviderNotFoundError,
+    LLMProviderUnavailableError,
+    LLMRateLimitError,
+    LLMTimeoutError,
     QueryPlanningError,
     TokenCountingError,
 )
@@ -48,8 +67,18 @@ from llm.expansion_models import (
     GraphExpansionCandidateStep,
     GraphExpansionResult,
 )
+from llm.fake_provider import FakeLLMProvider
 from llm.graph_expander import GraphContextExpander
 from llm.planner_models import QueryPlan
+from llm.provider_config import LLMProviderConfig
+from llm.provider_contracts import LLMProviderContract
+from llm.provider_models import (
+    LLMMessage,
+    LLMProviderCapabilities,
+    LLMRequest,
+    LLMResponse,
+)
+from llm.provider_registry import LLMProviderRegistry, provider_registry
 from llm.pruning_config import ContextPruningConfig
 from llm.pruning_contracts import ContextPrunerContract
 from llm.pruning_models import ContextPruningResult, PrunedCandidateRecord
@@ -68,6 +97,10 @@ from llm.token_counter import (
 )
 
 __all__ = [
+    "AnswerGenerationConfig",
+    "AnswerGenerationError",
+    "AnswerGenerator",
+    "AnswerGeneratorContract",
     "AnswerStyle",
     "ContextBudgetConfig",
     "ContextOmissionRecord",
@@ -90,6 +123,8 @@ __all__ = [
     "ContextRankingScoreBreakdown",
     "DeterministicFallbackTokenCounter",
     "ExactTokenCounter",
+    "FakeLLMProvider",
+    "GeneratedAnswer",
     "GraphContextExpander",
     "GraphExpanderContract",
     "GraphExpansionAnchor",
@@ -100,12 +135,33 @@ __all__ = [
     "GraphExpansionError",
     "GraphExpansionResult",
     "GraphStrategy",
+    "InvalidAnswerConfigError",
     "InvalidBudgetConfigError",
     "InvalidExpansionConfigError",
+    "InvalidLLMConfigError",
+    "InvalidLLMRequestError",
     "InvalidPruningConfigError",
     "InvalidQueryError",
     "InvalidRankingConfigError",
+    "LLMAuthenticationError",
     "LLMError",
+    "LLMExecutionError",
+    "LLMFinishReason",
+    "LLMMessage",
+    "LLMMessageRole",
+    "LLMModelUnavailableError",
+    "LLMProviderCapabilities",
+    "LLMProviderConfig",
+    "LLMProviderContract",
+    "LLMProviderError",
+    "LLMProviderErrorCategory",
+    "LLMProviderNotFoundError",
+    "LLMProviderRegistry",
+    "LLMProviderUnavailableError",
+    "LLMRateLimitError",
+    "LLMRequest",
+    "LLMResponse",
+    "LLMTimeoutError",
     "PackedContext",
     "PackedContextItem",
     "PrunedCandidateRecord",
@@ -123,4 +179,5 @@ __all__ = [
     "TokenCountMode",
     "TokenCounterContract",
     "TokenCountingError",
+    "provider_registry",
 ]
