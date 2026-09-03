@@ -47,12 +47,18 @@ TASK-6F (LLM Provider Abstraction) complete. Next task is TASK-6G (Grounded Answ
   - Explicit generation boundaries enforced: NO retrieval, NO graph traversal, NO reranking, NO direct provider SDK access inside 6G, NO citation verification (delegated to 6H).
   - Ensured deterministic orchestration through `100-run` execution test and fake provider integration.
   - Handled negative test paths like empty-context and provider errors safely without leaking internal states.
+- [x] TASK-6H: Citation & Grounding Engine complete
+  - Defined `GroundingClaim`, `CitationReference`, `GroundingMetrics`, `GroundingVerificationResult` models for deterministic citation and verification mapping.
+  - Implemented `GroundingEngine` matching extracted factual claims to citation marker boundaries `[CTX:candidate-id]`.
+  - Defined bounded claim scoring mechanics leveraging structural overlap (`WEIGHT_CITATION_VALIDITY`, `WEIGHT_LEXICAL_OVERLAP`).
+  - Added deterministic status states representing `valid`, `missing`, `malformed`, `ambiguous` parameters strictly against the supplied context evidence.
+  - Proven strict bounding: No BM25 requests, NO graph traversal, NO reranking, NO filesystem access during validation rendering.
 
 ---
 
 ## In Progress
 
-- TASK-6H — Citation & Grounding Engine (Next)
+- TASK-6I — Evaluation & Hardening (Next)
 
 ---
 
@@ -66,11 +72,11 @@ TASK-6F (LLM Provider Abstraction) complete. Next task is TASK-6G (Grounded Answ
 - [x] 6E: Token Budgeting & Context Packing — ✅ Done
 - [x] 6F: LLM Provider Abstraction — ✅ Done
 - [x] 6G: Grounded Answer Generation — ✅ Done
-- [ ] 6H: Citation & Grounding Engine
+- [x] 6H: Citation & Grounding Engine — ✅ Done
 - [ ] 6I: Evaluation & Hardening
 
 ---
 
 ## Last Updated
 
-2026-09-03 — TASK-6G Grounded Answer Generation complete. All 624 tests passing, 100% ruff and mypy compliance. Next task is TASK-6H.
+2026-09-03 — TASK-6H Citation & Grounding Engine complete. All 636 tests passing, 100% ruff and mypy compliance. Next task is TASK-6I.

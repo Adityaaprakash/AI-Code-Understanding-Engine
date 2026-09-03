@@ -165,3 +165,51 @@ class LLMMessageRole(StrEnum):
     SYSTEM = "system"
     USER = "user"
     ASSISTANT = "assistant"
+
+
+class CitationStatus(StrEnum):
+    """Verification status of a parsed citation marker against supplied evidence."""
+
+    VALID = "valid"
+    INVALID = "invalid"
+    UNRESOLVED = "unresolved"
+    MISSING = "missing"
+    AMBIGUOUS = "ambiguous"
+    MALFORMED = "malformed"
+
+
+class ClaimStatus(StrEnum):
+    """Support status of an extracted factual claim against supplied evidence."""
+
+    SUPPORTED = "supported"
+    PARTIALLY_SUPPORTED = "partially_supported"
+    UNSUPPORTED = "unsupported"
+    UNCITED = "uncited"
+    UNVERIFIABLE = "unverifiable"
+
+
+class GroundingStatus(StrEnum):
+    """Overall answer-level grounding status based on aggregate claim support."""
+
+    SUPPORTED = "supported"
+    PARTIALLY_SUPPORTED = "partially_supported"
+    UNSUPPORTED = "unsupported"
+    UNVERIFIABLE = "unverifiable"
+
+
+class GroundingReasonCode(StrEnum):
+    """Explainability reason codes for citation and claim verification."""
+
+    VALID_CITATION = "VALID_CITATION"
+    INVALID_CITATION = "INVALID_CITATION"
+    UNKNOWN_CONTEXT_ID = "UNKNOWN_CONTEXT_ID"
+    MALFORMED_CITATION = "MALFORMED_CITATION"
+    SYMBOL_MATCH = "SYMBOL_MATCH"
+    IDENTIFIER_MATCH = "IDENTIFIER_MATCH"
+    LEXICAL_EVIDENCE = "LEXICAL_EVIDENCE"
+    STRUCTURAL_EVIDENCE = "STRUCTURAL_EVIDENCE"
+    INSUFFICIENT_EVIDENCE = "INSUFFICIENT_EVIDENCE"
+    NO_EVIDENCE = "NO_EVIDENCE"
+    UNCITED_CLAIM = "UNCITED_CLAIM"
+    PARTIAL_EVIDENCE = "PARTIAL_EVIDENCE"
+    UNSUPPORTED_CLAIM = "UNSUPPORTED_CLAIM"

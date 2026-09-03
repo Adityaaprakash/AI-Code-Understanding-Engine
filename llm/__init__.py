@@ -18,9 +18,13 @@ from llm.context_ranker import ContextRanker
 from llm.contracts import QueryPlannerContract
 from llm.enums import (
     AnswerStyle,
+    CitationStatus,
+    ClaimStatus,
     ContextOverflowPolicy,
     ContextPackingReasonCode,
     GraphStrategy,
+    GroundingReasonCode,
+    GroundingStatus,
     LLMFinishReason,
     LLMMessageRole,
     LLMProviderErrorCategory,
@@ -38,9 +42,11 @@ from llm.exceptions import (
     ContextPruningError,
     ContextRankingError,
     GraphExpansionError,
+    GroundingVerificationError,
     InvalidAnswerConfigError,
     InvalidBudgetConfigError,
     InvalidExpansionConfigError,
+    InvalidGroundingConfigError,
     InvalidLLMConfigError,
     InvalidLLMRequestError,
     InvalidPruningConfigError,
@@ -69,6 +75,15 @@ from llm.expansion_models import (
 )
 from llm.fake_provider import FakeLLMProvider
 from llm.graph_expander import GraphContextExpander
+from llm.grounding_config import GroundingVerificationConfig
+from llm.grounding_contracts import GroundingEngineContract
+from llm.grounding_engine import GroundingEngine
+from llm.grounding_models import (
+    CitationReference,
+    GroundingClaim,
+    GroundingMetrics,
+    GroundingVerificationResult,
+)
 from llm.planner_models import QueryPlan
 from llm.provider_config import LLMProviderConfig
 from llm.provider_contracts import LLMProviderContract
@@ -102,6 +117,9 @@ __all__ = [
     "AnswerGenerator",
     "AnswerGeneratorContract",
     "AnswerStyle",
+    "CitationReference",
+    "CitationStatus",
+    "ClaimStatus",
     "ContextBudgetConfig",
     "ContextOmissionRecord",
     "ContextOverflowPolicy",
@@ -135,9 +153,19 @@ __all__ = [
     "GraphExpansionError",
     "GraphExpansionResult",
     "GraphStrategy",
+    "GroundingClaim",
+    "GroundingEngine",
+    "GroundingEngineContract",
+    "GroundingMetrics",
+    "GroundingReasonCode",
+    "GroundingStatus",
+    "GroundingVerificationConfig",
+    "GroundingVerificationError",
+    "GroundingVerificationResult",
     "InvalidAnswerConfigError",
     "InvalidBudgetConfigError",
     "InvalidExpansionConfigError",
+    "InvalidGroundingConfigError",
     "InvalidLLMConfigError",
     "InvalidLLMRequestError",
     "InvalidPruningConfigError",

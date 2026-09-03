@@ -224,3 +224,15 @@ class InvalidAnswerConfigError(AnswerGenerationError):
     """Exception raised when answer generation configuration is invalid."""
 
     pass
+
+
+class GroundingVerificationError(LLMError):
+    """Exception raised when citation verification or grounding execution fails."""
+
+    pass
+
+
+class InvalidGroundingConfigError(GroundingVerificationError):
+    """Exception raised when grounding verification configuration is invalid."""
+
+    pass
