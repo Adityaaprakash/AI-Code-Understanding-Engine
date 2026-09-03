@@ -9,7 +9,19 @@ from typing import Any
 
 from fastapi import APIRouter
 
+from backend.api.v1.graph import router as graph_router
+from backend.api.v1.impact import router as impact_router
+from backend.api.v1.query import router as query_router
+from backend.api.v1.repositories import router as repositories_router
+from backend.api.v1.symbols import router as symbols_router
+
 api_v1_router = APIRouter()
+
+api_v1_router.include_router(repositories_router)
+api_v1_router.include_router(query_router)
+api_v1_router.include_router(symbols_router)
+api_v1_router.include_router(graph_router)
+api_v1_router.include_router(impact_router)
 
 
 @api_v1_router.get("", summary="API v1 root info", response_model=dict[str, Any])
