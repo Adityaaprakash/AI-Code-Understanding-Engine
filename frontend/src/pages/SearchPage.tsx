@@ -329,10 +329,17 @@ export const SearchPage: React.FC = () => {
               {queryResponse.results.map((item, index) => (
                 <div key={item.chunk_id || index} className="search-result-item">
                   <div className="search-result-header">
-                    <Link to="/symbols" className="search-result-title">
-                      <FileCode2 size={16} />
-                      {item.symbol_name || (item.file_path.split('/').pop() || item.file_path)}
-                    </Link>
+                    {item.symbol_id ? (
+                      <Link to={`/symbols/${queryResponse.repository_id}/${item.symbol_id}`} className="search-result-title">
+                        <FileCode2 size={16} />
+                        {item.symbol_name || (item.file_path.split('/').pop() || item.file_path)}
+                      </Link>
+                    ) : (
+                      <div className="search-result-title" style={{ cursor: 'default', textDecoration: 'none' }}>
+                        <FileCode2 size={16} />
+                        {item.symbol_name || (item.file_path.split('/').pop() || item.file_path)}
+                      </div>
+                    )}
                     <Badge variant={item.score > 0.8 ? 'success' : 'default'}>
                       Rank #{item.rank}
                     </Badge>

@@ -29,6 +29,7 @@ class SearchResultItem(BaseModel):
     score: float
     rank: int
     symbol_name: str | None = None
+    symbol_id: str | None = None
     start_line: int | None = None
     end_line: int | None = None
     content: str | None = None

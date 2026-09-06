@@ -80,6 +80,7 @@ class QueryApplicationService:
                     "score": r.rerank_score or r.score,
                     "rank": r.rank,
                     "symbol_name": r.symbol_name,
+                    "symbol_id": r.metadata.get("symbol_id", r.metadata.get("entity_id")) if getattr(r, "metadata", None) else None,
                     "start_line": r.start_line,
                     "end_line": r.end_line,
                     "content": r.metadata.get("content") if getattr(r, "metadata", None) else None,

@@ -140,6 +140,7 @@ export interface SearchResultItem {
   score: number;
   rank: number;
   symbol_name?: string | null;
+  symbol_id?: string | null;
   start_line?: number | null;
   end_line?: number | null;
   content?: string | null;
