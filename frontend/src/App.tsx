@@ -24,6 +24,7 @@ const App: React.FC = () => {
             {/* App shell wraps all inner routes */}
             <Route element={<AppShell />}>
               <Route path="/overview"      element={<OverviewPage />} />
+              <Route path="/overview/:repositoryId" element={<OverviewPage />} />
               <Route path="/repositories"  element={<RepositoriesPage />} />
               <Route path="/search"        element={<SearchPage />} />
               <Route path="/symbols"       element={<SymbolsPage />} />

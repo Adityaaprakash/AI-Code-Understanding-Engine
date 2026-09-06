@@ -13,6 +13,7 @@ import type {
   Repository,
   RepositoryCreate,
   SymbolSearchResponse,
+  Job,
 } from '../types';
 
 // ---------------------------------------------------------------------------
@@ -107,6 +108,20 @@ export function createRepository(
   signal?: AbortSignal,
 ): Promise<Repository> {
   return post<Repository>('/api/v1/repositories', payload, signal);
+}
+
+export function indexRepository(
+  id: string,
+  signal?: AbortSignal,
+): Promise<Job> {
+  return post<Job>(`/api/v1/repositories/${id}/index`, {}, signal);
+}
+
+export function getIndexStatus(
+  id: string,
+  signal?: AbortSignal,
+): Promise<Job[]> {
+  return get<Job[]>(`/api/v1/repositories/${id}/index-status`, signal);
 }
 
 // ---------------------------------------------------------------------------
