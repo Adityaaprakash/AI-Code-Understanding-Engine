@@ -63,19 +63,20 @@ TASK-7G (Design System + Application Shell) complete. The foundation for Phase 7
 ---
 
 ## Phase 7 Output Matrix
-**(7A0-7A1, 7G, 7A)**:
+**(7A0-7A1, 7G, 7A, 7F)**:
 - 7A0 + 7A1: Exposed code intelligence APIs via FastAPI.
 - 7G: Implemented application shell (header, sidebar, status bar), designed custom CSS variable token system, implemented reusable generic components (Button, Badge, etc.), integrated react-router and vitest.
 - 7A: Built the Repository Dashboard (`OverviewPage`), displaying live metrics, status, metadata, and providing repository index action, consuming real API endpoints. Handled state management (loading, error, nested jobs async state) fully via React functional hooks.
+- 7F: Built the Search capability (`SearchPage`), integrating with Phase 5/6 hybrid retrieval backend via `api/v1/query`. Handled routing parameters (`/search/:repositoryId`), input states, loading/error states, and rendered resulting code chunks aligned with 7G Design Tokens without exposing LLM behavior (`generate_answer: false`).
 
 ---
 
 ## Blocked / Pending
 
-- [ ] Transitioning to Phase 7B-7E feature implementations (Chat, Symbols, Graph, Search, Impact)
+- [ ] Transitioning to Phase 7B-7E feature implementations (Chat, Symbols, Graph, Impact)
 
 ---
 
 ## Last Updated
 
-2026-09-06 — TASK-7A Repository Dashboard complete. All 649 backend tests passing (100% ruff and mypy). 40 frontend vitest tests passing. Frontend build and lint passing.
+2026-09-07 — TASK-7F Search Implementation complete. 649 backend tests passing. 47 frontend vitest tests passing. Frontend build and lint passing.

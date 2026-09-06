@@ -27,6 +27,7 @@ const App: React.FC = () => {
               <Route path="/overview/:repositoryId" element={<OverviewPage />} />
               <Route path="/repositories"  element={<RepositoriesPage />} />
               <Route path="/search"        element={<SearchPage />} />
+              <Route path="/search/:repositoryId" element={<SearchPage />} />
               <Route path="/symbols"       element={<SymbolsPage />} />
               <Route path="/graph"         element={<GraphPage />} />
               <Route path="/chat"          element={<ChatPage />} />

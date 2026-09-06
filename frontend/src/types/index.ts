@@ -119,23 +119,39 @@ export interface ImpactAnalysisResponse {
 export interface QueryRequest {
   query: string;
   repository_id: string;
+  top_k?: number;
+  generate_answer?: boolean;
+}
+
+export interface GroundedAnswerResponse {
+  answer_text: string;
+  intent: string;
+  overall_status: string;
+  supported_claims: number;
+  total_claims: number;
+  generation_latency_ms: number;
+  metadata: Record<string, unknown>;
+}
+
+export interface SearchResultItem {
+  chunk_id: string;
+  file_path: string;
+  language: string;
+  score: number;
+  rank: number;
+  symbol_name?: string | null;
+  start_line?: number | null;
+  end_line?: number | null;
+  content?: string | null;
 }
 
 export interface QueryResponse {
-  answer: string;
-  sources: SourceReference[];
-  query_intent: string;
-  model: string;
-  latency_ms: number;
-}
-
-export interface SourceReference {
-  chunk_id: string;
-  file_path: string;
-  start_line: number;
-  end_line: number;
-  language: string;
-  relevance_score: number;
+  repository_id: string;
+  query: string;
+  normalized_query: string;
+  intent: string;
+  results: SearchResultItem[];
+  answer?: GroundedAnswerResponse | null;
 }
 
 // ---------------------------------------------------------------------------
