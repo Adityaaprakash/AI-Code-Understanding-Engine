@@ -34,6 +34,7 @@ const App: React.FC = () => {
               <Route path="/graph/:repositoryId" element={<GraphPage />} />
               <Route path="/graph/:repositoryId/:symbolId" element={<GraphPage />} />
               <Route path="/chat"          element={<ChatPage />} />
+              <Route path="/chat/:repositoryId" element={<ChatPage />} />
               <Route path="/impact"        element={<ImpactPage />} />
             </Route>
 
