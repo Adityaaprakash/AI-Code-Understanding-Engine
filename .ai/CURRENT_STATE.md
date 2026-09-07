@@ -69,15 +69,16 @@ TASK-7G (Design System + Application Shell) complete. The foundation for Phase 7
 - 7A: Built the Repository Dashboard (`OverviewPage`), displaying live metrics, status, metadata, and providing repository index action, consuming real API endpoints. Handled state management (loading, error, nested jobs async state) fully via React functional hooks.
 - 7F: Built the Search capability (`SearchPage`), integrating with Phase 5/6 hybrid retrieval backend via `api/v1/query`. Handled routing parameters (`/search/:repositoryId`), input states, loading/error states, and rendered resulting code chunks aligned with 7G Design Tokens without exposing LLM behavior (`generate_answer: false`).
 - 7C: Built the Symbol Explorer (`SymbolsPage`). Extended `QueryRequest` schema minimally to support UUID resolution directly from search results. Implemented depth-1 structural graph traversal consumption utilizing `/api/v1/graph`. Presented relational code semantics (Calls, Called By, Imports) organized clearly, aligned visually with 7G styles, and provided forward navigation paths to Graph, Impact, and Chat capabilities.
+- 7D: Built the Graph Explorer (`GraphPage`). Leveraged `backend/schemas/graph.py` and `/api/v1/graph` to directly consume traversal responses. Developed a zero-dependency deterministic force-directed graph canvas (`SimpleGraphCanvas`). Implemented interactive pan/zoom, interactive node selection, and relational depth control (1-3 levels). Provided direct semantic navigation connecting Phase 7C and Phase 7D interactions while retaining rigorous architectural boundaries.
 
 ---
 
 ## Blocked / Pending
 
-- [ ] Transitioning to Phase 7B, 7D, 7E feature implementations (Chat, Graph, Impact)
+- [ ] Transitioning to Phase 7B, 7E feature implementations (Chat, Impact)
 
 ---
 
 ## Last Updated
 
-2026-09-07 — TASK-7C Symbol Explorer Implementation complete. 649 backend tests passing. 53 frontend vitest tests passing. Frontend build and lint passing.
+2026-09-07 — TASK-7D Graph Explorer Implementation complete. 649 backend tests passing. 61 frontend vitest tests passing. Frontend build and lint passing.
