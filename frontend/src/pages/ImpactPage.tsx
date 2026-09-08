@@ -315,7 +315,7 @@ export const ImpactPage: React.FC = () => {
         <Link to={`/graph/${repositoryId}/${symbolId}`} style={{ textDecoration: 'none' }}>
            <Button iconLeft={<Network size={16} />}>Open in Graph</Button>
         </Link>
-        <Link to={`/chat/${repositoryId}?q=${encodeURIComponent('What could be affected if ' + (rootSymbol?.name || 'this symbol') + ' changes?')}`} style={{ textDecoration: 'none' }}>
+        <Link to={`/chat/${repositoryId}?symbol_id=${symbolId}`} style={{ textDecoration: 'none' }}>
            <Button iconLeft={<MessageSquare size={16} />}>Ask AI</Button>
         </Link>
       </section>

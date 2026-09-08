@@ -303,13 +303,13 @@ export const SymbolsPage: React.FC = () => {
       </section>
 
       <section className="actions-panel">
-        <Link to={`/graph`} style={{ textDecoration: 'none' }}>
+        <Link to={`/graph/${repositoryId}/${symbolId}`} style={{ textDecoration: 'none' }}>
            <Button iconLeft={<Network size={16} />}>View in Graph</Button>
         </Link>
         <Link to={`/impact/${repositoryId}/${symbolId}`} style={{ textDecoration: 'none' }}>
            <Button iconLeft={<Target size={16} />}>Analyze Impact</Button>
         </Link>
-        <Link to={`/chat`} style={{ textDecoration: 'none' }}>
+        <Link to={`/chat/${repositoryId}?symbol_id=${symbolId}`} style={{ textDecoration: 'none' }}>
            <Button iconLeft={<MessageSquare size={16} />}>Ask AI</Button>
         </Link>
       </section>

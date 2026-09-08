@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { useParams, useNavigate, useSearchParams, Link } from 'react-router-dom';
-import { Search, Loader2, FileCode2, FileText, Network, MessageSquare, ChevronRight } from 'lucide-react';
+import { Search, Loader2, FileCode2, FileText, Network, MessageSquare } from 'lucide-react';
 import { Button } from '../components/ui/Button';
 import { Badge } from '../components/ui/Badge';
 import { LoadingState } from '../components/ui/LoadingState';
@@ -363,11 +363,14 @@ export const SearchPage: React.FC = () => {
                   )}
                   
                   <div style={{ display: 'flex', gap: 'var(--sp-2)', marginTop: 'var(--sp-2)' }}>
-                     <Button size="sm" variant="ghost" iconLeft={<ChevronRight size={14} />}>View File</Button>
                      {item.symbol_name && (
-                       <Button size="sm" variant="ghost" iconLeft={<Network size={14} />}>Explore Graph</Button>
+                       <Link to={`/graph/${queryResponse.repository_id}/${item.symbol_id}`} style={{ textDecoration: 'none' }}>
+                         <Button size="sm" variant="ghost" iconLeft={<Network size={14} />}>Explore Graph</Button>
+                       </Link>
                      )}
-                     <Button size="sm" variant="ghost" iconLeft={<MessageSquare size={14} />}>Ask AI</Button>
+                     <Link to={`/chat/${queryResponse.repository_id}?symbol_id=${item.symbol_id || ''}`} style={{ textDecoration: 'none' }}>
+                       <Button size="sm" variant="ghost" iconLeft={<MessageSquare size={14} />}>Ask AI</Button>
+                     </Link>
                   </div>
                 </div>
               ))}

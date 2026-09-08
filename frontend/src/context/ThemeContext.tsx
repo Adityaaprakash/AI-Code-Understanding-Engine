@@ -1,3 +1,4 @@
+/* eslint-disable react-refresh/only-export-components */
 /**
  * Theme context — supports 'dark' | 'light' | 'system'.
  * Preference is persisted to localStorage.

@@ -100,7 +100,6 @@ describe('ChatPage - Ask AI', () => {
     });
     
     // Resolve manually to cleanup
-    // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
     resolveApi!(mockQueryResponse);
   });
 
