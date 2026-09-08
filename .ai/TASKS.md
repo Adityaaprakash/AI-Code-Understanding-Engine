@@ -560,5 +560,22 @@ service needed for this task.
 - [x] Handle exact file changes including nested, unicode, and space-containing paths
 - [x] Guarantee strict determinism and valid sorting of results
 - [x] Implement robust repository-path and commit SHA resolution testing
-- [x] Detailed automated tests running without breaking CI
 - [x] Pass pre-existing test suite and quality gates
+
+### TASK-8B: Changed Symbol Detection
+
+**Status:** ✅ Done
+**Blockers:** TASK-8A ✅
+**Scope:** Determine which specific code symbols (methods, functions, classes) changed between two commits based on the changed files detected by the Git Diff Engine.
+
+**Acceptance criteria:**
+- [x] Defined `SymbolChangeType` and `ChangedSymbol`/`ChangedSymbolResult` models
+- [x] Implemented `ChangedSymbolDetector` orchestrating git file retrieval, IR parsing, and identity mapping
+- [x] Process `MODIFIED`, `DELETED`, `ADDED`, `RENAMED` files dynamically across JAVA, PYTHON, and TYPESCRIPT
+- [x] Tested deterministic mapping ensuring untouched symbols within modified files remain completely ignored
+- [x] Exposed `OpaqueFile` tracking for parser failures (`OpaqueFileFallbackReason.UNSUPPORTED_LANGUAGE`, `PARSER_FAILURE`).
+- [x] Implemented `IDENTITY_ONLY` identity transitions avoiding silent skips for location/canonical UUID shifts.
+- [x] Added robust automated test suite preventing regressions
+- [x] Verify strict immutability and determinism throughout the matching phase
+- [x] Ensure performance bounds for symbol map generation
+

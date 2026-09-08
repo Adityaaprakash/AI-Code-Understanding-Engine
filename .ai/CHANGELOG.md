@@ -2,6 +2,21 @@
 
 All notable changes to this project are recorded here.
 
+## 2026-09-08 — Phase 8B — Changed Symbol Detection Complete (Remediated)
+
+**Completed by:** TASK-8B
+
+### Added
+- Implemented `ChangedSymbolDetector` connecting `GitDiffEngine` outputs to Canonical Code IR normalization pipelines.
+- Defined immutable symbol change models: `SymbolChangeType`, `ChangedSymbol`, and `ChangedSymbolResult`.
+- Added symbol parsing logic dynamically extracting historical and current file revisions from git trees.
+- Validated changed symbol matching against structural exact body representations rather than relying on fuzzy AST diffing.
+- Explicitly documented `OpaqueFile` reporting containing `OpaqueFileFallbackReason` fields when a modified file lacks source extractability due to parser failures or unsupported configs.
+- Exposed explicit `IDENTITY_ONLY` identity transition signals to gracefully intercept location and namespace adjustments matching against canonical UUIDs without incorrectly spoofing semantic modification flags.
+- Extensive 15+ automation test cases added (`tests/test_symbol_diff.py`).
+
+---
+
 ## 2026-09-08 — Phase 8A — Git Diff Engine Complete
 
 **Completed by:** TASK-8A

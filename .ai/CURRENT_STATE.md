@@ -8,7 +8,7 @@
 
 ## Current Task
 
-TASK-8A (Git Diff Engine) complete. The boundary for git operations is defined and tested, ready for TASK-8B (Changed Symbol Detection).
+TASK-8B (Changed Symbol Detection) complete. The boundary for semantic diff analysis is defined and tested, ready for TASK-8C (Partial Re-indexing).
 
 ---
 
@@ -87,3 +87,6 @@ TASK-8A (Git Diff Engine) complete. The boundary for git operations is defined a
 2026-09-08 — TASK-7E Impact Analysis Implementation complete. 649 backend tests passing. 75 frontend vitest tests passing. Frontend build and lint passing.
 2026-09-08 — TASK-7H Showcase Implementation complete. 649 backend tests passing. 75 frontend vitest tests passing. Frontend build and lint passing.
 2026-09-08 — TASK-7I Verification & Hardening complete. Removed dead links, synchronized query parameters, silenced unproblematic lints. 0 lint warnings. 75 frontend tests passing. Phase 7 Complete.
+2026-09-08 — TASK-8A Git Diff Engine complete. 660 backend tests passing.
+2026-09-08 — TASK-8B Changed Symbol Detection complete. 675 backend tests passing.
+2026-09-08 — TASK-8B Remediation complete. Added `OpaqueFile` support and `IDENTITY_ONLY` transition tracking. 670 backend tests passing.
