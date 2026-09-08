@@ -2,9 +2,21 @@
 
 All notable changes to this project are recorded here.
 
-## 2026-09-03 — Phase 6F — LLM Provider Abstraction
+## 2026-09-08 — Phase 8A — Git Diff Engine Complete
 
-**Completed by:** TASK-6F
+**Completed by:** TASK-8A
+
+### Added
+- Implemented `GitDiffEngine` providing language-agnostic file diff boundaries in `backend/git`.
+- Defined canonical representations: `GitDiffResult`, `ChangedFile`, and `ChangeType` (`ADDED`, `MODIFIED`, `DELETED`, `RENAMED`, `TYPE_CHANGED`).
+- Handled reliable parsing of raw `-z` git sub-process output to account for renames, paths with spaces, unicode paths, and edge cases.
+- Implemented robust error handling with `InvalidRepositoryError`, `InvalidCommitError`, and `GitError` domain exceptions.
+- Hardened determinism through strictly sorted changed file arrays and exact path mappings.
+- Passed all pre-existing CI pipelines and established 10+ new automated git-diff tests.
+
+---
+
+## 2026-09-03 — Phase 6F — LLM Provider Abstraction
 
 ### Added
 - **TASK-6F (LLM Provider Abstraction Layer):**

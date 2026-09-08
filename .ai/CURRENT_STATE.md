@@ -2,13 +2,13 @@
 
 ## Active Phase
 
-**Phase 7 — PRODUCT UI & SHOWCASE IN PROGRESS** (Phase 1-6 COMPLETE)
+**Phase 8 — INCREMENTAL INDEXING & ADVANCED INTELLIGENCE IN PROGRESS** (Phase 1-7 COMPLETE)
 
 ---
 
 ## Current Task
 
-TASK-7I (Frontend QA, Hardening & Phase 7 Verification) complete. The Phase 7 frontend application is fully verified and stable.
+TASK-8A (Git Diff Engine) complete. The boundary for git operations is defined and tested, ready for TASK-8B (Changed Symbol Detection).
 
 ---
 

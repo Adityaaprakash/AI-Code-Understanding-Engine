@@ -543,3 +543,22 @@ service needed for this task.
 - After completing a task: update `CURRENT_STATE.md`, `CHANGELOG.md`,
   and this file.
 
+---
+
+## Phase 8 — Incremental Indexing & Advanced Intelligence
+
+### TASK-8A: Git Diff Engine
+
+**Status:** ✅ Done
+**Blockers:** Phase 1-7 ✅
+**Scope:** Implement a production-quality Git diff engine that can compare two repository commits and determine exactly what changed between them independently of symbol-level analysis.
+
+**Acceptance criteria:**
+- [x] Create modular Git abstraction `GitDiffEngine`
+- [x] Define `GitDiffResult` and `ChangedFile` (ADDED, MODIFIED, DELETED, RENAMED) contracts
+- [x] Diff implementation using native git CLI with `-z` output for accurate machine parsing
+- [x] Handle exact file changes including nested, unicode, and space-containing paths
+- [x] Guarantee strict determinism and valid sorting of results
+- [x] Implement robust repository-path and commit SHA resolution testing
+- [x] Detailed automated tests running without breaking CI
+- [x] Pass pre-existing test suite and quality gates
