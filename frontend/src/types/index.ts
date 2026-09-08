@@ -100,6 +100,20 @@ export interface GraphTraversalResponse {
   edges: GraphEdge[];
 }
 
+export interface ImpactPathStep {
+  source_id: string;
+  target_id: string;
+  kind: string;
+  edge_id?: string | null;
+}
+
+export interface ImpactPath {
+  target_id: string;
+  depth: number;
+  node_ids: string[];
+  steps: ImpactPathStep[];
+}
+
 export interface ImpactNode extends SymbolItem {
   impact_score: number;
   categories: string[];
@@ -110,6 +124,7 @@ export interface ImpactAnalysisResponse {
   depth: number;
   impacted_nodes: ImpactNode[];
   total_impact_score: number;
+  paths: ImpactPath[];
 }
 
 // ---------------------------------------------------------------------------

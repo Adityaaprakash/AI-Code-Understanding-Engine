@@ -3,7 +3,7 @@
 
 import uuid
 
-from pydantic import BaseModel
+from pydantic import BaseModel, Field
 
 
 class SymbolResponseItem(BaseModel):
@@ -42,6 +42,20 @@ class GraphTraversalResponse(BaseModel):
     edges: list[GraphEdgeSchema]
 
 
+class ImpactPathStepSchema(BaseModel):
+    source_id: str
+    target_id: str
+    kind: str
+    edge_id: str | None = None
+
+
+class ImpactPathSchema(BaseModel):
+    target_id: str
+    depth: int
+    node_ids: list[str]
+    steps: list[ImpactPathStepSchema]
+
+
 class ImpactNodeSchema(SymbolResponseItem):
     impact_score: float
     categories: list[str]
@@ -54,3 +68,4 @@ class ImpactAnalysisResponse(BaseModel):
     depth: int
     impacted_nodes: list[ImpactNodeSchema]
     total_impact_score: float
+    paths: list[ImpactPathSchema] = Field(default_factory=list)

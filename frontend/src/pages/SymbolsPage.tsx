@@ -306,7 +306,7 @@ export const SymbolsPage: React.FC = () => {
         <Link to={`/graph`} style={{ textDecoration: 'none' }}>
            <Button iconLeft={<Network size={16} />}>View in Graph</Button>
         </Link>
-        <Link to={`/impact`} style={{ textDecoration: 'none' }}>
+        <Link to={`/impact/${repositoryId}/${symbolId}`} style={{ textDecoration: 'none' }}>
            <Button iconLeft={<Target size={16} />}>Analyze Impact</Button>
         </Link>
         <Link to={`/chat`} style={{ textDecoration: 'none' }}>

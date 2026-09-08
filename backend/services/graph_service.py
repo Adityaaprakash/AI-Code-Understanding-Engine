@@ -6,6 +6,8 @@ from backend.schemas.graph import (
     GraphTraversalResponse,
     ImpactAnalysisResponse,
     ImpactNodeSchema,
+    ImpactPathSchema,
+    ImpactPathStepSchema,
     SymbolResponseItem,
 )
 from graph.impact_analyzer import ImpactAnalyzer
@@ -112,11 +114,32 @@ class GraphApplicationService:
                 )
             )
 
+        mapped_paths = []
+        for p in result.paths:
+            mapped_steps = [
+                ImpactPathStepSchema(
+                    source_id=s.source_id,
+                    target_id=s.target_id,
+                    kind=s.kind.value if hasattr(s.kind, "value") else str(s.kind),
+                    edge_id=s.edge_id,
+                )
+                for s in p.steps
+            ]
+            mapped_paths.append(
+                ImpactPathSchema(
+                    target_id=p.target_id,
+                    depth=p.depth,
+                    node_ids=p.node_ids,
+                    steps=mapped_steps,
+                )
+            )
+
         return ImpactAnalysisResponse(
             source_node_id=source_node_id,
             depth=depth,
             impacted_nodes=impacted,
             total_impact_score=float(len(impacted)),
+            paths=mapped_paths,
         )
 
 

@@ -36,6 +36,7 @@ const App: React.FC = () => {
               <Route path="/chat"          element={<ChatPage />} />
               <Route path="/chat/:repositoryId" element={<ChatPage />} />
               <Route path="/impact"        element={<ImpactPage />} />
+              <Route path="/impact/:repositoryId/:symbolId" element={<ImpactPage />} />
             </Route>
 
             {/* Catch-all */}
