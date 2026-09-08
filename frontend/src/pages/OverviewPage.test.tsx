@@ -108,9 +108,10 @@ describe('OverviewPage - Repository Dashboard', () => {
     // Verify metrics
     expect(screen.getByText('15,420')).toBeInTheDocument();
     
-    // Quick action panels
-    expect(screen.getByText('Search Code')).toBeInTheDocument();
-    expect(screen.getByText('Ask AI')).toBeInTheDocument();
+    // Showcase component instead of Quick action panels
+    expect(screen.getByText('Explore CodeLens Intelligence Flow')).toBeInTheDocument();
+    expect(screen.getByText('2. Universal Search')).toBeInTheDocument();
+    expect(screen.getByText('5. Ask AI Chat')).toBeInTheDocument();
   });
 
   it('handles re-index action gracefully', async () => {

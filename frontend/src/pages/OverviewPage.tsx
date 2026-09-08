@@ -1,6 +1,6 @@
 import React, { useEffect, useState, useCallback } from 'react';
 import { useParams, useNavigate, Link } from 'react-router-dom';
-import { Github, FolderGit2, RefreshCw, AlertCircle, FileCode2, Search, Network, MessageSquare } from 'lucide-react';
+import { Github, FolderGit2, RefreshCw, AlertCircle } from 'lucide-react';
 import { Panel } from '../components/ui/Panel';
 import { Button } from '../components/ui/Button';
 import { Badge } from '../components/ui/Badge';
@@ -10,6 +10,7 @@ import { ErrorState } from '../components/ui/ErrorState';
 import { EmptyState } from '../components/ui/EmptyState';
 import * as api from '../services/api';
 import type { Repository, Job } from '../types';
+import { WorkflowShowcase } from '../components/ui/WorkflowShowcase';
 
 export const OverviewPage: React.FC = () => {
   const { repositoryId } = useParams<{ repositoryId?: string }>();
@@ -207,71 +208,7 @@ export const OverviewPage: React.FC = () => {
           </Panel>
        </div>
 
-       <h2 className="text-lg font-semibold" style={{ marginBottom: 'var(--sp-4)' }}>Quick Actions</h2>
-       
-       <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(240px, 1fr))', gap: 'var(--sp-4)' }}>
-          <style>{`
-            .quick-action-link { text-decoration: none; display: block; border-radius: var(--radius-lg); transition: transform var(--transition-fast); }
-            .quick-action-link:hover { transform: translateY(-2px); }
-            .quick-action-link:hover .panel { border-color: var(--border-focus); }
-          `}</style>
-
-          <Link to="/search" className="quick-action-link" aria-label="Navigate to Search Code">
-            <Panel className="quick-action-panel">
-               <div style={{ display: 'flex', alignItems: 'center', gap: 'var(--sp-3)' }}>
-                  <div style={{ padding: 'var(--sp-2)', background: 'var(--bg-elevated)', borderRadius: 'var(--radius-md)', color: 'var(--accent)' }}>
-                    <Search size={20} aria-hidden="true" />
-                  </div>
-                  <div>
-                    <h3 className="text-md font-medium text-primary m-0">Search Code</h3>
-                    <p className="text-sm text-secondary m-0">Natural language search</p>
-                  </div>
-               </div>
-            </Panel>
-          </Link>
-
-          <Link to="/symbols" className="quick-action-link" aria-label="Navigate to Explore Symbols">
-            <Panel className="quick-action-panel">
-               <div style={{ display: 'flex', alignItems: 'center', gap: 'var(--sp-3)' }}>
-                  <div style={{ padding: 'var(--sp-2)', background: 'var(--bg-elevated)', borderRadius: 'var(--radius-md)', color: 'var(--accent)' }}>
-                    <FileCode2 size={20} aria-hidden="true" />
-                  </div>
-                  <div>
-                    <h3 className="text-md font-medium text-primary m-0">Explore Symbols</h3>
-                    <p className="text-sm text-secondary m-0">Find classes and functions</p>
-                  </div>
-               </div>
-            </Panel>
-          </Link>
-
-          <Link to="/graph" className="quick-action-link" aria-label="Navigate to View Graph">
-            <Panel className="quick-action-panel">
-               <div style={{ display: 'flex', alignItems: 'center', gap: 'var(--sp-3)' }}>
-                  <div style={{ padding: 'var(--sp-2)', background: 'var(--bg-elevated)', borderRadius: 'var(--radius-md)', color: 'var(--accent)' }}>
-                    <Network size={20} aria-hidden="true" />
-                  </div>
-                  <div>
-                    <h3 className="text-md font-medium text-primary m-0">View Graph</h3>
-                    <p className="text-sm text-secondary m-0">Visualize dependencies</p>
-                  </div>
-               </div>
-            </Panel>
-          </Link>
-
-          <Link to="/chat" className="quick-action-link" aria-label="Navigate to Ask AI">
-            <Panel className="quick-action-panel">
-               <div style={{ display: 'flex', alignItems: 'center', gap: 'var(--sp-3)' }}>
-                  <div style={{ padding: 'var(--sp-2)', background: 'var(--bg-elevated)', borderRadius: 'var(--radius-md)', color: 'var(--accent)' }}>
-                    <MessageSquare size={20} aria-hidden="true" />
-                  </div>
-                  <div>
-                    <h3 className="text-md font-medium text-primary m-0">Ask AI</h3>
-                    <p className="text-sm text-secondary m-0">Chat with your codebase</p>
-                  </div>
-               </div>
-            </Panel>
-          </Link>
-       </div>
+       <WorkflowShowcase repositoryId={repo.id} />
     </div>
   );
 };
