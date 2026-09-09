@@ -280,11 +280,18 @@ class PartialReindexer:
             self.vector_index.remove(chunk_id, plan.repository_id, plan.target_commit)
 
         # 4. Add new chunks to lexical index
-        self.lexical_index.add_many(plan.chunks_to_add)
+        updated_chunks = [
+            c.model_copy(update={"commit_sha": plan.target_commit}) for c in plan.chunks_to_add
+        ]
+        self.lexical_index.add_many(updated_chunks)
 
         # 5. Add reused embeddings to vector index
-        chunk_map = {c.id: c for c in plan.chunks_to_add}
-        self.vector_index.add_many(plan.embeddings_to_reuse, chunks=chunk_map)
+        updated_reuse = [
+            e.model_copy(update={"commit_sha": plan.target_commit})
+            for e in plan.embeddings_to_reuse
+        ]
+        chunk_map = {c.id: c for c in updated_chunks}
+        self.vector_index.add_many(updated_reuse, chunks=chunk_map)
 
         # 5. Add newly generated embeddings to vector index
         if final_embs:

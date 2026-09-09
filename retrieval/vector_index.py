@@ -132,7 +132,10 @@ class VectorIndex(VectorIndexContract):
     ) -> RepositoryVectorIndex:
         key = f"{repository_id}@{commit_sha}" if commit_sha else repository_id
         if key not in self.indexes:
-            self.indexes[key] = RepositoryVectorIndex()
+            new_idx = RepositoryVectorIndex()
+            self.indexes[key] = new_idx
+            if commit_sha and repository_id not in self.indexes:
+                self.indexes[repository_id] = new_idx
         return self.indexes[key]
 
     def add(self, embedding: EmbeddingResult, chunk: CodeChunk | None = None) -> None:
@@ -258,9 +261,11 @@ class VectorIndex(VectorIndexContract):
             file_path=file_path,
         )
 
-    def document_count(self, repository_id: str | None = None) -> int:
+    def document_count(
+        self, repository_id: str | None = None, commit_sha: str | None = None
+    ) -> int:
         """Return total indexed vector count for a repository or across all repositories."""
         if repository_id is not None:
-            repo_index = self.indexes.get(repository_id)
-            return len(repo_index.documents) if repo_index else 0
-        return sum(len(r.documents) for r in self.indexes.values())
+            repo_idx = self._get_or_create_repo_index(repository_id, commit_sha)
+            return len(repo_idx.documents) if repo_idx is not None else 0
+        return sum(len(repo.documents) for repo in self.indexes.values())

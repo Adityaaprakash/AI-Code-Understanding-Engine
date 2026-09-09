@@ -123,13 +123,23 @@ class LexicalIndexContract(ABC):
         raise NotImplementedError
 
     @abstractmethod
-    def remove(self, chunk_id: str, repository_id: str) -> bool:
-        """Remove a single chunk by chunk_id from a target repository index."""
+    def remove(self, chunk_id: str, repository_id: str, commit_sha: str | None = None) -> bool:
+        """Remove a single chunk by chunk_id from a target repository index.
+
+        If commit_sha is provided, removes only from that specific version's index.
+        """
         raise NotImplementedError
 
     @abstractmethod
-    def clear(self, repository_id: str | None = None) -> None:
-        """Clear a specific repository index, or all repository indexes if repository_id is None."""
+    def clear(self, repository_id: str | None = None, commit_sha: str | None = None) -> None:
+        """Clear a target repository index. If commit_sha is provided, clears only that version."""
+        raise NotImplementedError
+
+    @abstractmethod
+    def clone_index_version(
+        self, repository_id: str, base_commit_sha: str | None, target_commit_sha: str
+    ) -> None:
+        """Clone the physical index structure for a new commit version to isolate destructive operations."""
         raise NotImplementedError
 
     @abstractmethod
@@ -214,13 +224,23 @@ class VectorIndexContract(ABC):
         raise NotImplementedError
 
     @abstractmethod
-    def remove(self, chunk_id: str, repository_id: str) -> bool:
-        """Remove a single vector embedding by chunk_id from a target repository index."""
+    def remove(self, chunk_id: str, repository_id: str, commit_sha: str | None = None) -> bool:
+        """Remove a single vector embedding by chunk_id from a target repository index.
+
+        If commit_sha is provided, removes only from that specific version's index.
+        """
         raise NotImplementedError
 
     @abstractmethod
-    def clear(self, repository_id: str | None = None) -> None:
-        """Clear a specific repository index, or all repository indexes if repository_id is None."""
+    def clear(self, repository_id: str | None = None, commit_sha: str | None = None) -> None:
+        """Clear a target repository index. If commit_sha is provided, clears only that version."""
+        raise NotImplementedError
+
+    @abstractmethod
+    def clone_index_version(
+        self, repository_id: str, base_commit_sha: str | None, target_commit_sha: str
+    ) -> None:
+        """Clone the physical index structure for a new commit version to isolate destructive operations."""
         raise NotImplementedError
 
     @abstractmethod

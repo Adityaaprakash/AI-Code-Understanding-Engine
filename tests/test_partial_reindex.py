@@ -131,15 +131,15 @@ def test_executor_replaces_chunks() -> None:
     assert stats["chunks_added"] == 1
 
     # Old deleted, new added
-    assert lexical.document_count() == 1
+    assert lexical.document_count(repository_id=REPO_ID, commit_sha="B") == 1
     # Check that new_chunk is actually the one there via search
-    results = lexical.search("main", REPO_ID)
+    results = lexical.search("main", REPO_ID, commit_sha="B")
     assert len(results) == 1
     assert results[0].chunk_id == "new_chunk"
 
     # Vector index should have automatically embedded the new chunk
     assert stats["embeddings_generated"] == 1
-    assert vector.document_count(REPO_ID) == 1
+    assert vector.document_count(REPO_ID, commit_sha="B") == 1
 
 
 def test_embedding_reuse() -> None:
@@ -585,6 +585,7 @@ def test_failure_safety_provider_exception() -> None:
         id="old_valid",
         chunk_type=ChunkType.FILE_CONTEXT,
         repository_id=REPO_ID,
+        commit_sha="A",
         file_id="file",
         file_path="file.py",
         language=Language.PYTHON,
@@ -600,6 +601,7 @@ def test_failure_safety_provider_exception() -> None:
         id="new_valid",
         chunk_type=ChunkType.FILE_CONTEXT,
         repository_id=REPO_ID,
+        commit_sha="B",
         file_id="file",
         file_path="file.py",
         language=Language.PYTHON,
@@ -632,8 +634,8 @@ def test_failure_safety_provider_exception() -> None:
         executor.execute(plan)
 
     # PROOF: old_chunk was NOT removed because execution failed during preparation.
-    assert lexical.document_count(REPO_ID) == 1
-    assert lexical.search("f", REPO_ID)[0].chunk_id == "old_valid"
+    assert lexical.document_count(REPO_ID, commit_sha="A") == 1
+    assert lexical.search("f", REPO_ID, commit_sha="A")[0].chunk_id == "old_valid"
 
 
 # ---- BLOCKER 3 EMBEDDING COMPATIBILITY TESTS ----
@@ -772,9 +774,9 @@ def test_apply_stage_lexical_failure_exposes_fractured_state() -> None:
     with pytest.raises(RuntimeError, match="Simulated lexical failure"):
         executor.execute(plan)
 
-    # PROOF: System fractures. "c1" was successfully removed BEFORE the failure,
-    # but "c2" failed to add.
-    assert lexical.document_count(REPO_ID) == 0
+    # PROOF: System fractures within target B. "c1" was successfully removed BEFORE the failure,
+    # but "c2" failed to add. The target B index reflects this fracture.
+    assert lexical.document_count(repository_id=REPO_ID, commit_sha="B") == 0
 
 
 def test_apply_stage_vector_failure_exposes_fractured_state() -> None:
@@ -842,6 +844,6 @@ def test_apply_stage_vector_failure_exposes_fractured_state() -> None:
     with pytest.raises(RuntimeError, match="Simulated vector failure"):
         executor.execute(plan)
 
-    # PROOF: Lexical mutations SUCCEEDED, but Vector mutations FAILED, resulting in mismatch.
-    assert lexical.document_count(REPO_ID) == 1
-    assert lexical.search("f", REPO_ID)[0].chunk_id == "c2"
+    # PROOF: Lexical mutations SUCCEEDED inside B, but Vector mutations FAILED inside B.
+    assert lexical.document_count(repository_id=REPO_ID, commit_sha="B") == 1
+    assert lexical.search("f", REPO_ID, commit_sha="B")[0].chunk_id == "c2"

@@ -200,7 +200,11 @@ class BM25LexicalIndex(LexicalIndexContract):
     ) -> RepositoryBM25Index:
         key = f"{repository_id}@{commit_sha}" if commit_sha else repository_id
         if key not in self._repo_indexes:
-            self._repo_indexes[key] = RepositoryBM25Index(k1=self.k1, b=self.b)
+            new_idx = RepositoryBM25Index(k1=self.k1, b=self.b)
+            self._repo_indexes[key] = new_idx
+            # Backward compatibility: unversioned callers default to first loaded version
+            if commit_sha and repository_id not in self._repo_indexes:
+                self._repo_indexes[repository_id] = new_idx
         return self._repo_indexes[key]
 
     def add(self, chunk: CodeChunk) -> None:
@@ -242,8 +246,16 @@ class BM25LexicalIndex(LexicalIndexContract):
         new_idx = RepositoryBM25Index(k1=getattr(self, "k1", 1.5), b=getattr(self, "b", 0.75))
         if old_idx:
             new_idx.documents = old_idx.documents.copy()
-            new_idx.postings = {k: v.copy() for k, v in old_idx.postings.items()}
-            new_idx.doc_frequencies = old_idx.doc_frequencies.copy()
+
+            # Reconstruct defaultdicts so new terms don't throw KeyErrors
+            new_idx.postings = defaultdict(dict)
+            for k, v in old_idx.postings.items():
+                new_idx.postings[k] = v.copy()
+
+            new_idx.doc_frequencies = defaultdict(int)
+            for k, v in old_idx.doc_frequencies.items():
+                new_idx.doc_frequencies[k] = v
+
             new_idx.total_documents = old_idx.total_documents
             new_idx.sum_doc_length = old_idx.sum_doc_length
 
@@ -275,9 +287,11 @@ class BM25LexicalIndex(LexicalIndexContract):
             file_path=file_path,
         )
 
-    def document_count(self, repository_id: str | None = None) -> int:
+    def document_count(
+        self, repository_id: str | None = None, commit_sha: str | None = None
+    ) -> int:
         """Return the number of indexed documents in a repository, or across all repositories."""
         if repository_id is not None:
-            repo_idx = self._get_repo_index(repository_id)
+            repo_idx = self._get_repo_index(repository_id, commit_sha)
             return repo_idx.total_documents if repo_idx is not None else 0
         return sum(repo.total_documents for repo in self._repo_indexes.values())
