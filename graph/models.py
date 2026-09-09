@@ -3,7 +3,7 @@
 from collections.abc import Iterable
 from typing import Any
 
-from pydantic import BaseModel, ConfigDict, Field, field_validator
+from pydantic import BaseModel, ConfigDict, Field, PrivateAttr, field_validator
 
 from graph.edges import GraphEdge
 from graph.enums import EdgeKind, NodeKind
@@ -19,6 +19,23 @@ class CodeGraph(BaseModel):
     nodes: dict[str, GraphNode] = Field(default_factory=dict)
     edges: dict[str, GraphEdge] = Field(default_factory=dict)
     metadata: dict[str, Any] = Field(default_factory=dict)
+
+    _outbound_index: dict[str, list[GraphEdge]] | None = PrivateAttr(default=None)
+    _inbound_index: dict[str, list[GraphEdge]] | None = PrivateAttr(default=None)
+
+    def _ensure_indexes(self) -> None:
+        if self._outbound_index is not None and self._inbound_index is not None:
+            return
+
+        out_idx: dict[str, list[GraphEdge]] = {}
+        in_idx: dict[str, list[GraphEdge]] = {}
+
+        for edge in self.edges.values():
+            out_idx.setdefault(edge.source_id, []).append(edge)
+            in_idx.setdefault(edge.target_id, []).append(edge)
+
+        self._outbound_index = out_idx
+        self._inbound_index = in_idx
 
     @field_validator("repository_id")
     @classmethod
@@ -49,7 +66,19 @@ class CodeGraph(BaseModel):
 
     def add_edge(self, edge: GraphEdge) -> None:
         """Add or update an edge in the graph."""
+        is_update = edge.id in self.edges
+        if is_update and self._outbound_index is not None:
+            # Clear indexes if updating to avoid complex removal logic
+            self._outbound_index = None
+            self._inbound_index = None
+
         self.edges[edge.id] = edge
+
+        if not is_update:
+            if self._outbound_index is not None:
+                self._outbound_index.setdefault(edge.source_id, []).append(edge)
+            if self._inbound_index is not None:
+                self._inbound_index.setdefault(edge.target_id, []).append(edge)
 
     def add_edges(self, edges: Iterable[GraphEdge]) -> None:
         """Add multiple edges to the graph."""
@@ -70,19 +99,21 @@ class CodeGraph(BaseModel):
 
     def get_outbound_edges(self, source_id: str, kind: EdgeKind | None = None) -> list[GraphEdge]:
         """Retrieve all outbound edges originating from the given source node ID."""
-        return [
-            edge
-            for edge in self.edges.values()
-            if edge.source_id == source_id and (kind is None or edge.kind == kind)
-        ]
+        self._ensure_indexes()
+        assert self._outbound_index is not None
+        edges = self._outbound_index.get(source_id, [])
+        if kind is None:
+            return edges
+        return [e for e in edges if e.kind == kind]
 
     def get_inbound_edges(self, target_id: str, kind: EdgeKind | None = None) -> list[GraphEdge]:
         """Retrieve all inbound edges terminating at the given target node ID."""
-        return [
-            edge
-            for edge in self.edges.values()
-            if edge.target_id == target_id and (kind is None or edge.kind == kind)
-        ]
+        self._ensure_indexes()
+        assert self._inbound_index is not None
+        edges = self._inbound_index.get(target_id, [])
+        if kind is None:
+            return edges
+        return [e for e in edges if e.kind == kind]
 
     def get_neighbors(
         self, node_id: str, kind: EdgeKind | None = None, direction: str = "both"
