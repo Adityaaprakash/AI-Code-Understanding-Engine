@@ -253,8 +253,8 @@ class BM25LexicalIndex(LexicalIndexContract):
                 new_idx.postings[k] = v.copy()
 
             new_idx.doc_frequencies = defaultdict(int)
-            for k, v in old_idx.doc_frequencies.items():
-                new_idx.doc_frequencies[k] = v
+            for term, freq in old_idx.doc_frequencies.items():
+                new_idx.doc_frequencies[term] = freq
 
             new_idx.total_documents = old_idx.total_documents
             new_idx.sum_doc_length = old_idx.sum_doc_length
