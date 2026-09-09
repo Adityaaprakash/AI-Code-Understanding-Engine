@@ -54,6 +54,9 @@ dev = [
     # FastAPI / Starlette type stubs
     "types-passlib",
 ]
+research = [
+    "sentence-transformers>=3.0",
+]
 
 # ──────────────────────────────────────────────────────────────────────────────
 # Build system

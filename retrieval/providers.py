@@ -216,6 +216,86 @@ class HostedAPIEmbeddingProvider(EmbeddingProviderContract):
             raise EmbeddingProviderError(f"HTTP connection error: {exc}", retryable=True) from exc
 
 
+class LocalSentenceTransformerProvider(EmbeddingProviderContract):
+    """Local offline semantic embedding provider using sentence-transformers."""
+
+    def __init__(
+        self,
+        model_name: str = "all-MiniLM-L6-v2",
+        dimension: int = 384,
+        embedding_version: str = "local-minilm-semantic-v1",
+    ) -> None:
+        if dimension <= 0:
+            raise EmbeddingConfigurationError(f"Dimension must be > 0, got {dimension}")
+            
+        self._provider_name = "LocalSentenceTransformerProvider"
+        self._model_name = model_name
+        self._dimension = dimension
+        self._embedding_version = embedding_version
+        
+        # Load the model eagerly here so it's loaded only once per instance.
+        from sentence_transformers import SentenceTransformer
+        
+        # Force CPU for benchmark reproducibility.
+        self._model = SentenceTransformer(model_name, device="cpu")
+
+    @property
+    def provider_name(self) -> str:
+        return self._provider_name
+
+    @property
+    def model_name(self) -> str:
+        return self._model_name
+
+    @property
+    def dimension(self) -> int:
+        return self._dimension
+
+    @property
+    def embedding_version(self) -> str:
+        return self._embedding_version
+
+    def embed(self, inputs: list[EmbeddingInput]) -> list[EmbeddingResult]:
+        """Generate true semantic dense vectors for inputs using the local model."""
+        if not inputs:
+            return []
+            
+        texts = [inp.text for inp in inputs]
+        
+        # Native batch encoding, 32 by default, returning list of numpy arrays or tensors
+        # L2-normalized explicitly matching the system expectations
+        raw_vectors = self._model.encode(
+            texts,
+            batch_size=32,
+            convert_to_numpy=True,
+            normalize_embeddings=True,
+        )
+        
+        results: list[EmbeddingResult] = []
+        for idx, inp in enumerate(inputs):
+            vec: list[float] = raw_vectors[idx].tolist()
+            
+            repo_id = str(inp.metadata.get("repository_id", "unknown_repo"))
+            commit_id = inp.metadata.get("commit_id")
+            commit_sha = inp.metadata.get("commit_sha")
+
+            results.append(
+                EmbeddingResult(
+                    chunk_id=inp.chunk_id,
+                    vector=vec,
+                    dimension=self._dimension,
+                    provider_name=self._provider_name,
+                    model_name=self._model_name,
+                    embedding_version=self._embedding_version,
+                    repository_id=repo_id,
+                    commit_id=str(commit_id) if commit_id is not None else None,
+                    commit_sha=str(commit_sha) if commit_sha is not None else None,
+                )
+            )
+            
+        return results
+
+
 def math_sqrt(val: float) -> float:
     """Helper sqrt function."""
     import math
