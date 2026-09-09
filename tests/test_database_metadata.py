@@ -42,4 +42,5 @@ def test_metadata_contains_the_documented_foreign_key_delete_actions() -> None:
         ("jobs", "repository_id"): "CASCADE",
         ("index_versions", "repository_id"): "CASCADE",
         ("index_versions", "job_id"): None,
+        ("repositories", "active_index_version_id"): "SET NULL",
     }

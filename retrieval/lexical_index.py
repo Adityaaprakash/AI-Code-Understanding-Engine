@@ -93,7 +93,6 @@ class RepositoryBM25Index:
         language: Language | None = None,
         chunk_type: ChunkType | None = None,
         file_path: str | None = None,
-        commit_sha: str | None = None,
     ) -> list[LexicalSearchResult]:
         """Execute BM25 search over the repository index with optional filters."""
         if not query_tokens or self.total_documents == 0:
@@ -127,13 +126,7 @@ class RepositoryBM25Index:
                     continue
                 if chunk_type is not None and doc.chunk_type != chunk_type:
                     continue
-                if (
-                    file_path is not None
-                    and doc.file_path != file_path
-                    and not doc.file_path.endswith(file_path)
-                ):
-                    continue
-                if commit_sha is not None and doc.commit_sha != commit_sha:
+                if file_path is not None and doc.file_path != file_path:
                     continue
 
                 doc_len = float(doc.doc_len)
@@ -203,19 +196,17 @@ class BM25LexicalIndex(LexicalIndexContract):
         self._repo_indexes: dict[str, RepositoryBM25Index] = {}
 
     def _get_repo_index(
-        self, repository_id: str, create: bool = True
-    ) -> RepositoryBM25Index | None:
-        if repository_id not in self._repo_indexes:
-            if not create:
-                return None
-            self._repo_indexes[repository_id] = RepositoryBM25Index(k1=self.k1, b=self.b)
-        return self._repo_indexes[repository_id]
+        self, repository_id: str, commit_sha: str | None = None
+    ) -> RepositoryBM25Index:
+        key = f"{repository_id}@{commit_sha}" if commit_sha else repository_id
+        if key not in self._repo_indexes:
+            self._repo_indexes[key] = RepositoryBM25Index(k1=self.k1, b=self.b)
+        return self._repo_indexes[key]
 
     def add(self, chunk: CodeChunk) -> None:
-        """Add or replace a CodeChunk in the lexical index."""
+        """Add or replace a single CodeChunk in the index."""
         doc = self.text_builder.build_document(chunk)
-        repo_idx = self._get_repo_index(chunk.repository_id, create=True)
-        assert repo_idx is not None
+        repo_idx = self._get_repo_index(chunk.repository_id, chunk.commit_sha)
         repo_idx.add(doc)
 
     def add_many(self, chunks: CodeChunkCollection | Iterable[CodeChunk]) -> None:
@@ -224,19 +215,39 @@ class BM25LexicalIndex(LexicalIndexContract):
         for chunk in chunk_list:
             self.add(chunk)
 
-    def remove(self, chunk_id: str, repository_id: str) -> bool:
-        """Remove a chunk from a specific repository index."""
-        repo_idx = self._get_repo_index(repository_id, create=False)
-        if repo_idx is None:
-            return False
+    def remove(self, chunk_id: str, repository_id: str, commit_sha: str | None = None) -> bool:
+        """Remove a single chunk by chunk_id from a target repository index."""
+        repo_idx = self._get_repo_index(repository_id, commit_sha)
         return repo_idx.remove(chunk_id)
 
-    def clear(self, repository_id: str | None = None) -> None:
+    def clear(self, repository_id: str | None = None, commit_sha: str | None = None) -> None:
         """Clear a specific repository index, or all repository indexes if repository_id is None."""
-        if repository_id is None:
+        if repository_id is not None:
+            key = f"{repository_id}@{commit_sha}" if commit_sha else repository_id
+            if key in self._repo_indexes:
+                self._repo_indexes[key].clear()
+        else:
+            for repo_idx in self._repo_indexes.values():
+                repo_idx.clear()
             self._repo_indexes.clear()
-        elif repository_id in self._repo_indexes:
-            self._repo_indexes[repository_id].clear()
+
+    def clone_index_version(
+        self, repository_id: str, base_commit_sha: str | None, target_commit_sha: str
+    ) -> None:
+        """Clone the physical index structure to isolate destructive operations for a new version."""
+        old_key = f"{repository_id}@{base_commit_sha}" if base_commit_sha else repository_id
+        new_key = f"{repository_id}@{target_commit_sha}"
+
+        old_idx = self._repo_indexes.get(old_key)
+        new_idx = RepositoryBM25Index(k1=getattr(self, "k1", 1.5), b=getattr(self, "b", 0.75))
+        if old_idx:
+            new_idx.documents = old_idx.documents.copy()
+            new_idx.postings = {k: v.copy() for k, v in old_idx.postings.items()}
+            new_idx.doc_frequencies = old_idx.doc_frequencies.copy()
+            new_idx.total_documents = old_idx.total_documents
+            new_idx.sum_doc_length = old_idx.sum_doc_length
+
+        self._repo_indexes[new_key] = new_idx
 
     def search(
         self,
@@ -254,10 +265,7 @@ class BM25LexicalIndex(LexicalIndexContract):
         if not query or not query.strip():
             return []
 
-        repo_idx = self._get_repo_index(repository_id, create=False)
-        if repo_idx is None:
-            return []
-
+        repo_idx = self._get_repo_index(repository_id, commit_sha)
         query_tokens = tokenize_query(query)
         return repo_idx.search(
             query_tokens=query_tokens,
@@ -265,12 +273,11 @@ class BM25LexicalIndex(LexicalIndexContract):
             language=language,
             chunk_type=chunk_type,
             file_path=file_path,
-            commit_sha=commit_sha,
         )
 
     def document_count(self, repository_id: str | None = None) -> int:
         """Return the number of indexed documents in a repository, or across all repositories."""
         if repository_id is not None:
-            repo_idx = self._get_repo_index(repository_id, create=False)
+            repo_idx = self._get_repo_index(repository_id)
             return repo_idx.total_documents if repo_idx is not None else 0
         return sum(repo.total_documents for repo in self._repo_indexes.values())

@@ -8,7 +8,15 @@ Mirrors the `index_versions` table in .ai/DATABASE_SCHEMA.md exactly.
 import uuid
 from datetime import datetime
 
-from sqlalchemy import TIMESTAMP, CheckConstraint, ForeignKey, Index, Integer, Text
+from sqlalchemy import (
+    TIMESTAMP,
+    CheckConstraint,
+    ForeignKey,
+    Index,
+    Integer,
+    Text,
+    UniqueConstraint,
+)
 from sqlalchemy.dialects.postgresql import UUID
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
@@ -25,6 +33,11 @@ class IndexVersion(Base):
             "kind IN ('full', 'incremental')",
             name="ck_index_versions_kind",
         ),
+        CheckConstraint(
+            "status IN ('building', 'ready', 'failed')",
+            name="ck_index_versions_status",
+        ),
+        UniqueConstraint("repository_id", "commit_sha", name="uq_index_versions_repository_commit"),
         Index("idx_index_versions_repository_id", "repository_id"),
     )
 
@@ -46,6 +59,7 @@ class IndexVersion(Base):
     )
     commit_sha: Mapped[str] = mapped_column(Text, nullable=False)
     kind: Mapped[str] = mapped_column(Text, nullable=False)
+    status: Mapped[str] = mapped_column(Text, nullable=False, server_default="building")
     files_indexed: Mapped[int] = mapped_column(Integer, nullable=False, server_default="0")
     symbols_indexed: Mapped[int] = mapped_column(Integer, nullable=False, server_default="0")
     chunks_indexed: Mapped[int] = mapped_column(Integer, nullable=False, server_default="0")

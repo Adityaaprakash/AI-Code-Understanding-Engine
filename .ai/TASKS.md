@@ -579,3 +579,47 @@ service needed for this task.
 - [x] Verify strict immutability and determinism throughout the matching phase
 - [x] Ensure performance bounds for symbol map generation
 
+### TASK-8C: Partial Re-indexing
+
+**Status:** ✅ Done
+**Blockers:** TASK-8B ✅
+**Scope:** Safely map `ChangedSymbolResult` states and raw file updates into incremental operations on the underlying `BM25LexicalIndex` and `VectorIndex`, avoiding repo-wide rebuilds.
+
+**Acceptance criteria:**
+- [x] Defined `PartialReindexPlan` with files added/modified/deleted, chunks to remove, chunks to add, and embeddings to reuse.
+- [x] Implemented `PartialReindexPlanner` to deterministically calculate accurate patch sets based on old chunk maps.
+- [x] **Opaque Preservation:** Opaque files explicitly PRESERVE existing active knowledge to prevent catastrophic deletion upon parser failures.
+- [x] **Failure Isolation:** Execution follows a prepare-before-mutate strategy, generating all potentially failing remote embeddings before mutating any local persistence. Note: Apply-stage atomicity is currently limited by existing contract capabilities without rollback.
+- [x] **Embedding Compatibility:** Exact text matching is safely bound to explicit provider, model, dimension, and API version compatibility rules for preventing vector index drift.
+- [x] Implemented `PartialReindexer` to correctly execute plans against storage interfaces.
+- [x] Assured completely side-effect free planning boundaries.
+- [x] Handled chunk granularities matching `CodeChunker` rules without regressing semantic contexts.
+
+### TASK-8D: Dependency-Aware Invalidation
+
+**Status:** ✅ Done
+**Blockers:** TASK-8C ✅
+**Scope:** Implement intelligence to safely propagate re-indexing across structurally dependent untouched code (e.g., return type changed in a method -> callers must update embeddings).
+
+**Acceptance criteria:**
+- [x] Defined `DependencyInvalidationResult`, `DependencyInvalidationPlan`, `AffectedSymbol`, `AffectedFile` models.
+- [x] Implemented `DependencyInvalidator` that reuses the existing `ImpactAnalyzer`.
+- [x] Correctly distinguishes direct changes from dependency effects.
+- [x] Cycle safety, duplicate removal, minimum depth deduplication.
+- [x] Does not regenerate embeddings for unchanged dependency-affected code.
+- [x] Composed seamlessly with `PartialReindexPlanner` without duplicating planner logic.
+- [x] Verified Large scale fan-in robustness.
+
+### TASK-8E: Index Versioning
+
+**Status:** ✅ Done
+**Blockers:** TASK-8D ✅
+**Scope:** Implement Index Version tracking and lifecycle status management via `IndexVersionManager`, ensuring orchestrator sets status to `READY` properly and retrievers natively isolate by active `commit_sha`.
+
+**Acceptance criteria:**
+- [x] Add `status` field tracking logical index completion state (`building`, `ready`, `failed`).
+- [x] Add unique constraints to database indexing configurations.
+- [x] Manage an active `active_index_version_id` locally mapped over to `Repository`.
+- [x] Generate deterministic alembic migration configurations capturing database updates.
+- [x] Ensure Phase 4+5 retrievers inherently isolate index sets preventing incomplete sets exposure.
+- [x] Verify API Query boundaries properly inherit the `active_index_version` constraints unconditionally.

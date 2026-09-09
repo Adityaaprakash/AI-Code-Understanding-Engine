@@ -73,7 +73,6 @@ class RepositoryVectorIndex:
         language: Language | None = None,
         chunk_type: ChunkType | None = None,
         file_path: str | None = None,
-        commit_sha: str | None = None,
     ) -> list[VectorSearchResult]:
         """Execute exact cosine similarity vector search with metadata filtering."""
         if not self.documents:
@@ -94,8 +93,6 @@ class RepositoryVectorIndex:
             if chunk_type is not None and doc.chunk_type != chunk_type:
                 continue
             if file_path is not None and doc.file_path != file_path:
-                continue
-            if commit_sha is not None and doc.commit_sha != commit_sha:
                 continue
 
             score = cosine_similarity(query_vector, doc.vector)
@@ -130,14 +127,17 @@ class VectorIndex(VectorIndexContract):
     def __init__(self) -> None:
         self.indexes: dict[str, RepositoryVectorIndex] = {}
 
-    def _get_or_create_repo_index(self, repository_id: str) -> RepositoryVectorIndex:
-        if repository_id not in self.indexes:
-            self.indexes[repository_id] = RepositoryVectorIndex()
-        return self.indexes[repository_id]
+    def _get_or_create_repo_index(
+        self, repository_id: str, commit_sha: str | None = None
+    ) -> RepositoryVectorIndex:
+        key = f"{repository_id}@{commit_sha}" if commit_sha else repository_id
+        if key not in self.indexes:
+            self.indexes[key] = RepositoryVectorIndex()
+        return self.indexes[key]
 
     def add(self, embedding: EmbeddingResult, chunk: CodeChunk | None = None) -> None:
         """Add or replace a single vector embedding in the index."""
-        repo_index = self._get_or_create_repo_index(embedding.repository_id)
+        repo_index = self._get_or_create_repo_index(embedding.repository_id, embedding.commit_sha)
 
         lang: Language = Language.PYTHON
         ctype: ChunkType = ChunkType.FILE_CONTEXT
@@ -191,21 +191,38 @@ class VectorIndex(VectorIndexContract):
             chk = chunk_map.get(emb.chunk_id)
             self.add(emb, chunk=chk)
 
-    def remove(self, chunk_id: str, repository_id: str) -> bool:
+    def remove(self, chunk_id: str, repository_id: str, commit_sha: str | None = None) -> bool:
         """Remove a single vector embedding by chunk_id from a target repository index."""
-        if repository_id in self.indexes:
-            return self.indexes[repository_id].remove(chunk_id)
+        key = f"{repository_id}@{commit_sha}" if commit_sha else repository_id
+        if key in self.indexes:
+            return self.indexes[key].remove(chunk_id)
         return False
 
-    def clear(self, repository_id: str | None = None) -> None:
+    def clear(self, repository_id: str | None = None, commit_sha: str | None = None) -> None:
         """Clear a specific repository index, or all repository indexes if repository_id is None."""
         if repository_id is not None:
-            if repository_id in self.indexes:
-                self.indexes[repository_id].clear()
+            key = f"{repository_id}@{commit_sha}" if commit_sha else repository_id
+            if key in self.indexes:
+                self.indexes[key].clear()
         else:
             for repo_index in self.indexes.values():
                 repo_index.clear()
             self.indexes.clear()
+
+    def clone_index_version(
+        self, repository_id: str, base_commit_sha: str | None, target_commit_sha: str
+    ) -> None:
+        """Clone the physical index structure to isolate destructive operations for a new version."""
+        old_key = f"{repository_id}@{base_commit_sha}" if base_commit_sha else repository_id
+        new_key = f"{repository_id}@{target_commit_sha}"
+
+        old_idx = self.indexes.get(old_key)
+        new_idx = RepositoryVectorIndex()
+        if old_idx:
+            new_idx.documents = old_idx.documents.copy()
+            new_idx._dimension = old_idx._dimension
+
+        self.indexes[new_key] = new_idx
 
     def search(
         self,
@@ -228,7 +245,8 @@ class VectorIndex(VectorIndexContract):
             if math.isnan(val) or math.isinf(val):
                 raise VectorQueryError("query_vector contains non-finite values (NaN or Inf)")
 
-        repo_index = self.indexes.get(repository_id)
+        key = f"{repository_id}@{commit_sha}" if commit_sha else repository_id
+        repo_index = self.indexes.get(key)
         if repo_index is None:
             return []
 
@@ -238,7 +256,6 @@ class VectorIndex(VectorIndexContract):
             language=language,
             chunk_type=chunk_type,
             file_path=file_path,
-            commit_sha=commit_sha,
         )
 
     def document_count(self, repository_id: str | None = None) -> int:

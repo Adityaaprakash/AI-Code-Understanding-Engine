@@ -8,7 +8,7 @@
 
 ## Current Task
 
-TASK-8B (Changed Symbol Detection) complete. The boundary for semantic diff analysis is defined and tested, ready for TASK-8C (Partial Re-indexing).
+TASK-8E (Index Versioning) complete. The system now robustly manages index state via the `IndexVersionManager`, explicitly setting index version statuses and exposing active queries directly to retrievers. Phase 8 completed successfully.
 
 ---
 
@@ -90,3 +90,6 @@ TASK-8B (Changed Symbol Detection) complete. The boundary for semantic diff anal
 2026-09-08 — TASK-8A Git Diff Engine complete. 660 backend tests passing.
 2026-09-08 — TASK-8B Changed Symbol Detection complete. 675 backend tests passing.
 2026-09-08 — TASK-8B Remediation complete. Added `OpaqueFile` support and `IDENTITY_ONLY` transition tracking. 670 backend tests passing.
+2026-09-08 — TASK-8C Partial Re-indexing Remediation complete. Implemented safely bound planner and executor for incremental CodeChunks and index updates. Added strict execution boundary for Opaque File preservation, embedding preparation check-before-mutating logic for failure isolation, and rigorous configuration compatibility models for vector identity tracking. 678 backend tests passing.
+2026-09-08 — TASK-8D Dependency-Aware Invalidation complete. 687 backend tests passing.
+2026-09-08 — TASK-8E Index Versioning complete. Added tracking for logical index versions, index version constraints, and updated API boundaries and resolvers to query exclusively off of the active repository index version securely. 687 backend tests passing.

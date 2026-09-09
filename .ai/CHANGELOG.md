@@ -2,6 +2,31 @@
 
 All notable changes to this project are recorded here.
 
+## 2026-09-08 — Phase 8D — Dependency-Aware Invalidation Complete
+
+**Completed by:** TASK-8D
+
+### Added
+- Created `retrieval/dependency_invalidator.py` defining `DependencyInvalidationResult`, `AffectedSymbol`, `AffectedFile`.
+- Reused Phase 3 Code Knowledge Graph to deterministically identify dependency-affected symbols upstream of directly modified symbols.
+- Extended `PartialReindexPlanner` to process dependency invalidation plans seamlessly.
+- Proven isolation where unchanged dependent source strings completely bypass embedding generation (`chunks_to_embed` length remains zero) due to identity preservation.
+- Handled cycles and multiple dependency path deduplication logic.
+- Scaled dependency extraction on 5,000 fan-in edges synthetically tested.
+
+## 2026-09-08 — Phase 8C — Partial Re-indexing Complete
+
+**Completed by:** TASK-8C
+
+### Added
+- Phase 8C Partial Re-indexing Remediation logic (`retrieval/partial_reindexer.py`) including safety-isolated mutation orchestration.
+- **Opaque File Preservation:** Extracted semantics explicitly preserving opaque file active state knowledge upon parser failures.
+- **Prepare-before-Mutate:** Architecture executing dynamic embedding generation *before* executing destructive removals against physical indexes.
+- **Embedding Compatibility Rules:** Reusing text fragments explicitly validated against embedding backend configurations (provider, model, dimensionality, version) preventing index drift.
+- 13 comprehensive partial re-indexing validation tests.
+
+---
+
 ## 2026-09-08 — Phase 8B — Changed Symbol Detection Complete (Remediated)
 
 **Completed by:** TASK-8B

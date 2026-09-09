@@ -8,7 +8,7 @@ Mirrors the `repositories` table in .ai/DATABASE_SCHEMA.md exactly.
 import uuid
 from datetime import datetime
 
-from sqlalchemy import TIMESTAMP, CheckConstraint, Text
+from sqlalchemy import TIMESTAMP, CheckConstraint, ForeignKey, Text
 from sqlalchemy.dialects.postgresql import UUID
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
@@ -45,6 +45,11 @@ class Repository(Base):
     status: Mapped[str] = mapped_column(Text, nullable=False, server_default="pending")
     error_message: Mapped[str | None] = mapped_column(Text, nullable=True)
     total_loc: Mapped[int | None] = mapped_column(nullable=True)
+    active_index_version_id: Mapped[uuid.UUID | None] = mapped_column(
+        UUID(as_uuid=True),
+        ForeignKey("index_versions.id", ondelete="SET NULL", use_alter=True),
+        nullable=True,
+    )
     created_at: Mapped[datetime] = mapped_column(
         TIMESTAMP(timezone=True), nullable=False, server_default="now()"
     )
@@ -69,5 +74,11 @@ class Repository(Base):
         "Job", back_populates="repository", cascade="all, delete-orphan"
     )
     index_versions: Mapped[list["IndexVersion"]] = relationship(  # type: ignore[name-defined]  # noqa: F821
-        "IndexVersion", back_populates="repository", cascade="all, delete-orphan"
+        "IndexVersion",
+        back_populates="repository",
+        cascade="all, delete-orphan",
+        foreign_keys="[IndexVersion.repository_id]",
+    )
+    active_index_version: Mapped["IndexVersion | None"] = relationship(  # type: ignore[name-defined]  # noqa: F821
+        "IndexVersion", foreign_keys=[active_index_version_id]
     )

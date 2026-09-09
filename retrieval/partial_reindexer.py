@@ -66,6 +66,7 @@ class PartialReindexPlanner:
         new_normalization_results: dict[str, NormalizationResult],
         new_source_codes: dict[str, str],
         repository_id: str,
+        dependency_invalidation: Any | None = None,
     ) -> PartialReindexPlan:
         """Calculate the precise partial re-index plan for the repository."""
         # Step 1: Identify all affected files
@@ -103,6 +104,16 @@ class PartialReindexPlanner:
             if filepath not in affected_files_set:
                 affected_files_set.add(filepath)
                 files_modified.append(filepath)
+
+        # Merge dependency invalidation files
+        if dependency_invalidation:
+            for affected_file in dependency_invalidation.affected_files:
+                if affected_file.file_path not in affected_files_set:
+                    affected_files_set.add(affected_file.file_path)
+                    # We flag it as modified to ensure planner evaluates it,
+                    # but actual source/embedding regeneration is correctly
+                    # bypassed by the chunker text builder if unchanged.
+                    files_modified.append(affected_file.file_path)
 
         # Note: Since the real file operations are inferred from ChangedSymbolResult,
         # we will process any file touched in `affected_files_set`.
@@ -255,15 +266,23 @@ class PartialReindexer:
                     )
                 )
 
-        # 2. APPLY MUTATIONS: Remove stale chunks from both indices
-        for chunk_id in plan.chunks_to_remove:
-            self.lexical_index.remove(chunk_id, plan.repository_id)
-            self.vector_index.remove(chunk_id, plan.repository_id)
+        # 3. Clone indexes for the target version before applying mutating operations
+        self.lexical_index.clone_index_version(
+            plan.repository_id, plan.base_commit, plan.target_commit
+        )
+        self.vector_index.clone_index_version(
+            plan.repository_id, plan.base_commit, plan.target_commit
+        )
 
-        # 3. Add new chunks to lexical index
+        # 4. APPLY MUTATIONS: Remove stale chunks from both indices within target commit bounds
+        for chunk_id in plan.chunks_to_remove:
+            self.lexical_index.remove(chunk_id, plan.repository_id, plan.target_commit)
+            self.vector_index.remove(chunk_id, plan.repository_id, plan.target_commit)
+
+        # 4. Add new chunks to lexical index
         self.lexical_index.add_many(plan.chunks_to_add)
 
-        # 4. Add reused embeddings to vector index
+        # 5. Add reused embeddings to vector index
         chunk_map = {c.id: c for c in plan.chunks_to_add}
         self.vector_index.add_many(plan.embeddings_to_reuse, chunks=chunk_map)
 

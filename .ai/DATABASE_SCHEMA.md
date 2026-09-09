@@ -54,6 +54,7 @@ CREATE TABLE repositories (
                                       'indexed', 'error', 'stale')),
     error_message   TEXT,
     total_loc       BIGINT,                 -- Populated after first index
+    active_index_version_id  UUID REFERENCES index_versions(id) ON DELETE SET NULL,
     created_at      TIMESTAMPTZ NOT NULL DEFAULT now(),
     updated_at      TIMESTAMPTZ NOT NULL DEFAULT now()
 );
@@ -242,11 +243,14 @@ CREATE TABLE index_versions (
     job_id          UUID NOT NULL REFERENCES jobs(id),
     commit_sha      TEXT NOT NULL,
     kind            TEXT NOT NULL CHECK (kind IN ('full', 'incremental')),
+    status          TEXT NOT NULL DEFAULT 'building'
+                    CHECK (status IN ('building', 'ready', 'failed')),
     files_indexed   INTEGER NOT NULL DEFAULT 0,
     symbols_indexed INTEGER NOT NULL DEFAULT 0,
     chunks_indexed  INTEGER NOT NULL DEFAULT 0,
     duration_ms     BIGINT,
-    created_at      TIMESTAMPTZ NOT NULL DEFAULT now()
+    created_at      TIMESTAMPTZ NOT NULL DEFAULT now(),
+    UNIQUE (repository_id, commit_sha)
 );
 
 CREATE INDEX idx_index_versions_repository_id ON index_versions(repository_id);

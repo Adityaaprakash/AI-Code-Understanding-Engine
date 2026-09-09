@@ -47,7 +47,12 @@ class QueryApplicationService:
         self.grounding = GroundingEngine()
 
     def process_query(
-        self, query: str, repository_id: str, top_k: int, generate_answer: bool = True
+        self,
+        query: str,
+        repository_id: str,
+        top_k: int,
+        generate_answer: bool = True,
+        commit_sha: str | None = None,
     ) -> tuple[list, dict | None]:
         """Run the full retrieval (and optional generation) pipeline."""
         # 1. Plan
@@ -55,10 +60,16 @@ class QueryApplicationService:
 
         # 2. Retrieve
         lexical_res = self.lexical_retriever.retrieve(
-            query=plan.processed_query, repository_id=repository_id, top_k=top_k
+            query=plan.processed_query,
+            repository_id=repository_id,
+            top_k=top_k,
+            commit_sha=commit_sha,
         )
         vector_res = self.vector_retriever.retrieve(
-            query=plan.processed_query, repository_id=repository_id, top_k=top_k
+            query=plan.processed_query,
+            repository_id=repository_id,
+            top_k=top_k,
+            commit_sha=commit_sha,
         )
 
         # 3. Fuse & Rerank
@@ -80,7 +91,9 @@ class QueryApplicationService:
                     "score": r.rerank_score or r.score,
                     "rank": r.rank,
                     "symbol_name": r.symbol_name,
-                    "symbol_id": r.metadata.get("symbol_id", r.metadata.get("entity_id")) if getattr(r, "metadata", None) else None,
+                    "symbol_id": r.metadata.get("symbol_id", r.metadata.get("entity_id"))
+                    if getattr(r, "metadata", None)
+                    else None,
                     "start_line": r.start_line,
                     "end_line": r.end_line,
                     "content": r.metadata.get("content") if getattr(r, "metadata", None) else None,
