@@ -58,7 +58,7 @@ TASK-8E (Index Versioning) complete. The system now robustly manages index state
 
 ## In Progress
 
-(None; transitioning to feature implementations)
+- [x] Phase 9D: Research Metrics & Analysis Engine complete.
 
 ---
 
