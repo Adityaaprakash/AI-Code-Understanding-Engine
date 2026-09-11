@@ -3,8 +3,9 @@
 
 import uuid
 from datetime import datetime
+from pathlib import Path
 
-from pydantic import BaseModel, ConfigDict, Field
+from pydantic import BaseModel, ConfigDict, Field, model_validator
 
 
 class RepositoryCreate(BaseModel):
@@ -15,6 +16,25 @@ class RepositoryCreate(BaseModel):
     url: str | None = Field(None, description="GitHub repository URL if source_type is github.")
     local_path: str | None = Field(None, description="Local path if source_type is local.")
     default_branch: str = Field("main", description="Target branch to index.")
+
+    @model_validator(mode="after")
+    def validate_local_path(self) -> "RepositoryCreate":
+        if self.source_type == "local":
+            if not self.local_path:
+                raise ValueError("local_path is required when source_type is local.")
+            try:
+                # Canonicalize the path to prevent traversal bypasses
+                resolved = Path(self.local_path).resolve(strict=True)
+            except Exception:
+                raise ValueError("local_path does not exist or is invalid.")
+
+            if not resolved.is_dir():
+                raise ValueError("local_path must be a directory.")
+
+            # The architecture allows developer-supplied arbitrary paths across the host
+            # filesystem. It is explicitly a trusted developer input model.
+            self.local_path = str(resolved)
+        return self
 
 
 class RepositoryResponse(BaseModel):
