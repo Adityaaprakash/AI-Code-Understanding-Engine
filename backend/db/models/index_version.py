@@ -70,7 +70,7 @@ class IndexVersion(Base):
 
     # Relationships
     repository: Mapped["Repository"] = relationship(  # type: ignore[name-defined]  # noqa: F821
-        "Repository", back_populates="index_versions"
+        "Repository", back_populates="index_versions", foreign_keys=[repository_id]
     )
     job: Mapped["Job"] = relationship(  # type: ignore[name-defined]  # noqa: F821
         "Job", back_populates="index_versions"
