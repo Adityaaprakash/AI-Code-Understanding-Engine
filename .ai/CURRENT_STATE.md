@@ -2,94 +2,28 @@
 
 ## Active Phase
 
-**Phase 8 — INCREMENTAL INDEXING & ADVANCED INTELLIGENCE IN PROGRESS** (Phase 1-7 COMPLETE)
-
----
-
-## Current Task
-
-TASK-8E (Index Versioning) complete. The system now robustly manages index state via the `IndexVersionManager`, explicitly setting index version statuses and exposing active queries directly to retrievers. Phase 8 completed successfully.
+**PHASE 9G COMPLETE** — Ready for Commit
 
 ---
 
 ## Completed
-
-- [x] Project specification established
-- [x] Architecture established
-- [x] Core constraints established
-- [x] Top-level directory structure created
-- [x] `.gitignore` created
-- [x] `.env.example` created
-- [x] `README.md` created
-- [x] `.ai/` project-memory files created and populated
-- [x] TASK-1B through TASK-1H: Phase 1 Complete
-- [x] TASK-2A through TASK-2G: Phase 2 Complete
-- [x] TASK-3A through TASK-3H: Phase 3 Complete
-- [x] TASK-4A through TASK-4E: Phase 4 Complete
-- [x] TASK-5A through TASK-5G: Phase 5 Complete
-- [x] TASK-6A: Query Intent & Query Planning complete
-- [x] TASK-6B: Graph-Aware Context Expansion complete
-- [x] TASK-6C: Context Ranking complete
-- [x] TASK-6D: Context Deduplication & Pruning complete
-- [x] TASK-6E: Token Budgeting & Context Packing complete
-- [x] TASK-6F: LLM Provider Abstraction complete
-  - Defined provider-independent contracts (`LLMProviderContract`), models (`LLMMessage`, `LLMProviderCapabilities`, `LLMRequest`, `LLMResponse`, `LLMProviderConfig`), and enums (`LLMFinishReason`, `LLMProviderErrorCategory`, `LLMMessageRole`).
-  - Created thread-safe `LLMProviderRegistry` with resolution, duplicate handling, and isolated registry support.
-  - Implemented normalized exception hierarchy (`LLMProviderError`, `InvalidLLMConfigError`, `LLMAuthenticationError`, `LLMProviderUnavailableError`, `LLMTimeoutError`, `LLMRateLimitError`, `InvalidLLMRequestError`, `LLMModelUnavailableError`, `LLMExecutionError`, `LLMProviderNotFoundError`).
-  - Built zero-dependency, deterministic `FakeLLMProvider` for offline unit and integration testing without network calls.
-  - Added secret protection with `SecretStr` preventing API key leakage in logs, exceptions, or string outputs.
-  - Created comprehensive test suite in `tests/test_llm_provider.py` covering contract adherence, model validation, immutability, registry resolution, error normalization, capability reporting, timeout handling, JSON roundtripping, 100-run determinism, 6E PackedContext boundary crossing, and boundary negative invariants.
-  - All 614 repository tests pass cleanly with 100% ruff format, ruff check, and mypy compliance.
-- [x] TASK-6G: Grounded Answer Generation complete
-  - Defined `GeneratedAnswer` Pydantic model (`frozen=True`) for structured output, and `AnswerGenerationConfig` for immutable config.
-  - Defined `AnswerGeneratorContract` interface and implemented `AnswerGenerator` for deterministic orchestration of prompt construction and provider invocation.
-  - Implemented exact context ordering preservation and handled token metadata propagation.
-  - Explicit generation boundaries enforced: NO retrieval, NO graph traversal, NO reranking, NO direct provider SDK access inside 6G, NO citation verification (delegated to 6H).
-  - Ensured deterministic orchestration through `100-run` execution test and fake provider integration.
-  - Handled negative test paths like empty-context and provider errors safely without leaking internal states.
-- [x] TASK-6H: Citation & Grounding Engine complete
-  - Defined `GroundingClaim`, `CitationReference`, `GroundingMetrics`, `GroundingVerificationResult` models for deterministic citation and verification mapping.
-  - Implemented `GroundingEngine` matching extracted factual claims to citation marker boundaries `[CTX:candidate-id]`.
-  - Defined bounded claim scoring mechanics leveraging structural overlap (`WEIGHT_CITATION_VALIDITY`, `WEIGHT_LEXICAL_OVERLAP`).
-  - Added deterministic status states representing `valid`, `missing`, `malformed`, `ambiguous` parameters strictly against the supplied context evidence.
-  - Proven strict bounding: No BM25 requests, NO graph traversal, NO reranking, NO filesystem access during validation rendering.
-
----
-
-## In Progress
-
-- [x] Phase 9D: Research Metrics & Analysis Engine complete.
-
----
-
-## Phase 7 Output Matrix
-**(7A0-7A1, 7G, 7A, 7F, 7C)**:
-- 7A0 + 7A1: Exposed code intelligence APIs via FastAPI.
-- 7G: Implemented application shell (header, sidebar, status bar), designed custom CSS variable token system, implemented reusable generic components (Button, Badge, etc.), integrated react-router and vitest.
-- 7A: Built the Repository Dashboard (`OverviewPage`), displaying live metrics, status, metadata, and providing repository index action, consuming real API endpoints. Handled state management (loading, error, nested jobs async state) fully via React functional hooks.
-- 7F: Built the Search capability (`SearchPage`), integrating with Phase 5/6 hybrid retrieval backend via `api/v1/query`. Handled routing parameters (`/search/:repositoryId`), input states, loading/error states, and rendered resulting code chunks aligned with 7G Design Tokens without exposing LLM behavior (`generate_answer: false`).
-- 7C: Built the Symbol Explorer (`SymbolsPage`). Extended `QueryRequest` schema minimally to support UUID resolution directly from search results. Implemented depth-1 structural graph traversal consumption utilizing `/api/v1/graph`. Presented relational code semantics (Calls, Called By, Imports) organized clearly, aligned visually with 7G styles, and provided forward navigation paths to Graph, Impact, and Chat capabilities.
-- 7D: Built the Graph Explorer (`GraphPage`). Leveraged `backend/schemas/graph.py` and `/api/v1/graph` to directly consume traversal responses. Developed a zero-dependency deterministic force-directed graph canvas (`SimpleGraphCanvas`). Implemented interactive pan/zoom, interactive node selection, and relational depth control (1-3 levels). Provided direct semantic navigation connecting Phase 7C and Phase 7D interactions while retaining rigorous architectural boundaries.
-- 7B: Built the Chat / Ask AI interface (`ChatPage`). Reused the `/api/v1/query` contract with `generate_answer=True` to execute stateless codebase-grounded AI assistant features. Implemented a robust multiline composer, markdown block rendering, rigorous citation source metadata, and integrated seamlessly with `Symbol Explorer` symbol-injected initialization logic. Strictly avoided fake streaming or artificial backend memory states.
-- 7E: Built the Impact Analysis UI (`ImpactPage`). Consumed `/api/v1/impact` and cleanly separated direct vs transitive dependencies using depth metrics. Displayed grouped relationship categories dynamically. Backported structured impact path evidence (`paths`) securely out of `ImpactAnalyzer` up to the frontend UI without causing regressions. Verified with 75 green UI tests.
-- 7H: Showcase Implementation complete. Integrated a seamless visual workflow component (`WorkflowShowcase`) directly into the `OverviewPage` Dashboard. Mapped the 7 core steps (Codebase -> Search -> Symbol -> Graph -> Chat -> Citation -> Impact) providing context, purpose, and unified cross-linking into actual application functionality. Replaced generic quick actions with explicit guided UI.
-
----
-
-- [x] Phase 7I Final Frontend QA complete. Complete end-to-end product flow is ready for production.
+- [x] Phase 1: Foundation (Architecture, `.ai`, Project setup)
+- [x] Phase 2: Database & API Foundation (Alembic, PostgreSQL, FastAPI structure)
+- [x] Phase 3: Code Analysis (Tree-sitter, Canonical IR for Java, Python, TypeScript)
+- [x] Phase 4: Symbol Graph (Graph schema, relationships)
+- [x] Phase 5: Indexing Pipeline (RepoCloner, AST+IR Chunking, Embedding)
+- [x] Phase 6: Retrieval and LLM Pipeline (BM25, vector, fusion, query planner, LLM generation)
+- [x] Phase 7: Product UI (React/Vite SPA, Dashboards, Global Search, D3 Graph Explorer, Ask AI)
+- [x] Phase 8: Incremental Indexing (Git diff extraction, AST dependency boundaries, partial refreshes)
+- [x] Phase 9A: Benchmark Dataset creation and normalization
+- [x] Phase 9B: Semantic Vector Baseline formulation  
+- [x] Phase 9C: Retrieval Ablation testing (Vector vs BM25+Vector vs Graph vs Reranker)
+- [x] Phase 9D: Research Metrics Analysis Engine formulation  
+- [x] Phase 9E: Performance Benchmarking bounding  
+- [x] Phase 9F: Security & Error Handling bounds enforced  
+- [x] Phase 9G: Documentation & Research Report formulated natively  
 
 ---
 
 ## Last Updated
-
-2026-09-07 — TASK-7D Graph Explorer Implementation complete. 649 backend tests passing. 61 frontend vitest tests passing. Frontend build and lint passing.
-2026-09-08 — TASK-7B Chat Ask AI Implementation complete. 649 backend tests passing. 68 frontend vitest tests passing. Frontend build and lint passing.
-2026-09-08 — TASK-7E Impact Analysis Implementation complete. 649 backend tests passing. 75 frontend vitest tests passing. Frontend build and lint passing.
-2026-09-08 — TASK-7H Showcase Implementation complete. 649 backend tests passing. 75 frontend vitest tests passing. Frontend build and lint passing.
-2026-09-08 — TASK-7I Verification & Hardening complete. Removed dead links, synchronized query parameters, silenced unproblematic lints. 0 lint warnings. 75 frontend tests passing. Phase 7 Complete.
-2026-09-08 — TASK-8A Git Diff Engine complete. 660 backend tests passing.
-2026-09-08 — TASK-8B Changed Symbol Detection complete. 675 backend tests passing.
-2026-09-08 — TASK-8B Remediation complete. Added `OpaqueFile` support and `IDENTITY_ONLY` transition tracking. 670 backend tests passing.
-2026-09-08 — TASK-8C Partial Re-indexing Remediation complete. Implemented safely bound planner and executor for incremental CodeChunks and index updates. Added strict execution boundary for Opaque File preservation, embedding preparation check-before-mutating logic for failure isolation, and rigorous configuration compatibility models for vector identity tracking. 678 backend tests passing.
-2026-09-08 — TASK-8D Dependency-Aware Invalidation complete. 687 backend tests passing.
-2026-09-08 — TASK-8E Index Versioning complete. Added tracking for logical index versions, index version constraints, and updated API boundaries and resolvers to query exclusively off of the active repository index version securely. 687 backend tests passing.
+2026-09-11 — TASK-9G Documentation & Research Report Implementation complete. 742 backend tests passing. Phase 1-9 completely achieved rigorously.

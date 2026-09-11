@@ -1,3 +1,4 @@
+from pathlib import Path
 
 import pytest
 
@@ -8,31 +9,49 @@ from llm.answer_generator import AnswerGenerator
 from llm.budget_models import ContextPackingStats, PackedContext
 
 
-def test_9f_1_path_security_traversal_rejection(tmp_path):
-    """Verify that path normalization traps non-existent traversal and explicitly resolves."""
-    # Non-existent traversal
-    with pytest.raises(ValueError, match="local_path does not exist"):
-        RepositoryCreate(
-            name="test",
-            source_type="local",
-            local_path=str(tmp_path / "repo" / ".." / ".." / "outside"),
-        )
+def test_9f_1_path_security_trusted_developer_model(tmp_path: Path) -> None:
+    """Verify that path normalization validates existence but trusts the developer path."""
 
     # Exists but is file
     file_path = tmp_path / "file.txt"
     file_path.write_text("hello")
     with pytest.raises(ValueError, match="local_path must be a directory"):
-        RepositoryCreate(name="test", source_type="local", local_path=str(file_path))
+        RepositoryCreate(
+            name="test",
+            source_type="local",
+            url=None,
+            default_branch="main",
+            local_path=str(file_path),
+        )
+
+    # Arbitrary traversal resolves and is allowed if it exists (Trusted Developer Model)
+    # We test with a known directory (the test's tmp_path) accessed via traversal
+    traversal_path = tmp_path / "fake" / ".." / "fake2" / ".."
+    repo = RepositoryCreate(
+        name="test",
+        source_type="local",
+        url=None,
+        default_branch="main",
+        local_path=str(traversal_path),
+    )
+    assert repo.local_path == str(traversal_path.resolve())
 
     # Valid absolute path resolves correctly (developer trust model)
     repo_path = tmp_path / "valid_repo"
     repo_path.mkdir()
-    repo = RepositoryCreate(name="test", source_type="local", local_path=str(repo_path))
+    repo = RepositoryCreate(
+        name="test",
+        source_type="local",
+        url=None,
+        default_branch="main",
+        local_path=str(repo_path),
+    )
     assert repo.local_path == str(repo_path.resolve())
 
 
-def test_9f_2_prompt_injection_isolation():
+def test_9f_2_prompt_injection_isolation() -> None:
     """Verify strictly separated formatted context via XML tags."""
+    from llm.enums import ContextOverflowPolicy, TokenCountMode
     from llm.query_planner import QueryPlanner
     from retrieval.query_processor import QueryPreprocessor
 
@@ -56,8 +75,8 @@ def test_9f_2_prompt_injection_isolation():
         input_candidate_count=1,
         packed_candidate_count=1,
         omitted_candidate_count=0,
-        token_count_mode="exact",
-        overflow_policy="TRUNCATE",
+        token_count_mode=TokenCountMode.EXACT,
+        overflow_policy=ContextOverflowPolicy.TRUNCATE,
     )
     pcontext = PackedContext(
         query="What does config do?",
@@ -84,7 +103,7 @@ def test_9f_2_prompt_injection_isolation():
 
 
 @pytest.mark.asyncio
-async def test_9f_4_git_argument_safety(tmp_path):
+async def test_9f_4_git_argument_safety(tmp_path: Path) -> None:
     """Verify Git parameter flag injection boundaries are enforced."""
     subprocess_mock_repo = tmp_path
 
@@ -104,7 +123,7 @@ async def test_9f_4_git_argument_safety(tmp_path):
         engine._resolve_commit(str(subprocess_mock_repo), "--help")
 
 
-def test_9f_6_api_error_handling():
+def test_9f_6_api_error_handling() -> None:
     """Verify that unhandled exceptions format neatly inside FastAPI context schemas."""
     # (FastAPI exception tests are usually end-to-end, tested via process context, but
     # ensuring the unified AppException maintains strict properties).

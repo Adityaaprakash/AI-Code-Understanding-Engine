@@ -1,137 +1,80 @@
-# AI Code Understanding Engine — CodeLens AI
+# AI Code Understanding Engine
 
-> **Status:** Phase 1 — Foundation (active development)
+CodeLens AI is a local-first, developer-facing reasoning engine providing semantically-aware structural analysis of large codebases.
 
----
-
-## What Is It?
-
-The **AI Code Understanding Engine** (working product name: **CodeLens AI**) is a
-local-first, developer-facing tool that provides deep, semantically-aware
-understanding of large codebases. Given a natural-language question — *"Which
-services call this database table?"*, *"What breaks if I change this interface?"*
-— it locates the relevant code, explains it, and reasons about the impact, all
-without requiring the developer to page through the repository manually.
+**Status:** Phase 9G — Research Complete
 
 ---
 
-## Why Ordinary Vector RAG Is Insufficient
+## What It Does
+Given a natural-language question, the engine locates the relevant code, traverses its exact execution flow topologically, explains dependencies, and reasons about downstream impacts, without requiring manual recursive file searches.
 
-Standard retrieval-augmented generation pipelines embed code chunks into dense
-vectors and return the nearest neighbours. This approach has three structural
-weaknesses for code:
+## Why It Is Different
+Traditional vector-RAG architectures retrieve chunks based on semantic similarity, which limits structural awareness. Related functionality often lives in varying scopes. CodeLens addresses this by replacing semantic indexing gaps with Canonical Code IR representations layered with Hybrid Retrieval metrics. **The LLM is the final reasoning layer over a structured code intelligence system.**
 
-| Problem | Impact |
-|---|---|
-| **No structural awareness** | Related symbols (caller / callee, implementation / interface) sit in different chunks that a similarity search may never co-retrieve. |
-| **No relationship traversal** | Impact analysis requires following cross-file, cross-module call graphs — vector similarity cannot do this. |
-| **Sparse vocabulary mismatch** | Code uses identifiers, not natural language. BM25 term frequency often outperforms dense retrieval on symbol names and error strings. |
-
-CodeLens AI addresses this with a **hybrid retrieval stack**: BM25 + vector
-similarity + graph traversal, fused and reranked before being passed to the LLM.
-
----
-
-## High-Level Architecture
-
-```
-┌─────────────────────────────────────────────────────────────┐
-│  React Frontend (CodeLens UI)                               │
-└──────────────────────────┬──────────────────────────────────┘
-                           │ REST / JSON
-┌──────────────────────────▼──────────────────────────────────┐
-│  FastAPI Backend                                            │
-│   ├─ Repository API   ├─ Query API   ├─ Symbol API          │
-│   └─ Impact Analysis API                                    │
-└──────┬───────────────────────────────────────┬──────────────┘
-       │ Async jobs (PostgreSQL queue)          │ Sync queries
-┌──────▼──────────┐                   ┌────────▼──────────────┐
-│  Worker Process │                   │  Retrieval Engine     │
-│  ├─ Index repos │                   │  ├─ BM25              │
-│  ├─ Parse ASTs  │                   │  ├─ Vector (pgvector) │
-│  └─ Build graph │                   │  ├─ Graph traversal   │
-└──────┬──────────┘                   │  ├─ Fusion + Rerank   │
-       │                              │  └─ Context pruning   │
-┌──────▼──────────────────────────────▼──────────────────────┐
-│  PostgreSQL (primary store + pgvector + job queue)          │
-└─────────────────────────────────────────────────────────────┘
-                           │
-┌──────────────────────────▼──────────────────────────────────┐
-│  Provider-agnostic LLM & Embedding Interface                │
-│  (OpenAI / Anthropic / Ollama / Azure OpenAI)               │
-└─────────────────────────────────────────────────────────────┘
+## Architecture
+```mermaid
+graph LR
+    Code[Repository] --> Parse[AST Parser]
+    Parse --> IR[Canonical Code IR]
+    IR --> Chunk[CodeChunker]
+    IR --> Graph[Knowledge Graph]
+    Chunk --> Embed[Vectors & BM25]
+    Query[User Query] --> HR[Hybrid Search]
+    HR --> Prune[Context Pruner]
+    Prune --> LLM[Local/Hosted LLM]
+    LLM --> Citations[Cited Output]
 ```
 
-**Code analysis pipeline (at index time):**
+## Core Capabilities
+*   **Search**: Find exact implementations and abstractions.
+*   **Symbol Exploration**: Traverse topological relationships spanning entire codebases.
+*   **Impact Analysis**: Compute caller/callee blast-radii mapping.
+*   **AI Chat**: Contextual queries scoped locally inside graphs.
+*   **Citations**: Context source verification.
+
+## Supported Languages
+*   **Python**: `tree-sitter-python`
+*   **Java**: `tree-sitter-java`
+*   **TypeScript / JavaScript**: `tree-sitter-typescript`
+
+## Retrieval Pipeline
+An ablated hybrid retrieval system running `pg_bm25` lexicals, `pgvector` semantics, and BFS reverse-dependency structural traversals, fused via Reciprocal Rank Fusion configurations targeting identifiers.
+
+## Incremental Indexing
+Automatically synchronizes codebase commits by executing bounded `git diff` operations detecting opaque refactors while replacing minimal `Canonical Code IR` nodes without full re-indexing loads.
+
+## LLM Context Engine
+Executes framework-agnostic connections directly mapping OpenAI, Anthropic, or Local Ollama servers. Replaces unbounded chat-histories with stateless, procedurally pruned, context-packed XML boundaries.
+
+## Product UI
+A React + Vite Single Page Application directly driving dashboard diagnostics, global searches, deep visual D3 structural graphs, and LLM conversations.
+
+## Research Evaluation
+Evaluated over an explicitly mapped 95-relevance static dataset. Validates that structural integration mitigates semantic loss inherently plaguing traditional vector RAG implementations in highly disjoint structural environments.
+
+## Benchmark Results
+**System C (BM25 + Vector + Graph):** 
+*   **MRR**: `0.7560` (+0.2379 over Vector baselines)
+*   **Recall@5**: `0.8403`
+*   **HitRate@5**: `0.9375`
+*   **NDCG@5**: `0.7093`
+
+## Security
+*   **Path Traversal**: Local repository paths are developer-trusted inputs and are not OS-sandboxed. Arbitrary relative resolutions are mathematically evaluated and accepted if the directory exists.
+*   **Prompt Injection**: Hardened through explicit trusted-instruction and untrusted-evidence separation utilizing `<code_evidence>` XML boundaries. (Note: Security is architectural; absolute resistance requires adversarial evaluation).
+
+## Tech Stack
+**Frontend**: React, TypeScript, Vite, TailwindCSS
+**Backend**: Python, FastAPI, SQLAlchemy, Tree-Sitter
+**Database**: PostgreSQL, pgvector, pg_bm25
+
+## Quick Start
+*Full end-to-end Docker Compose setup instructions dropping soon...*
+
+## Project Structure
 ```
-Repository (GitHub URL or local path)
-  ↓ Clone / read
-AST Parser (tree-sitter — Java, Python, TypeScript)
-  ↓
-Canonical Code IR (repository / file / module / class /
-                   function / method / variable / reference)
-  ↓
-Symbol graph builder      Chunk builder
-  ↓                            ↓
-PostgreSQL graph tables   Embeddings → pgvector
-```
-
----
-
-## MVP Languages
-
-| Language | AST library |
-|---|---|
-| Java | tree-sitter-java |
-| Python | tree-sitter-python |
-| TypeScript | tree-sitter-typescript |
-
-Additional languages can be added in later phases via a plugin-style parser registry.
-
----
-
-## Local-First Philosophy
-
-* All data (code index, embeddings, graph) is stored in a local PostgreSQL
-  database.
-* No telemetry, no cloud data upload required.
-* LLM and embedding calls go to the provider you configure (or a local Ollama
-  instance).
-* The architecture is cloud-ready: the same stack runs unchanged on a VM or
-  container host.
-
----
-
-## Repository Targets
-
-| Metric | Target |
-|---|---|
-| Maximum repository size | ≤ 1 M LOC |
-| Query P95 latency | ≤ 8 seconds |
-
----
-
-## Development Phases
-
-| Phase | Description | Status |
-|---|---|---|
-| 1 | Foundation — repo structure, project memory, constraints | 🟡 In progress |
-| 2 | Technology setup — Python runtime, DB migrations, test infra | ⬜ Pending |
-| 3 | Database foundation — schema, migrations, seed data | ⬜ Pending |
-| 4 | API foundation — FastAPI skeleton, auth scaffold | ⬜ Pending |
-| 5 | Code analysis — AST parsing, Canonical IR | ⬜ Pending |
-| 6 | Indexing pipeline — ingestion, embedding, graph | ⬜ Pending |
-| 7 | Retrieval engine — BM25 + vector + graph + fusion | ⬜ Pending |
-| 8 | LLM integration — provider-agnostic interface | ⬜ Pending |
-| 9 | Frontend — React UI, query interface | ⬜ Pending |
-| 10 | Evaluation & optimisation | ⬜ Pending |
-
----
-
-## Repository Layout
-
-```
-.ai/              Project memory (AI context files)
+.ai/              Project memory 
 backend/          FastAPI application
 frontend/         React application
 code-analyzer/    AST parsing and Canonical IR
@@ -139,21 +82,19 @@ retrieval/        BM25 / vector / graph retrieval
 graph/            Symbol graph builder
 llm/              Provider-agnostic LLM/embedding interface
 evaluation/       Benchmarks and quality metrics
-experiments/      Research notebooks and prototypes
 docs/             Architecture and API documentation
-docker/           Docker and docker-compose files
-tests/            Cross-component integration tests
 ```
 
----
+## Testing
+Tested across `pytest` orchestrations mapping securely against 742 localized structural assertions.
 
-## Getting Started
+## Research Report
+The project report evaluates structural relationships. See [Phase 9 Research Report](docs/research/phase-9-research-report.md).
 
-> **Full setup instructions will be added in Phase 2.**
+## Limitations
+*   Tested robustly exactly against subsets of 48 queries across 3 projects, limiting assumptions of global million-line corpus accuracy.
+*   Token bounding metrics not rigorously tested against real enterprise hallucinations.
+*   Local trust developer model requires active host awareness. 
 
-Prerequisites (planned): Python ≥ 3.12, Node ≥ 20, Docker, PostgreSQL 16.
-
----
-
-*This project is actively developed. See [`.ai/CURRENT_STATE.md`](.ai/CURRENT_STATE.md) for
-the live development status.*
+## Roadmap
+* Phase 10: Optimizations and Scaling 

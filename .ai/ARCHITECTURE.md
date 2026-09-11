@@ -186,3 +186,4 @@ User submits natural-language query
 - Not a microservices system. The backend and worker share code and a database.
 - Not event-driven. The job queue is polled, not pushed via a broker.
 - Not distributed. All components run on one host in Docker Compose.
+- Not simply "Chat with your code". The LLM is the final reasoning layer over a structured code intelligence system. It does not replace code retrieval logic natively securely intelligently completely explicitly correctly.

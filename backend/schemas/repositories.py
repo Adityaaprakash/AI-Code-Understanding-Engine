@@ -26,7 +26,7 @@ class RepositoryCreate(BaseModel):
                 # Canonicalize the path to prevent traversal bypasses
                 resolved = Path(self.local_path).resolve(strict=True)
             except Exception:
-                raise ValueError("local_path does not exist or is invalid.")
+                raise ValueError("local_path does not exist or is invalid.") from None
 
             if not resolved.is_dir():
                 raise ValueError("local_path must be a directory.")
