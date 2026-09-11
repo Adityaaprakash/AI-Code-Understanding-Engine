@@ -1,0 +1,364 @@
+{
+  "experiment_id": "9E",
+  "benchmark_version": "9E.1",
+  "timestamp": "2026-09-11T06:17:28.288160+00:00",
+  "environment": {
+    "os": "Windows",
+    "platform": "Windows-11-10.0.26200-SP0",
+    "python": "3.12.14",
+    "cpu": "AMD64 Family 25 Model 80 Stepping 0, AuthenticAMD",
+    "logical_cpus": 12,
+    "physical_cpus": 6,
+    "ram_bytes": 7887228928,
+    "embedding_provider": "LocalSentenceTransformerProvider",
+    "embedding_model": "all-MiniLM-L6-v2",
+    "embedding_dimensions": 384,
+    "device": "cpu"
+  },
+  "fixtures": [],
+  "full_indexing": [
+    {
+      "fixture_name": "repo-py-ecommerce-001",
+      "pipeline_stages_measured": [
+        "lexical_indexing",
+        "embedding_inference",
+        "vector_indexing"
+      ],
+      "loc": 198,
+      "files": 13,
+      "symbols": 22,
+      "chunks": 22,
+      "time_sec": 0.02435169999989739,
+      "files_per_sec": 533.8436111733952,
+      "loc_per_sec": 8130.848847102479
+    },
+    {
+      "fixture_name": "repo-java-banking-001",
+      "pipeline_stages_measured": [
+        "lexical_indexing",
+        "embedding_inference",
+        "vector_indexing"
+      ],
+      "loc": 81,
+      "files": 9,
+      "symbols": 9,
+      "chunks": 9,
+      "time_sec": 0.008181000000149652,
+      "files_per_sec": 1100.1098765096554,
+      "loc_per_sec": 9900.988888586899
+    },
+    {
+      "fixture_name": "repo-ts-gateway-001",
+      "pipeline_stages_measured": [
+        "lexical_indexing",
+        "embedding_inference",
+        "vector_indexing"
+      ],
+      "loc": 90,
+      "files": 10,
+      "symbols": 10,
+      "chunks": 10,
+      "time_sec": 0.007302799999706622,
+      "files_per_sec": 1369.337600792043,
+      "loc_per_sec": 12324.038407128388
+    }
+  ],
+  "incremental_indexing": [
+    {
+      "change_size": "0 files",
+      "total_files_before": 100,
+      "changed_files": 0,
+      "invalidated_files": 0,
+      "invalidated_symbols": 0,
+      "chunks_considered": 100,
+      "chunks_rebuilt": 0,
+      "embeddings_reused": 100,
+      "embeddings_recomputed": 0,
+      "graph_entities_affected": 0,
+      "full_time_sec": 0.5,
+      "incremental_time_sec": 0.18473749999975553,
+      "speedup": 2.7065430532193986,
+      "file_invalidation_reduction_percentage": 100.0
+    },
+    {
+      "change_size": "1 files",
+      "total_files_before": 100,
+      "changed_files": 1,
+      "invalidated_files": 1,
+      "invalidated_symbols": 1,
+      "chunks_considered": 100,
+      "chunks_rebuilt": 1,
+      "embeddings_reused": 99,
+      "embeddings_recomputed": 1,
+      "graph_entities_affected": 1,
+      "full_time_sec": 0.5,
+      "incremental_time_sec": 0.39267059999974663,
+      "speedup": 1.273331893773027,
+      "file_invalidation_reduction_percentage": 99.0
+    },
+    {
+      "change_size": "10 files",
+      "total_files_before": 100,
+      "changed_files": 10,
+      "invalidated_files": 10,
+      "invalidated_symbols": 10,
+      "chunks_considered": 100,
+      "chunks_rebuilt": 10,
+      "embeddings_reused": 90,
+      "embeddings_recomputed": 10,
+      "graph_entities_affected": 10,
+      "full_time_sec": 0.5,
+      "incremental_time_sec": 1.6287476000002243,
+      "speedup": 0.30698433550597204,
+      "file_invalidation_reduction_percentage": 90.0
+    }
+  ],
+  "embedding": {
+    "cold_model_initialization_ms": null,
+    "cold_initialization_plus_first_inference_ms": 27451.977799999895,
+    "batches": [
+      {
+        "batch_size": 1,
+        "mean_ms": 17.51195000001644,
+        "p50_ms": 17.138850000037564,
+        "p95_ms": 19.714955000017653,
+        "warmup_count": 3,
+        "measurement_count": 10,
+        "throughput_texts_per_sec": 57.10386010097112
+      },
+      {
+        "batch_size": 8,
+        "mean_ms": 39.884370000118,
+        "p50_ms": 40.768550000166215,
+        "p95_ms": 42.667165000261775,
+        "warmup_count": 3,
+        "measurement_count": 10,
+        "throughput_texts_per_sec": 200.5798211027656
+      },
+      {
+        "batch_size": 16,
+        "mean_ms": 69.6855499999856,
+        "p50_ms": 67.66524999989088,
+        "p95_ms": 76.74742000003789,
+        "warmup_count": 3,
+        "measurement_count": 10,
+        "throughput_texts_per_sec": 229.60283402226824
+      },
+      {
+        "batch_size": 32,
+        "mean_ms": 116.13172000006671,
+        "p50_ms": 115.88610000012523,
+        "p95_ms": 123.55795999997098,
+        "warmup_count": 3,
+        "measurement_count": 10,
+        "throughput_texts_per_sec": 275.54917575002287
+      },
+      {
+        "batch_size": 64,
+        "mean_ms": 257.7441599999929,
+        "p50_ms": 231.4256000001933,
+        "p95_ms": 390.9623900001177,
+        "warmup_count": 3,
+        "measurement_count": 10,
+        "throughput_texts_per_sec": 248.3082439256568
+      }
+    ]
+  },
+  "retrieval": [
+    {
+      "system_id": "System A",
+      "query_count": 48,
+      "warmup_count": 5,
+      "measurement_count": 48,
+      "mean_ms": 0.5652687500041035,
+      "p50_ms": 0.5471499998748186,
+      "p95_ms": 0.7189750001089122,
+      "preprocessing_ms": null,
+      "query_embedding_ms": null,
+      "vector_retrieval_ms": null,
+      "bm25_retrieval_ms": null,
+      "graph_retrieval_ms": null,
+      "fusion_ms": null,
+      "reranking_ms": null,
+      "total_ms": null
+    },
+    {
+      "system_id": "System B",
+      "query_count": 48,
+      "warmup_count": 5,
+      "measurement_count": 48,
+      "mean_ms": 1.1309937499959233,
+      "p50_ms": 1.1583499997414037,
+      "p95_ms": 1.448114999993777,
+      "preprocessing_ms": null,
+      "query_embedding_ms": null,
+      "vector_retrieval_ms": null,
+      "bm25_retrieval_ms": null,
+      "graph_retrieval_ms": null,
+      "fusion_ms": null,
+      "reranking_ms": null,
+      "total_ms": null
+    },
+    {
+      "system_id": "System C",
+      "query_count": 48,
+      "warmup_count": 5,
+      "measurement_count": 48,
+      "mean_ms": 1.3813750000224445,
+      "p50_ms": 1.3652000002366549,
+      "p95_ms": 1.8798400002879132,
+      "preprocessing_ms": null,
+      "query_embedding_ms": null,
+      "vector_retrieval_ms": null,
+      "bm25_retrieval_ms": null,
+      "graph_retrieval_ms": null,
+      "fusion_ms": null,
+      "reranking_ms": null,
+      "total_ms": null
+    },
+    {
+      "system_id": "System D",
+      "query_count": 48,
+      "warmup_count": 5,
+      "measurement_count": 48,
+      "mean_ms": 1.7031854166968212,
+      "p50_ms": 1.7381999998633546,
+      "p95_ms": 2.3159600000553837,
+      "preprocessing_ms": null,
+      "query_embedding_ms": null,
+      "vector_retrieval_ms": null,
+      "bm25_retrieval_ms": null,
+      "graph_retrieval_ms": null,
+      "fusion_ms": null,
+      "reranking_ms": null,
+      "total_ms": null
+    }
+  ],
+  "graph_traversal": [
+    {
+      "graph_queries": 48,
+      "nodes_visited": 20,
+      "edges_traversed": 6,
+      "mean_ms": 0.2780708332750237,
+      "p50_ms": 0.2551000000039494,
+      "p95_ms": 0.5031699998198746
+    }
+  ],
+  "reranker": [
+    {
+      "candidate_count": 20,
+      "query_count": 48,
+      "mean_ms": 0.36080416661358566,
+      "p50_ms": 0.3633500000432832,
+      "p95_ms": 0.5655099999557932
+    }
+  ],
+  "components": [
+    {
+      "component": "BM25",
+      "mean_ms": 0.4266499999800999,
+      "p50_ms": 0.40769999986878247,
+      "p95_ms": 0.7113650000064808
+    },
+    {
+      "component": "Vector",
+      "mean_ms": 0.5609874999853067,
+      "p50_ms": 0.5332000000635162,
+      "p95_ms": 0.7547249997287507
+    },
+    {
+      "component": "Graph",
+      "mean_ms": 0.2780708332750237,
+      "p50_ms": 0.2551000000039494,
+      "p95_ms": 0.5031699998198746
+    },
+    {
+      "component": "Fusion",
+      "mean_ms": 0.16511041668347085,
+      "p50_ms": 0.17905000004247995,
+      "p95_ms": 0.26102500019078434
+    }
+  ],
+  "memory": [
+    {
+      "operation": "Cold Start Embedding Provider",
+      "baseline_rss_mb": 82.93359375,
+      "peak_rss_mb": 494.33203125,
+      "settled_rss_mb": 494.33203125,
+      "peak_delta_mb": 411.3984375
+    },
+    {
+      "operation": "Post-Indexing Settled Memory",
+      "baseline_rss_mb": 82.9296875,
+      "peak_rss_mb": 503.984375,
+      "settled_rss_mb": 503.984375,
+      "peak_delta_mb": 421.0546875
+    }
+  ],
+  "index_size": [
+    {
+      "component": "BM25",
+      "in_memory_estimate_bytes": null,
+      "in_memory_estimate_status": "NOT_MEASURED",
+      "persistent_disk_bytes": null,
+      "persistent_status": "NOT_PERSISTED"
+    },
+    {
+      "component": "Vector",
+      "in_memory_estimate_bytes": null,
+      "in_memory_estimate_status": "NOT_MEASURED",
+      "persistent_disk_bytes": null,
+      "persistent_status": "NOT_PERSISTED"
+    },
+    {
+      "component": "Graph",
+      "in_memory_estimate_bytes": null,
+      "in_memory_estimate_status": "NOT_MEASURED",
+      "persistent_disk_bytes": null,
+      "persistent_status": "NOT_PERSISTED"
+    }
+  ],
+  "scaling": [
+    {
+      "workload": "synthetic_small",
+      "pipeline_stages_measured": [
+        "parsing",
+        "lexical_indexing"
+      ],
+      "loc": 1000,
+      "files": 10,
+      "elapsed_seconds": 0.011669999999867287,
+      "throughput_loc_per_sec": 85689.79557168609,
+      "peak_rss_bytes": 4096,
+      "peak_rss_mb": 0.00390625
+    },
+    {
+      "workload": "synthetic_medium",
+      "pipeline_stages_measured": [
+        "parsing",
+        "lexical_indexing"
+      ],
+      "loc": 10000,
+      "files": 50,
+      "elapsed_seconds": 0.11659850000023653,
+      "throughput_loc_per_sec": 85764.39589030149,
+      "peak_rss_bytes": 528465920,
+      "peak_rss_mb": 503.984375
+    }
+  ],
+  "failure_accounting": {
+    "queries_total": 48,
+    "queries_succeeded": 48,
+    "queries_failed": 0,
+    "timeouts": 0,
+    "exceptions": 0,
+    "fallbacks": 0,
+    "repositories_total": 3,
+    "repositories_succeeded": 3,
+    "repositories_failed": 0,
+    "files_failed": 0,
+    "embedding_failures": 0,
+    "graph_failures": 0
+  },
+  "limitations": []
+}
