@@ -43,12 +43,22 @@ def sync_client(app_instance: FastAPI) -> TestClient:
 
 
 @pytest.fixture
-async def async_client(app_instance: FastAPI) -> AsyncGenerator[AsyncClient, None]:
+async def async_client(app_instance: FastAPI, db_session: AsyncSession) -> AsyncGenerator[AsyncClient, None]:
     """Provide an asynchronous httpx.AsyncClient wired to the FastAPI application."""
-    transport = ASGITransport(app=app_instance)
-    async with AsyncClient(transport=transport, base_url="http://testserver") as client:
-        yield client
+    from backend.db.session import get_db_session
 
+    async def get_test_db_session():
+        yield db_session
+
+    # Override the production database dependency for API tests
+    app_instance.dependency_overrides[get_db_session] = get_test_db_session
+
+    transport = ASGITransport(app=app_instance)
+    try:
+        async with AsyncClient(transport=transport, base_url="http://testserver") as client:
+            yield client
+    finally:
+        app_instance.dependency_overrides.pop(get_db_session, None)
 
 @pytest.fixture(scope="session")
 def database_url() -> str | None:

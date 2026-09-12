@@ -12,6 +12,7 @@ from backend.db.models.job import Job
 from backend.db.models.repository import Repository
 from backend.db.session import get_db_session
 from backend.schemas.repositories import JobResponse, RepositoryCreate, RepositoryResponse
+from backend.services.demo_indexer import DemoIndexer
 
 router = APIRouter(prefix="/repositories", tags=["Repositories"])
 
@@ -107,6 +108,49 @@ async def trigger_indexing(
     await session.commit()
     await session.refresh(job)
     return job  # type: ignore
+
+
+@router.post(
+    "/{repo_id}/index-demo",
+    summary="Synchronously index a repository for development/demo purposes",
+    status_code=status.HTTP_200_OK,
+)
+async def trigger_demo_indexing(
+    repo_id: uuid.UUID, session: AsyncSession = Depends(get_db_session)
+):
+    """Synchronous pipeline that populates the in-memory stores for the Phase 9H demo."""
+    db_repo = await session.get(Repository, repo_id)
+    if not db_repo:
+        raise AppException(
+            "Repository not found", code="NOT_FOUND", status_code=status.HTTP_404_NOT_FOUND
+        )
+
+    # Note: Job abstraction is preserved for tracking
+    job = Job(
+        repository_id=db_repo.id,
+        kind="full_index",
+        status="running",
+        payload={"branch": db_repo.default_branch, "demo_mode": True},
+    )
+    session.add(job)
+    await session.commit()
+    await session.refresh(job)
+
+    try:
+        stats = await DemoIndexer.index_repository(repo_id, session)
+        job.status = "done"
+        job.result = stats
+        await session.commit()
+        return {"job": job, "stats": stats}
+    except Exception as e:
+        job.status = "failed"
+        job.result = {"error": str(e)}
+        await session.commit()
+        raise AppException(
+            f"Demo indexing failed: {e!s}",
+            code="INDEX_FAILED",
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+        )
 
 
 @router.get(

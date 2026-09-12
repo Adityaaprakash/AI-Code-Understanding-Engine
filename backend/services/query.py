@@ -31,7 +31,13 @@ class QueryApplicationService:
 
         self.lexical_retriever = LexicalRetriever(self.lexical_index)
 
-        self.embedding_provider = DeterministicTestEmbeddingProvider()
+        # Preferably use real semantic provider for showcase/demo retrieval quality
+        try:
+            from retrieval.providers import LocalSentenceTransformerProvider
+
+            self.embedding_provider = LocalSentenceTransformerProvider()
+        except ImportError:
+            self.embedding_provider = DeterministicTestEmbeddingProvider()
         self.vector_retriever = VectorRetriever(self.vector_index, self.embedding_provider)
 
         # We omit GraphRetriever for now unless we have a persistent graph store injected
