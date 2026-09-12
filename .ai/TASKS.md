@@ -623,3 +623,35 @@ service needed for this task.
 - [x] Generate deterministic alembic migration configurations capturing database updates.
 - [x] Ensure Phase 4+5 retrievers inherently isolate index sets preventing incomplete sets exposure.
 - [x] Verify API Query boundaries properly inherit the `active_index_version` constraints unconditionally.
+
+---
+
+## Phase 9 — Research & Hardening
+
+### TASK-9H: Demo & Showcase Preparation
+
+**Status:** ✅ Done
+**Objective:** Make the application demonstrable end-to-end via a real, synchronous demo indexing orchestrator utilizing existing pipelines.
+
+**Scope actually implemented:**
+- Constructed the `DemoIndexer` orchestrator to wire existing Parser, Canonical IR, AST chunking, Embedding, BM25, and Graph components synchronously for real-time testing.
+- Created `POST /api/v1/repositories/{repo_id}/index-demo` endpoint.
+- Corrected FastAPI `dependency_overrides` for `get_db_session` in pytest to prevent global AsyncEngine connection connection pool leakage and closed-event-loop errors across tests.
+- Updated `docs/demo/showcase-guide.md`.
+
+**Files/components involved:**
+- `backend/services/demo_indexer.py`
+- `backend/api/v1/repositories.py`
+- `backend/services/query.py`
+- `docs/demo/showcase-guide.md`
+- `tests/test_9h_api_e2e.py`
+- `tests/test_9h_demo_indexer.py`
+- `tests/conftest.py`
+
+**Tests and verification:**
+- Verified end-to-end `test_9h_api_e2e.py` orchestrating search, symbol lookup, query graphs, and impact evaluations natively.
+- Full quality gate validated without performance locking bugs.
+- Latest verified test result: 726 passed, 18 skipped, 0 failed, 0 errors.
+
+**Completion status:**
+- ✅ Complete.

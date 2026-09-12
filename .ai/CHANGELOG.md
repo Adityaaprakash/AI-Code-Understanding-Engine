@@ -10,6 +10,7 @@ All notable changes are documented sequentially.
 *   **9E**: Tested operational load latency and throughput measuring execution capacities.
 *   **9F**: Evaluated API security boundary, establishing a trusted-developer path model (no OS sandboxing). Hardened prompt injection using architectural XML tag instructional separation.
 *   **9G**: Authored project research documentation verifying complete structural operations.
+*   **9H**: Demo & Showcase Preparation. Implemented synchronous `DemoIndexer` orchestration for real-time repository indexing. Integrated demo API endpoints, tested end-to-end functionality, authored `docs/demo/showcase-guide.md`, and fixed FastAPI test dependency injection isolation logic.
 
 ### Phase 8: Incremental Indexing
 *   Engineered git-diff integrations resolving exact modified paths without total cache loss, preserving memory execution metrics.
